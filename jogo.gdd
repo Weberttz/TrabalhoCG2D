@@ -1,0 +1,27 @@
+GAME DESIGN DOCUMENT
+
+Título do Jogo: <escolher>  
+Estilo de Jogo: Plataforma
+Personagens: <escolher>, zumbis, chefe
+Mecânicas: Pular, atirar, ataque físico
+Lore: <criar>
+
+Plataformas randômicas: polígono convexo 
+BackGround: cidade?? floresta?? com efeito parallax?
+
+
+Design das plataformas:
+
+********** ******         ************    **********
+*        * *    *****     *          *    *        *
+*        * *        *     *******    *    **********
+*        * *        *           ******
+********** **********
+
+itens: munição, durabilidade de arma branca
+quantidade de corações: 3?
+quantidade de zumbis: fixa ou randomica com teto??
+
+vai possuir dificuldades diferentes??
+Minimapa para viewport
+Quantas sprites?
