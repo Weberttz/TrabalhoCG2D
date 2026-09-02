@@ -1,5 +1,5 @@
 def set_pixel(superficie, x, y, cor):
-    superficie.set_at((x,y), cor)
+    superficie.set_at((int(x), int(y)), cor)
   
 def linha_bresenham(superficie, x0, y0, x1, y1, cor):
     dx = abs(x1 - x0)
