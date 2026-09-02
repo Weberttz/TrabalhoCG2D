@@ -4,21 +4,13 @@ import sys
 from bresenham import linha_bresenham
 from plataforma import Plataforma
 from jogador import Jogador
-
-pygame.init()
-largura, altura = 1280, 720
-tela = pygame.display.set_mode((largura, altura))
-clock = pygame.time.Clock()
+from zumbi import Zumbi
+from random import randint
+from level import level
 
 cor_preta = (0, 0, 0) # cor preta
 cor_branca = (255, 255, 255)
-
-pygame.display.set_caption("Jogo")
-rodando = True
-
-jogador = Jogador("red")
-dt = 0
-gravidade = 4
+TAMANHO_QUADRADO = 30
 
 def set_pixel(superficie, x, y, cor):
     superficie.set_at((x,y), cor)
@@ -34,72 +26,53 @@ def draw_polygonon(superficie, vertices, color):
         x1, y1 = vertices[(i+1) % n]
         linha_bresenham(superficie, x0, y0, x1, y1, color)
 
-def criar_plataformas():
+def criar_zumbi(plataformas):
+    rnd = randint(0, len(plataformas))
+    tamanho_zumbi = 30
+    return Zumbi(plataformas[rnd].x1 - tamanho_zumbi, plataformas[rnd].y1)
+
+def criar_level(layout):
     plataformas = []
-    x0, y0 = 0, 718
-    largura, altura = 100, 28
-    distancia = 60
-    for _ in range(4):
-        x1 = x0 + largura
-        y1 = y0 - altura
-        
-        plataforma = Plataforma(x0, x1, y0, y1, cor_branca)
-        plataformas.append(plataforma)
-        x0+=largura + distancia
+    largura, altura = 30, 30
+    for y, row in enumerate(layout):
+        for x, tile in enumerate(row):
+            if tile == "P":
+                plataforma = Plataforma(x * TAMANHO_QUADRADO, x * TAMANHO_QUADRADO + largura,
+                               y * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + altura, cor_branca)
+                plataformas.append(plataforma)
 
     return plataformas
 
-def aplicar_gravidade(jogador):
-    jogador.y += jogador.vel
+def main():
+    pygame.init()
+    largura, altura = 1280, 720
+    tela = pygame.display.set_mode((largura, altura))
+    clock = pygame.time.Clock()
 
-    if jogador.y >= altura: 
-        jogador.y = altura
-        jogador.y = 0
+    pygame.display.set_caption("Jogo")
+    rodando = True
 
-while rodando:
-    for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
-            rodando = False
+    plataformas = criar_level(level)
+    jogador = Jogador(plataformas, "red")
 
-    print(pygame.mouse.get_pos())
-    tela.fill(cor_preta)
+    while rodando:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                rodando = False
+        
+        jogador.atualizar()
+        tela.fill(cor_preta)
 
-    vertices = [(jogador.x, jogador.y), 
-                (jogador.x + jogador.tamanho, jogador.y), 
-                (jogador.x + jogador.tamanho, jogador.y - jogador.tamanho), 
-                (jogador.x, jogador.y - jogador.tamanho)]
-    
-    draw_polygonon(tela, vertices,jogador.cor)
+        for plataforma in plataformas:
+            draw_polygonon(tela, plataforma.vertices, plataforma.cor)
 
-    plataformas = criar_plataformas()
-    keys = pygame.key.get_pressed()
+        draw_polygonon(tela, jogador.vertices, jogador.cor)
 
-    if keys[pygame.K_SPACE] and jogador.no_chao:
-       jogador.y -= jogador.vel  
-       jogador.no_chao = False
+        pygame.display.flip()
+        clock.tick(30)
 
-    if keys[pygame.K_LEFT]:
-        jogador.x -= jogador.vel
-    if keys[pygame.K_RIGHT]:
-        jogador.x += jogador.vel
+    pygame.quit()
+    sys.exit()
 
-    pode_cair = True
-
-    for plataforma in plataformas:
-        for (x, y) in plataforma.vertices:
-            valor1 = plataforma.x0 - jogador.tamanho
-            valor2 = plataforma.x1
-            if jogador.y == y and  valor1 < jogador.x and  valor2 > jogador.x: 
-                pode_cair = False 
-                jogador.no_chao = True
-
-        draw_polygonon(tela, plataforma.vertices, "white")
-
-    if pode_cair: aplicar_gravidade(jogador)
-    
-    dt = clock.tick(60) / 1000
-
-    pygame.display.flip()
-
-pygame.quit()
-sys.exit()
+if __name__ == "__main__":
+    main()
