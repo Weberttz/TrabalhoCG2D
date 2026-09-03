@@ -8,12 +8,16 @@ class Jogador:
 
         # Física
         self.pos = pygame.Vector2(100, 40)
+        self.vel_x = 0
+        self.vel_y = 0
         self.aceleracao = pygame.Vector2(0, 10)
         self.no_chao = False
 
+        self.retangulo = pygame.Rect(100, 10, self.tamanho, self.tamanho)
+
         # Movimento
         self.velocidade = 5
-        self.forca_pulo = -100
+        self.forca_pulo = -15
         self.plataformas = plataformas
 
     def atualizar(self):
@@ -22,33 +26,57 @@ class Jogador:
         self.lidar_com_colisoes()
 
         self.vertices = [(self.pos.x, self.pos.y), 
-                            (self.pos.x + self.tamanho, self.pos.y), 
+                            (self.pos.x, self.pos.y - self.tamanho),
                             (self.pos.x + self.tamanho, self.pos.y - self.tamanho), 
-                            (self.pos.x, self.pos.y - self.tamanho)]
+                            (self.pos.x + self.tamanho, self.pos.y)]
 
     def lidar_com_inputs(self):
         keys = pygame.key.get_pressed()
 
+        self.vel_x = 0
+
         if keys[pygame.K_LEFT]:
-            self.pos.x += -self.velocidade
+            self.vel_x += -self.velocidade
     
         if keys[pygame.K_RIGHT]:
-            self.pos.x += self.velocidade
+            self.vel_x = self.velocidade
 
         if keys[pygame.K_SPACE] and self.no_chao:
-            self.pos.y += self.forca_pulo
+            self.aceleracao.y = self.forca_pulo
             self.no_chao = False
 
     def aplicar_gravidade(self):
         # aplicar gravidade se não estiver no chão
-        if not self.no_chao: 
-            self.pos.y += self.aceleracao.y
+        self.aceleracao.y += 0.8
+        if self.aceleracao.y > 10: # Aceleração tem teto
+            self.aceleracao.y = 10
 
     def lidar_com_colisoes(self):
-        self.no_chao = False
+        # Movimento horizontal
+        self.pos.x += self.vel_x
+        self.retangulo.x = self.pos.x
+
         for plataforma in self.plataformas:
-           for (x, y) in plataforma.vertices:
-                valor1 = plataforma.x0 - self.tamanho
-                valor2 = plataforma.x1
-                if self.pos.y == y and  valor1 < self.pos.x and valor2 > self.pos.x: 
+            if self.retangulo.colliderect(plataforma.retangulo):
+                if self.vel_x > 0:  # Movendo para a direita
+                    self.retangulo.right = plataforma.retangulo.left
+                elif self.vel_x < 0:  # Movendo para a esquerda
+                    self.retangulo.left = plataforma.retangulo.right
+                self.pos.x = self.retangulo.x # Sincroniza a posição com o eixo x do obstáculo
+
+        # Movimento vertical
+        self.pos.y += self.aceleracao.y
+        self.retangulo.y = self.pos.y  
+
+        self.no_chao = False
+
+        for plataforma in self.plataformas:
+            if self.retangulo.colliderect(plataforma.retangulo):
+                if self.aceleracao.y > 0:  # Caindo
+                    self.retangulo.bottom = plataforma.retangulo.top
                     self.no_chao = True
+                    self.aceleracao.y = 0
+                elif self.aceleracao.y < 0:  # Pulando
+                    self.retangulo.top = plataforma.retangulo.bottom
+                    self.aceleracao.y = 0
+                self.pos.y = self.retangulo.y # Sincroniza a posição com o eixo y do obstáculo
