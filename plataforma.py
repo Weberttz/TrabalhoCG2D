@@ -1,3 +1,5 @@
+import pygame
+
 class Plataforma:
     def __init__(self, x0, x1, y0, y1, cor):
         self.x0 = x0
@@ -6,6 +8,7 @@ class Plataforma:
         self.y1 = y1
         self.vertices = [(x0, y0), (x0, y1), (x1, y1), (x1, y0)]
         self.cor = cor
+        self.retangulo = pygame.Rect(x0, y1, 30, 30)
 
-
+# mudar a assinatura para Retangulo(left, top, largura, altura)
     
