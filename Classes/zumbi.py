@@ -1,17 +1,15 @@
-from Classes.bloco import Objeto
+from Classes.humanoide import Humanoide
 
-class Zumbi(Objeto):
-    def __init__(self, x, y, largura, altura, cor):
-        self.vida = 3
-        self.altura = altura
-        self.largura = largura
-        self.x = x
-        self.y = y
-        super().__init__(x, y, largura, altura, cor)
+class Zumbi(Humanoide):
+    def __init__(self, plataformas, pos, cor):
+        super().__init__(plataformas, [], pos, cor)
         self.vertices = []
 
     def atualizar(self):
-            self.vertices = [(self.x, self.y), 
-                                (self.x + self.altura, self.y), 
-                                (self.x + self.altura, self.y - self.altura), 
-                                (self.x, self.y - self.altura)]
+        self.aplicar_gravidade()
+        self.lidar_com_colisoes()
+
+        self.vertices = [(self.pos.x, self.pos.y), 
+                            (self.pos.x, self.pos.y - self.tamanho),
+                            (self.pos.x + self.tamanho, self.pos.y - self.tamanho), 
+                            (self.pos.x + self.tamanho, self.pos.y)]
