@@ -21,11 +21,13 @@ def criar_zumbis(plataformas):
     for _ in range(QUANTIDADE_INIMIGOS):
         rnd = randint(0, len(plataformas))
 
+        if rnd + distancia > len(plataformas): continue
+
         for i in range(rnd, rnd + distancia):
-            if i in set_numeros or rnd + distancia > len(plataformas): continue
+            if i in set_numeros: continue
 
         zumbis.append(Zumbi(plataformas[rnd].x0, plataformas[rnd].y1 - tamanho_zumbi, 
-                    tamanho_zumbi, tamanho_zumbi, "green"))
+                    tamanho_zumbi, tamanho_zumbi, (53, 66, 35)))
         set_numeros.add(rnd)
 
     return zumbis
@@ -37,7 +39,7 @@ def criar_level(layout):
         for x, tile in enumerate(row):
             if tile == "P":
                 plataforma = Plataforma(x * TAMANHO_QUADRADO,
-                               y * TAMANHO_QUADRADO, largura, altura, WHITE)
+                               y * TAMANHO_QUADRADO, largura, altura, (59, 132, 68))
                 plataformas.append(plataforma)
 
     return plataformas
@@ -70,19 +72,20 @@ def main():
         tela.fill(BLACK)
 
         for plataforma in plataformas:
-            draw_polygonon(tela, plataforma.vertices, plataforma.cor)
+            draw_polygonon(tela, plataforma.vertices, BLACK)
+            scanline_fill(tela, plataforma.vertices, plataforma.cor)
 
         draw_polygonon(tela, jogador.vertices, jogador.cor)
 
         for zumbi in zumbis:
             zumbi.atualizar()
-            draw_polygonon(tela, zumbi.vertices, zumbi.cor)
+            draw_polygonon(tela, zumbi.vertices, BLACK)
+            scanline_fill(tela, zumbi.vertices, zumbi.cor)
 
         tela.blit(text, (30, 10))
 
-
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick(60)
 
     pygame.quit()
     sys.exit()
