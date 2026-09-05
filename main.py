@@ -1,35 +1,34 @@
 import pygame
 import sys
 
-from bresenham import linha_bresenham
-from plataforma import Plataforma
-from jogador import Jogador
-from zumbi import Zumbi
+from Algortimos.algoritmos import *
+from Classes.plataforma import Plataforma
+from Classes.jogador import Jogador
+from Classes.zumbi import Zumbi
 from random import randint
-from level import level
+from Mapas.level import level
 
-cor_preta = (0, 0, 0) # cor preta
-cor_branca = (255, 255, 255)
+BLACK = (0, 0, 0) # cor preta
+WHITE = (255, 255, 255)
 TAMANHO_QUADRADO = 30
+QUANTIDADE_INIMIGOS = 5
 
-def set_pixel(superficie, x, y, cor):
-    superficie.set_at((x,y), cor)
-
-def draw_line(superficie, pontos, cor):
-    for (x, y) in pontos:
-        set_pixel(superficie, x, y, cor)
-
-def draw_polygonon(superficie, vertices, color):
-    n = len(vertices)
-    for i in range(n):
-        x0, y0 = vertices[i]
-        x1, y1 = vertices[(i+1) % n]
-        linha_bresenham(superficie, x0, y0, x1, y1, color)
-
-def criar_zumbi(plataformas):
-    rnd = randint(0, len(plataformas))
+def criar_zumbis(plataformas):
+    zumbis = []
+    set_numeros = set()
     tamanho_zumbi = 30
-    return Zumbi(plataformas[rnd].x1 - tamanho_zumbi, plataformas[rnd].y1)
+    distancia = 5
+    for _ in range(QUANTIDADE_INIMIGOS):
+        rnd = randint(0, len(plataformas))
+
+        for i in range(rnd, rnd + distancia):
+            if i in set_numeros or rnd + distancia > len(plataformas): continue
+
+        zumbis.append(Zumbi(plataformas[rnd].x0, plataformas[rnd].y1 - tamanho_zumbi, 
+                    tamanho_zumbi, tamanho_zumbi, "green"))
+        set_numeros.add(rnd)
+
+    return zumbis
 
 def criar_level(layout):
     plataformas = []
@@ -37,36 +36,50 @@ def criar_level(layout):
     for y, row in enumerate(layout):
         for x, tile in enumerate(row):
             if tile == "P":
-                plataforma = Plataforma(x * TAMANHO_QUADRADO, x * TAMANHO_QUADRADO + largura,
-                               y * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + altura, cor_branca)
+                plataforma = Plataforma(x * TAMANHO_QUADRADO,
+                               y * TAMANHO_QUADRADO, largura, altura, WHITE)
                 plataformas.append(plataforma)
 
     return plataformas
 
 def main():
     pygame.init()
-    largura, altura = 1280, 720
+    largura, altura = 1262, 722
     tela = pygame.display.set_mode((largura, altura))
     clock = pygame.time.Clock()
+    myriad_pro_font = pygame.font.SysFont("Myriad Pro", 30)
 
     pygame.display.set_caption("Jogo")
     rodando = True
 
     plataformas = criar_level(level)
-    jogador = Jogador(plataformas, "red")
+    zumbis = criar_zumbis(plataformas)
+    jogador = Jogador(plataformas, zumbis, "red")
 
     while rodando:
+        text = myriad_pro_font.render(f"Vida: {jogador.vida} ", 1, WHITE)
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 rodando = False
-        
+
+        if jogador.pos.y > altura or jogador.vida == 0: 
+            jogador.pos.y = 40
+            jogador.vida = 100
+
         jogador.atualizar()
-        tela.fill(cor_preta)
+        tela.fill(BLACK)
 
         for plataforma in plataformas:
             draw_polygonon(tela, plataforma.vertices, plataforma.cor)
 
         draw_polygonon(tela, jogador.vertices, jogador.cor)
+
+        for zumbi in zumbis:
+            zumbi.atualizar()
+            draw_polygonon(tela, zumbi.vertices, zumbi.cor)
+
+        tela.blit(text, (30, 10))
+
 
         pygame.display.flip()
         clock.tick(30)
