@@ -49,7 +49,7 @@ def scanline_fill(superficie, pontos, cor_preenchimento):
             if y0 >= y1: # se a orientação estiver errada, trocar os valores
                 x0, y0, x1, y1 = x1, y1, x0, y0
 
-            if y < y0 or y >= y1: continue # se estiver fora da área, não fazer nada
+            if y <= y0 or y >= y1: continue # se estiver fora da área, não fazer nada
 
             x = x0 + (y - y0) * (x1 - x0) / (y1 - y0) # fórmula da interpolação
             interseccoes_x.append(x)
@@ -59,7 +59,8 @@ def scanline_fill(superficie, pontos, cor_preenchimento):
         for i in range(0, len(interseccoes_x), 2): # pegar os pontos dois a dois
             if i+1 >= len(interseccoes_x): break
 
-            x_inicio = int(round(interseccoes_x[i])) # x inicio e x fim 
+            x_inicio = int(round(interseccoes_x[i]) + 1) # x inicio e x fim 
             x_fim =  int(round(interseccoes_x[i+1]))
+
             for x in range(x_inicio, x_fim):
                 set_pixel(superficie, x, y, cor_preenchimento)
