@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-from Algortimos.algoritmos import *
+from BibliotecaGrafica.algoritmos import *
 from Classes.plataforma import Plataforma
 from Classes.jogador import Jogador
 from Classes.zumbi import Zumbi
