@@ -2,8 +2,8 @@ import random
 from Classes.humanoide import Humanoide
 
 class Zumbi(Humanoide):
-    def __init__(self, plataformas, pos, cor):
-        super().__init__(plataformas, [], pos, cor)
+    def __init__(self, plataformas, pos, equipamentos, cor):
+        super().__init__(plataformas, [], equipamentos, pos, cor)
         self.vertices = []
         self.tempo_mudar_direcao = 0
 
@@ -11,11 +11,9 @@ class Zumbi(Humanoide):
         self.aplicar_gravidade()
         self.lidar_com_colisoes()
         self.movimentar()
-        self.vertices = [(self.pos.x, self.pos.y), 
-                            (self.pos.x, self.pos.y - self.tamanho),
-                            (self.pos.x + self.tamanho, self.pos.y - self.tamanho), 
-                            (self.pos.x + self.tamanho, self.pos.y)]
-
+        self.atualizar_vertices()
+        self.atualizar_vertices_equipamento()
+    
     def movimentar(self):
         pos_base = 690
         controle = self.retangulo.x + self.vel_x * self.velocidade
