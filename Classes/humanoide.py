@@ -1,10 +1,15 @@
 import pygame
 
-class Humanoide: 
-    def __init__(self, plataformas, inimigos, pos, cor):
+class Humanoide(pygame.sprite.Sprite): 
+    def __init__(self, plataformas, inimigos, equipamentos, pos, cor):
         self.vida = 100
         self.cor = cor
         self.tamanho = 30
+        self.equipamentos = equipamentos
+
+        if len(equipamentos) > 0:
+            self.equipamento = equipamentos[0]
+        else: self.equipamento = None
 
         # Física
         self.pos = pos # pygame.Vector2(100, 300)
@@ -16,10 +21,13 @@ class Humanoide:
         self.retangulo = pygame.Rect(self.pos.x, self.pos.y - self.tamanho, self.tamanho, self.tamanho)
 
         # Movimento
-        self.velocidade = 3
+        self.velocidade = 5
         self.forca_pulo = -15
         self.plataformas = plataformas
         self.inimigos = inimigos
+
+        self.frame = 0
+        self.image = None
 
     def aplicar_gravidade(self):
         # aplicar gravidade se não estiver no chão
@@ -27,6 +35,21 @@ class Humanoide:
         if self.aceleracao.y > 10: # Aceleração tem teto
             self.aceleracao.y = 10
 
+    def atualizar_vertices(self):
+         self.vertices = [(self.pos.x, self.pos.y), 
+                                    (self.pos.x, self.pos.y - self.tamanho),
+                                    (self.pos.x + self.tamanho, self.pos.y - self.tamanho), 
+                                    (self.pos.x + self.tamanho, self.pos.y)]
+
+    def atualizar_vertices_equipamento(self):
+        if self.equipamento != None:
+            pos_equipamento_x = self.pos.x + self.tamanho
+            pos_equipamento_y = self.pos.y - self.tamanho // 2
+            self.equipamento.vertices = [(pos_equipamento_x, pos_equipamento_y), 
+                                            (pos_equipamento_x, pos_equipamento_y - self.equipamento.altura),
+                                            (pos_equipamento_x + self.equipamento.largura, pos_equipamento_y - self.equipamento.altura), 
+                                            (pos_equipamento_x + self.equipamento.largura, pos_equipamento_y)]
+                    
     def lidar_com_colisoes(self):
         # Movimento horizontal
         self.pos.x += self.vel_x
@@ -60,7 +83,26 @@ class Humanoide:
         for inimigo in self.inimigos:
             if self.retangulo.colliderect(inimigo.retangulo):
                 inimigo.cor = "blue"
+                self.cor = "red"
                 self.vida-= 1
                 if self.vida < 0: self.vida = 0
-            else: inimigo.cor = "green"
-            
+            else: 
+                inimigo.cor = "green"
+                self.cor = "black"
+
+
+    def animar(self, lista_idle, lista_walk_left, lista_walk_right):
+        if self.vel_x == 0 and self.vel_y == 0:
+            self.mudar_frame(lista_idle)
+        elif self.vel_x < 0:
+            self.mudar_frame(lista_walk_right)
+        else:
+            self.mudar_frame(lista_walk_left)
+
+    def mudar_frame(self, lista_animacao):
+        # Avança para o próximo quadro da animação
+        # O operador '%' (módulo) faz com que a contagem volte a 0 quando chegar ao fim da lista.
+        self.frame = (self.frame + 1) % len(lista_animacao)
+        
+        # Atualiza a imagem do herói para a imagem do quadro atual.
+        self.image = lista_animacao[self.frame]
