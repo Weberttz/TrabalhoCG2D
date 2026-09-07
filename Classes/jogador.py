@@ -2,19 +2,15 @@ import pygame
 from Classes.humanoide import Humanoide
 
 class Jogador(Humanoide):
-    def __init__(self, plataformas, inimigos , cor):
-        pos = pygame.Vector2(100, 300)
-        super().__init__(plataformas, inimigos, pos, cor)
+    def __init__(self, pos, plataformas, inimigos, equipamentos, cor):
+        super().__init__(plataformas, inimigos, equipamentos, pos, cor)
 
     def atualizar(self):
         self.lidar_com_inputs()
         self.aplicar_gravidade()
         self.lidar_com_colisoes()
-
-        self.vertices = [(self.pos.x, self.pos.y), 
-                            (self.pos.x, self.pos.y - self.tamanho),
-                            (self.pos.x + self.tamanho, self.pos.y - self.tamanho), 
-                            (self.pos.x + self.tamanho, self.pos.y)]
+        self.atualizar_vertices()
+        self.atualizar_vertices_equipamento()
 
     def lidar_com_inputs(self):
         keys = pygame.key.get_pressed()
