@@ -7,12 +7,19 @@ class Zumbi(Humanoide):
         self.vertices = []
         self.tempo_mudar_direcao = 0
 
-    def atualizar(self):
+    def atualizar(self, projetils):
         self.aplicar_gravidade()
         self.lidar_com_colisoes()
         self.movimentar()
         self.atualizar_vertices()
         self.atualizar_vertices_equipamento()
+        self.checar_atingido(projetils)
+
+    def checar_atingido(self, projetils):
+        for projetil in projetils:
+            if projetil.retangulo.colliderect(self.retangulo):
+                self.vida -= projetil.dano
+                if self.vida <= 0: self.vida = 0
     
     def movimentar(self):
         pos_base = 690

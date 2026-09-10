@@ -1,7 +1,4 @@
-import pygame
-
-LARGURA = 1262
-ALTURA = 722
+from settings import *
 
 class Camera:
     def __init__(self, alvo, largura_mapa, altura_mapa):

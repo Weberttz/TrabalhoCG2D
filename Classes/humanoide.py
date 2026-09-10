@@ -1,4 +1,4 @@
-import pygame
+from settings import *
 
 class Humanoide(pygame.sprite.Sprite): 
     def __init__(self, plataformas, inimigos, equipamentos, pos, cor):
@@ -54,8 +54,11 @@ class Humanoide(pygame.sprite.Sprite):
         # Movimento horizontal
         self.pos.x += self.vel_x
         self.retangulo.x = self.pos.x
+        
+        objetos = self.plataformas + self.inimigos
 
-        for plataforma in self.plataformas:
+        # Colisão com eixo X
+        for plataforma in objetos:
             if self.retangulo.colliderect(plataforma.retangulo):
                 if self.vel_x > 0:  # Movendo para a direita
                     self.retangulo.right = plataforma.retangulo.left
@@ -69,7 +72,7 @@ class Humanoide(pygame.sprite.Sprite):
 
         self.no_chao = False
 
-        for plataforma in self.plataformas:
+        for plataforma in objetos:
             if self.retangulo.colliderect(plataforma.retangulo):
                 if self.aceleracao.y > 0:  # Caindo
                     self.retangulo.bottom = plataforma.retangulo.top
@@ -79,16 +82,6 @@ class Humanoide(pygame.sprite.Sprite):
                     self.retangulo.top = plataforma.retangulo.bottom
                     self.aceleracao.y = 0
                 self.pos.y = self.retangulo.y # Sincroniza a posição com o eixo y do obstáculo
-
-        for inimigo in self.inimigos:
-            if self.retangulo.colliderect(inimigo.retangulo):
-                inimigo.cor = "blue"
-                self.cor = "red"
-                self.vida-= 1
-                if self.vida < 0: self.vida = 0
-            else: 
-                inimigo.cor = "green"
-                self.cor = "black"
 
 
     def animar(self, lista_idle, lista_walk_left, lista_walk_right):

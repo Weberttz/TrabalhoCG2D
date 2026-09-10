@@ -7,10 +7,12 @@ def draw_line(superficie, pontos, cor):
 
 def draw_polygonon(superficie, vertices, color):
     n = len(vertices)
+    superficie.lock()
     for i in range(n):
         x0, y0 = vertices[i]
         x1, y1 = vertices[(i+1) % n]
         linha_bresenham(superficie, x0, y0, x1, y1, color)
+    superficie.unlock()
   
 def linha_bresenham(superficie, x0, y0, x1, y1, cor):
     dx = abs(x1 - x0)
@@ -18,6 +20,8 @@ def linha_bresenham(superficie, x0, y0, x1, y1, cor):
     sx = 1 if x0 < x1 else -1
     sy = 1 if y0 < y1 else -1
     err = dx - dy
+
+    set_pixel = superficie.set_at
 
     while True:
         if x0 == x1 and y0 == y1:
@@ -29,7 +33,7 @@ def linha_bresenham(superficie, x0, y0, x1, y1, cor):
         if e2 < dx:
             err += dx
             y0 += sy
-        set_pixel(superficie, x0, y0, cor)
+        set_pixel((int(x0), int(y0)), cor)
 
 def scanline_fill(superficie, pontos, cor_preenchimento):
     ys = [ p[1] for p in pontos] # Lista só de Y
@@ -38,7 +42,7 @@ def scanline_fill(superficie, pontos, cor_preenchimento):
 
     n = len(pontos)
 
-    for y in range(y_min, y_max): # do mínimo ao máximo de y, movimento vertical
+    for y in range(int(y_min), int(y_max)): # do mínimo ao máximo de y, movimento vertical
         interseccoes_x = []
         for i in range(n): # pegar cada ponto do vetor de pontos
             x0, y0 = pontos[i]
@@ -62,5 +66,31 @@ def scanline_fill(superficie, pontos, cor_preenchimento):
             x_inicio = int(round(interseccoes_x[i]) + 1) # x inicio e x fim 
             x_fim =  int(round(interseccoes_x[i+1]))
 
+            set_pixel = superficie.set_at
             for x in range(x_inicio, x_fim):
-                set_pixel(superficie, x, y, cor_preenchimento)
+                set_pixel((x, y), cor_preenchimento)
+
+def flood_fill_iterativo(superficie, x, y, cor_preenchimento, cor_borda):
+    largura = superficie.get_width()
+    altura = superficie.get_height()
+
+    pilha = [(x, y)]
+
+    while pilha:
+        x, y = pilha.pop()
+
+        if not (0 <= x < largura and 0 <= y < altura):
+            continue
+
+        cor_atual = superficie.get_at((x, y))[:3]
+
+        if cor_atual == cor_borda or cor_atual == cor_preenchimento:
+            continue
+
+        set_pixel = superficie.set_at
+        set_pixel(superficie, x, y, cor_preenchimento)
+
+        pilha.append((x + 1, y))
+        pilha.append((x - 1, y))
+        pilha.append((x, y + 1))
+        pilha.append((x, y - 1))

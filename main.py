@@ -1,6 +1,8 @@
 import pygame
 import sys
+import csv
 
+from settings import *
 from BibliotecaGrafica.algoritmos import *
 from Classes.plataforma import Plataforma
 from Classes.jogador import Jogador
@@ -8,16 +10,6 @@ from Classes.zumbi import Zumbi
 from Classes.camera import Camera
 from Classes.arma import Arma
 from random import randint
-from Mapas.levelteste import level
-
-BLACK = (0, 0, 0) # cor preta
-WHITE = (255, 255, 255)
-TAMANHO_QUADRADO = 30
-QUANTIDADE_INIMIGOS = 20
-LARGURA = 1262
-ALTURA = 722
-POS_INICIO = pygame.Vector2(100, 300)
-VEL_ANIMACAO = 0.1
 
 def carregar_animacoes(lista_nomes, pasta="Sprites"):
     """Recebe uma lista de nomes (ex: 'zumbi_idle_0') e devolve um dicionário
@@ -59,16 +51,25 @@ def criar_zumbis(plataformas):
 
     return zumbis
 
+def carregar_mapa(nome_arquivo):
+    mapa = []
+    with open(nome_arquivo, "r") as f:
+        leitor = csv.reader(f)
+        for linha in leitor:
+            # Converte as strings do CSV em números inteiros
+            mapa.append([int(bloco) for bloco in linha])
+    return mapa
+
 def criar_level(layout):
+    cores = ["skyblue", (138, 51, 56), (59, 132, 68), (138, 51, 56), "blue", (53, 66, 35)]
     plataformas = []
     largura, altura = 30, 30
-    cor_plataforma = (59, 132, 68)
-    cor_marrom = (138, 51, 36)
+
     for y, row in enumerate(layout):
         for x, tile in enumerate(row):
-            if tile == "P":
+            if tile != 0:
                 plataforma = Plataforma(x * TAMANHO_QUADRADO,
-                               y * TAMANHO_QUADRADO, largura, altura, cor_marrom)
+                            y * TAMANHO_QUADRADO, largura, altura, cores[tile])
                 plataformas.append(plataforma)
 
     return plataformas
@@ -92,14 +93,15 @@ def main():
     rodando = True
     debug = True
 
-    largura_mapa = len(level[0]) * TAMANHO_QUADRADO
-    altura_mapa = len(level) * TAMANHO_QUADRADO
-
-    plataformas = criar_level(level)
+    mapa = carregar_mapa("./Mapas/fase1.csv")
+    plataformas = criar_level(mapa)
     zumbis = criar_zumbis(plataformas)
-    
+
+    largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
+    altura_mapa = len(mapa) * TAMANHO_QUADRADO
+
     arma = Arma(60, POS_INICIO.copy, "yellow")
-    jogador = Jogador(POS_INICIO.copy(), plataformas, zumbis, [arma], BLACK)
+    jogador = Jogador(POS_INICIO.copy(), plataformas, zumbis, [arma], "red")
     camera = Camera(jogador, largura_mapa, altura_mapa)
     tempo_animacao = 0
 
@@ -124,12 +126,12 @@ def main():
         z.image = lista_zumbi_idle[0]
 
     while rodando:
-        text = myriad_pro_font.render(f"Vida: {jogador.vida} ", 1, WHITE)
+        text = myriad_pro_font.render(f"Vida: {jogador.vida} Munição: {jogador.equipamento.municao}", 1, WHITE)
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 rodando = False
 
-        tela.fill(BLACK)
+        tela.fill(AZUL_NOTURNO)
 
         if jogador.vida == 0 or jogador.pos.y > altura_mapa or jogador.pos.x > largura_mapa: 
             jogador.pos = POS_INICIO.copy()
@@ -149,20 +151,24 @@ def main():
 
         # imprimir jogador e arma
         vertices_jogador_tela = camera.aplicar_vertices(jogador.vertices)
-        draw_polygonon(tela, vertices_jogador_tela, WHITE)
+        draw_polygonon(tela, vertices_jogador_tela, BLACK)
         scanline_fill(tela, vertices_jogador_tela, jogador.cor)
-        vertices_arma_tela = camera.aplicar_vertices(jogador.equipamento.vertices)
-        draw_polygonon(tela, vertices_arma_tela, jogador.equipamento.cor)
-        scanline_fill(tela, vertices_arma_tela, WHITE)
 
         dt = clock.tick(60) / 1000
+
+        for projetil in jogador.equipamento.projetils:
+            projetil.update(dt)
+            projetil.draw(tela, pygame.Vector2(0, 0), camera)
+
         tempo_animacao += dt
         avancar_frame = tempo_animacao >= VEL_ANIMACAO
         if avancar_frame:
             tempo_animacao = 0.0
 
         for zumbi in zumbis_visiveis:
-            zumbi.atualizar()
+            zumbi.atualizar(jogador.equipamento.projetils)
+            text_zumbi = myriad_pro_font.render(f"Vida: {zumbi.vida}", 1, WHITE)
+           
             if avancar_frame:
                 zumbi.animar(lista_zumbi_idle, lista_zumbi_walk_left, lista_zumbi_walk_right)
 
@@ -176,6 +182,8 @@ def main():
             else:
                 scanline_fill(tela, vertices_na_tela, zumbi.cor)
                 draw_polygonon(tela, vertices_na_tela, "red")
+
+            tela.blit(text_zumbi, (vertices_na_tela[0], vertices_na_tela[1]))
 
         tela.blit(text, (30, 10))
         
