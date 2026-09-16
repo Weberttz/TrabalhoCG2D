@@ -87,10 +87,37 @@ def flood_fill_iterativo(superficie, x, y, cor_preenchimento, cor_borda):
         if cor_atual == cor_borda or cor_atual == cor_preenchimento:
             continue
 
-        set_pixel = superficie.set_at
         set_pixel(superficie, x, y, cor_preenchimento)
 
         pilha.append((x + 1, y))
         pilha.append((x - 1, y))
         pilha.append((x, y + 1))
         pilha.append((x, y - 1))
+
+
+def bresenham_circulo(superficie, xc, yc, r, cor):
+    x = 0
+    y = r
+    d = 1 - r  # variável de decisão clássica
+
+    plotar8(superficie, xc, yc, x, y, cor)
+
+    while x < y:
+        if d < 0:
+            d += 2 * x + 3
+        else:
+            d += 2 * (x - y) + 5
+            y -= 1
+        x += 1
+        plotar8(superficie, xc, yc, x, y, cor)
+
+
+def plotar8(superficie, xc, yc, x, y, cor):
+    set_pixel(superficie, xc + x, yc + y, cor)
+    set_pixel(superficie, xc - x, yc + y, cor)
+    set_pixel(superficie, xc + x, yc - y, cor)
+    set_pixel(superficie, xc - x, yc - y, cor)
+    set_pixel(superficie, xc + y, yc + x, cor)
+    set_pixel(superficie, xc - y, yc + x, cor)
+    set_pixel(superficie, xc + y, yc - x, cor)
+    set_pixel(superficie, xc - y, yc - x, cor)

@@ -1,2 +1,5 @@
 __pycache__/
 Classes/retangulo.py
+
+.venv/ 
+venv/ 
