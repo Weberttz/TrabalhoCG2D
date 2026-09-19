@@ -6,6 +6,7 @@ class Zumbi(Humanoide):
         super().__init__(plataformas, [], equipamentos, pos, cor)
         self.vertices = []
         self.tempo_mudar_direcao = 0
+        self.vivo = True
 
     def atualizar(self, projetils):
         self.aplicar_gravidade()
@@ -14,6 +15,10 @@ class Zumbi(Humanoide):
         self.atualizar_vertices()
         self.atualizar_vertices_equipamento()
         self.checar_atingido(projetils)
+        self.morrer()
+
+    def morrer(self):
+        if self.vida == 0: self.vivo = False
 
     def checar_atingido(self, projetils):
         for projetil in projetils:
@@ -22,10 +27,6 @@ class Zumbi(Humanoide):
                 if self.vida <= 0: self.vida = 0
     
     def movimentar(self):
-        pos_base = 690
-        controle = self.retangulo.x + self.vel_x * self.velocidade
-        base = [p for p in self.plataformas if p.y0 == pos_base]
-
         # Move o zumbi baseado na direção atual
         self.retangulo.x += self.vel_x * self.velocidade
 
