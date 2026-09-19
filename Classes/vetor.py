@@ -25,10 +25,16 @@ class Vetor:
         yield self.y
 
     def __add__(self, outro):
-        return Vetor(self.x + outro.x, self.y + outro.y)
+        return Vetor(self.x + outro[0], self.y + outro[1])
 
     def __mul__(self, escalar):           # vetor * número
         return Vetor(self.x * escalar, self.y * escalar)
+    
+    def __sub__(self, outro):
+        return Vetor(self.x - outro[0], self.y - outro[1])
+
+    def __neg__(self):
+        return Vetor(-self.x, -self.y)
     
     def pegar_tamanho(self):
         return math.sqrt(self.x*self.x + self.y*self.y)
