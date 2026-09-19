@@ -5,6 +5,7 @@ class Jogador(Humanoide):
     def __init__(self, pos, plataformas, inimigos, equipamentos, cor):
         super().__init__(plataformas, inimigos, equipamentos, pos, cor)
         self.tempo = pygame.time.get_ticks()
+        self.olhando = 1
 
     def atualizar(self):
         self.lidar_com_inputs()
@@ -14,19 +15,34 @@ class Jogador(Humanoide):
         self.atualizar_vertices_equipamento()
         self.atirar()
 
-    def get_mouse_pos(self):
-        x, y = pygame.mouse.get_pos()
-        return pygame.Vector2(x, y)
+    def get_direcao_tiro(self):
+        keys = pygame.key.get_pressed()
+
+        x = 0
+        if keys[pygame.K_RIGHT]: x += 1
+        if keys[pygame.K_LEFT]:  x -= 1
+
+        y = 0
+        if keys[pygame.K_UP]:   y -= 1    # cima
+        if keys[pygame.K_DOWN] and not self.no_chao: y += 1  # baixo só no ar
+
+        if x == 0 and y == 0:
+            x = self.olhando              # parado: atira para onde olha
+
+        direcao = pygame.Vector2(x, y)
+        return direcao.normalize()
 
     def atirar(self):
-        pos = pygame.Vector2(self.pos.x + self.tamanho , self.pos.y - self.tamanho - self.equipamento.altura)
+        pos = pygame.Vector2(self.pos.x + self.tamanho // 2,
+                            self.pos.y - self.tamanho // 2 - self.equipamento.altura)
+
         tempo = pygame.time.get_ticks()
         if tempo - self.equipamento.tempo >= self.equipamento.intervalo_tiro:
-            self.equipamento.tempo = pygame.time.get_ticks()
+            self.equipamento.tempo = tempo
             self.equipamento.pode_atirar = True
 
-        self.equipamento.atacar(self.get_mouse_pos(), pygame.Vector2(0, 0), pos)
-        # self.bullets.update(dt)
+        if pygame.key.get_pressed()[pygame.K_z]:
+            self.equipamento.atacar(self.get_direcao_tiro(), pos)
 
 
     def lidar_com_inputs(self):
@@ -36,9 +52,11 @@ class Jogador(Humanoide):
 
         if keys[pygame.K_LEFT]:
             self.vel_x += -self.velocidade
+            self.olhando = -1
     
         if keys[pygame.K_RIGHT]:
             self.vel_x = self.velocidade
+            self.olhando = 1
 
         if keys[pygame.K_SPACE] and self.no_chao:
             self.aceleracao.y = self.forca_pulo
