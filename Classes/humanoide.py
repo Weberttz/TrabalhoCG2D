@@ -1,4 +1,5 @@
 from settings import *
+from BibliotecaGrafica.algoritmos import colisao_aabb, calcular_aabb
 
 class Humanoide(pygame.sprite.Sprite): 
     def __init__(self, plataformas, inimigos, equipamentos, pos, cor):
@@ -6,19 +7,21 @@ class Humanoide(pygame.sprite.Sprite):
         self.cor = cor
         self.tamanho = 30
         self.equipamentos = equipamentos
+        self.vertices = []
 
         if len(equipamentos) > 0:
             self.equipamento = equipamentos[0]
         else: self.equipamento = None
 
         # Física
-        self.pos = pos # pygame.Vector2(100, 300)
+        self.pos = pos
         self.vel_x = 0
         self.vel_y = 0
-        self.aceleracao = pygame.Vector2(0, 10)
+        self.aceleracao = Vetor(0, 10)
         self.no_chao = False
 
-        self.retangulo = pygame.Rect(self.pos.x, self.pos.y - self.tamanho, self.tamanho, self.tamanho)
+        self.retangulo = Retangulo(self.pos.x, self.pos.y - self.tamanho, self.tamanho, self.tamanho)
+        self.atualizar_vertices()
 
         # Movimento
         self.velocidade = 5
@@ -36,7 +39,7 @@ class Humanoide(pygame.sprite.Sprite):
             self.aceleracao.y = 10
 
     def atualizar_vertices(self):
-         self.vertices = [(self.pos.x, self.pos.y), 
+        self.vertices = [(self.pos.x, self.pos.y), 
                                     (self.pos.x, self.pos.y - self.tamanho),
                                     (self.pos.x + self.tamanho, self.pos.y - self.tamanho), 
                                     (self.pos.x + self.tamanho, self.pos.y)]
@@ -49,7 +52,7 @@ class Humanoide(pygame.sprite.Sprite):
                                             (pos_equipamento_x, pos_equipamento_y - self.equipamento.altura),
                                             (pos_equipamento_x + self.equipamento.largura, pos_equipamento_y - self.equipamento.altura), 
                                             (pos_equipamento_x + self.equipamento.largura, pos_equipamento_y)]
-                    
+
     def lidar_com_colisoes(self):
         # Movimento horizontal
         self.pos.x += self.vel_x
@@ -58,34 +61,35 @@ class Humanoide(pygame.sprite.Sprite):
         objetos = self.plataformas + self.inimigos
 
         # Colisão com eixo X
-        for plataforma in objetos:
-            if self.retangulo.colliderect(plataforma.retangulo):
+        for objeto in objetos:
+            if self.retangulo.colidiu_com(objeto.retangulo):
                 if self.vel_x > 0:  # Movendo para a direita
-                    self.retangulo.right = plataforma.retangulo.left
+                    self.retangulo.right = objeto.retangulo.left
                 elif self.vel_x < 0:  # Movendo para a esquerda
-                    self.retangulo.left = plataforma.retangulo.right
+                    self.retangulo.left = objeto.retangulo.right
                 self.pos.x = self.retangulo.x # Sincroniza a posição com o eixo x do obstáculo
 
         # Movimento vertical
         self.pos.y += self.aceleracao.y
-        self.retangulo.y = self.pos.y  
+        self.retangulo.bottom = self.pos.y  
 
         self.no_chao = False
 
-        for plataforma in objetos:
-            if self.retangulo.colliderect(plataforma.retangulo):
+        # Colisão com eixo y
+        for objeto in objetos:
+            if self.retangulo.colidiu_com(objeto.retangulo):
                 if self.aceleracao.y > 0:  # Caindo
-                    self.retangulo.bottom = plataforma.retangulo.top
+                    self.retangulo.bottom = objeto.retangulo.top
                     self.no_chao = True
                     self.aceleracao.y = 0
                 elif self.aceleracao.y < 0:  # Pulando
-                    self.retangulo.top = plataforma.retangulo.bottom
+                    self.retangulo.top = objeto.retangulo.bottom
                     self.aceleracao.y = 0
-                self.pos.y = self.retangulo.y # Sincroniza a posição com o eixo y do obstáculo
+                self.pos.y = self.retangulo.bottom # Sincroniza a posição com o eixo y do obstáculo
 
 
     def animar(self, lista_idle, lista_walk_left, lista_walk_right):
-        if self.vel_x == 0 and self.vel_y == 0:
+        if self.vel_x == 0:
             self.mudar_frame(lista_idle)
         elif self.vel_x < 0:
             self.mudar_frame(lista_walk_right)

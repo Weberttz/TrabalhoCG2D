@@ -1,5 +1,6 @@
 import pygame 
 from Classes.humanoide import Humanoide
+from Classes.vetor import Vetor
 
 class Jogador(Humanoide):
     def __init__(self, pos, plataformas, inimigos, equipamentos, cor):
@@ -10,8 +11,8 @@ class Jogador(Humanoide):
     def atualizar(self):
         self.lidar_com_inputs()
         self.aplicar_gravidade()
-        self.lidar_com_colisoes()
         self.atualizar_vertices()
+        self.lidar_com_colisoes()
         self.atualizar_vertices_equipamento()
         self.atirar()
 
@@ -29,11 +30,11 @@ class Jogador(Humanoide):
         if x == 0 and y == 0:
             x = self.olhando              # parado: atira para onde olha
 
-        direcao = pygame.Vector2(x, y)
-        return direcao.normalize()
+        direcao = Vetor(x, y)
+        return direcao.normalizar()
 
     def atirar(self):
-        pos = pygame.Vector2(self.pos.x + self.tamanho // 2,
+        pos = Vetor(self.pos.x + self.tamanho // 2,
                             self.pos.y - self.tamanho // 2 - self.equipamento.altura)
 
         tempo = pygame.time.get_ticks()

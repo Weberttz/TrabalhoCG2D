@@ -13,7 +13,7 @@ class Arma(Equipamento):
 
     def atacar(self, direcao, pos):
         if self.pode_atirar and self.municao > 0:
-            pos = pygame.Vector2(pos)
+            pos = Vetor(pos)
             projetil = Projetil(pos, pos + direcao)   # alvo = 1 unidade à frente
             self.projetils.append(projetil)
             self.pode_atirar = False
