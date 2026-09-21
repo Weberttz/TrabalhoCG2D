@@ -18,7 +18,7 @@ class Jogo:
 
         self.rodando = True
         self.debug = False
-        self.fases = ["./Mapas/fase5.csv", "./Mapas/fase3.csv","./Mapas/fase4.csv"]
+        self.fases = ["./Mapas/fase1.csv", "./Mapas/fase2.csv","./Mapas/fase3.csv"]
         self.fase_atual = 0
         self.max_fases = 3
         self.run_finalizada = False
@@ -53,9 +53,15 @@ class Jogo:
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
 
-        arma = Arma(60, POS_INICIO.copy(), "yellow")
-        self.jogador = Jogador(POS_INICIO.copy(), self.plataformas, self.zumbis, 
-                               self.coletaveis, [arma], "red")
+        if self.fase_atual == 0:
+            arma = Arma(60, POS_INICIO.copy(), "yellow")
+            self.jogador = Jogador(POS_INICIO.copy(), self.plataformas, self.zumbis, 
+                                self.coletaveis, [arma], "red")
+        else:
+            self.jogador.plataformas = self.plataformas
+            self.jogador.coletaveis = self.coletaveis
+            self.jogador.inimigos = self.zumbis
+
         self.camera = Camera(self.jogador, self.largura_mapa, self.altura_mapa)
 
         for z in self.zumbis:
@@ -75,7 +81,7 @@ class Jogo:
     # Loop principal
     def rodar(self):
         while self.rodando:
-            dt = self.clock.tick(60) / 1000   # único tick por frame
+            dt = self.clock.tick(60) / 1000 # único tick por frame
             self.tratar_eventos()
             self.atualizar(dt)
             self.desenhar()
@@ -84,18 +90,17 @@ class Jogo:
         sys.exit()
 
     def tratar_eventos(self):
-        keys = pygame.key.get_pressed()
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 self.rodando = False
-            if keys[pygame.K_h]:
+            if evento.type == pygame.KEYDOWN and evento.key == pygame.K_h:
                 self.debug = not self.debug
 
     # Atualização
     def atualizar(self, dt):
+        self.jogador.atualizar()
         self.verificar_morte_jogador()
         self.verificar_passou_de_fase()
-        self.jogador.atualizar()
         self.camera.atualizar()
 
         self.zumbis[:] = [z for z in self.zumbis if z.vivo]   # in-place: mantém a lista compartilhada
@@ -107,14 +112,13 @@ class Jogo:
 
     def verificar_morte_jogador(self):
         j = self.jogador
-        if j.vida <= 0 or j.pos.y > self.altura_mapa:
-            j.pos = POS_INICIO.copy()
-            j.vida = 100
+        if j.vida <= 0 or j.pos.y > self.altura_mapa or j.pos.x < 0:
+            j.resetar(POS_INICIO)
 
     def verificar_passou_de_fase(self):
         j = self.jogador
         if j.pos.x > self.largura_mapa:
-            j.pos = POS_INICIO.copy()
+            j.resetar(POS_INICIO)
             self.fase_atual+=1
 
             if self.fase_atual == self.max_fases:
@@ -125,7 +129,7 @@ class Jogo:
             self.carregar_fase(self.fases[self.fase_atual])
 
     def atualizar_visiveis(self):
-        dx, _ = self.camera.camera.topleft
+        dx, _ = self.camera.retangulo.topleft
         self.zumbis_visiveis = [
             z for z in self.zumbis
             if -dx - z.tamanho <= z.pos.x <= -dx + LARGURA
@@ -143,7 +147,7 @@ class Jogo:
         projeteis = self.jogador.equipamento.projetils
         projeteis[:] = [p for p in projeteis if p.ativo]   # remove os que não estão ativos
         for projetil in projeteis:
-            projetil.atualizar(dt)
+            projetil.atualizar(dt, self.plataformas)
 
     def atualizar_animacao(self, dt):
         self.tempo_animacao += dt
@@ -161,7 +165,7 @@ class Jogo:
     # Renderização
     def desenhar(self):
         self.tela.fill(AZUL_NOTURNO)
-        self.tela.blit(self.mundo_surface, self.camera.camera.topleft)
+        self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
 
         self.desenhar_jogador()
         self.desenhar_coletaveis()
@@ -176,6 +180,11 @@ class Jogo:
         draw_polygonon(self.tela, vertices, BLACK)
         scanline_fill(self.tela, vertices, self.jogador.cor)
 
+        if self.debug:
+            vertices_rect = self.camera.aplicar_vertices(self.jogador.retangulo.vertices)
+            aabb = Retangulo.calcular_aabb(vertices_rect)
+            desenhar_aabb(self.tela, aabb, WHITE)
+
     def desenhar_coletaveis(self):
         for coletavel in self.coletaveis_visiveis:
             if coletavel.tipo == "moeda":
@@ -184,9 +193,11 @@ class Jogo:
                 draw_polygonon(self.tela, vertices, "red")
             else:
                 desenhar_circulo(self.tela, coletavel.centro, coletavel.raio, coletavel.cor, True)
+                aabb = Retangulo.calcular_aabb(coletavel.retangulo.vertices)
+                desenhar_aabb(self.tela, aabb, BLACK)
 
     def desenhar_projeteis(self):
-        scroll = -Vetor(self.camera.camera.topleft)
+        scroll = -Vetor(self.camera.retangulo.topleft)
         for projetil in self.jogador.equipamento.projetils:
             projetil.desenhar(self.tela, scroll, self.camera)
 
@@ -205,10 +216,10 @@ class Jogo:
             if self.debug:
                 texto = self.fonte.render(f"Vida: {zumbi.vida}", 1, WHITE)
                 self.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
-                dx, dy = self.camera.camera.topleft
-                zumbi.retangulo.move_ip(dx, dy)
-                aabb = Retangulo.calcular_aabb(zumbi.retangulo.vertices)
-                desenhar_aabb(self.tela, aabb, "white")
+
+                vertices_rect = self.camera.aplicar_vertices(zumbi.retangulo.vertices)
+                aabb = Retangulo.calcular_aabb(vertices_rect)
+                desenhar_aabb(self.tela, aabb, WHITE)
 
     def desenhar_hud(self):
         texto_vida = self.fonte.render(f"Vida: {self.jogador.vida}", 1, WHITE)
