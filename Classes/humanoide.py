@@ -1,5 +1,4 @@
 from settings import *
-from BibliotecaGrafica.algoritmos import colisao_aabb, calcular_aabb
 
 class Humanoide(pygame.sprite.Sprite): 
     def __init__(self, plataformas, inimigos, equipamentos, pos, cor):
@@ -58,7 +57,7 @@ class Humanoide(pygame.sprite.Sprite):
         self.pos.x += self.vel_x
         self.retangulo.x = self.pos.x
         
-        objetos = self.plataformas + self.inimigos
+        objetos = self.plataformas
 
         # Colisão com eixo X
         for objeto in objetos:
@@ -86,7 +85,6 @@ class Humanoide(pygame.sprite.Sprite):
                     self.retangulo.top = objeto.retangulo.bottom
                     self.aceleracao.y = 0
                 self.pos.y = self.retangulo.bottom # Sincroniza a posição com o eixo y do obstáculo
-
 
     def animar(self, lista_idle, lista_walk_left, lista_walk_right):
         if self.vel_x == 0:

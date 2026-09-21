@@ -11,7 +11,7 @@ class Retangulo():
     def copy(self):
         return Retangulo(self.x, self.y, self.largura, self.altura)
 
-    # para o interpretador saber a quantidade de atributos declarados sem @property da classe
+    # para o interpretador saber a quantidade de atributos declarados
     def __len__(self):
         return 4
 
@@ -67,10 +67,6 @@ class Retangulo():
     def vertices(self):
         return [(self.left, self.top), (self.right, self.top),
                 (self.right, self.bottom), (self.left, self.bottom)]
-
-    # ------------------------------------------------------------------
-    # Pontos de referência
-    # ------------------------------------------------------------------
 
     @property
     def topleft(self):
@@ -128,9 +124,7 @@ class Retangulo():
     def center(self, pos):
         self.centerx, self.centery = pos[0], pos[1]
 
-    # ------------------------------------------------------------------
-    # Movimento
-    # ------------------------------------------------------------------
+    # movimento do rect para simular camera e máscara de colisão
     def move(self, dx, dy=None):
         if dy is None:                         
             dx, dy = dx
@@ -140,9 +134,7 @@ class Retangulo():
         self.x += dx
         self.y += dy
 
-    # ------------------------------------------------------------------
     # Colisão AABB
-    # ------------------------------------------------------------------
 
     @staticmethod
     def calcular_aabb(pontos):
