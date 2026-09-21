@@ -1,3 +1,5 @@
+import math
+
 def set_pixel(superficie, x, y, cor):
     superficie.set_at((int(x), int(y)), cor)
 
@@ -94,3 +96,59 @@ def flood_fill_iterativo(superficie, x, y, cor_preenchimento, cor_borda):
         pilha.append((x - 1, y))
         pilha.append((x, y + 1))
         pilha.append((x, y - 1))
+
+def desenhar_aabb(superficie, aabb, cor):
+
+    x1, y1, x2, y2 = aabb
+
+    pontos = [
+        (x1, y1),
+        (x2, y1),
+        (x2, y2),
+        (x1, y2)
+    ]
+
+    draw_polygonon(superficie, pontos, cor)
+
+def pontos_circulo(cx, cy, raio):
+    pontos = []
+    x, y = 0, raio
+    d = 1 - raio                     # para decisão
+
+    while x <= y:
+        # simetria de 8 vias
+        for px, py in ((x, y), (y, x), (-x, y), (-y, x),
+                       (x, -y), (y, -x), (-x, -y), (-y, -x)):
+            pontos.append((cx + px, cy + py))
+
+        x += 1
+        if d < 0:                  
+            d += 2 * x + 1
+        else:                       
+            y -= 1
+            d += 2 * (x - y) + 1
+
+    return pontos
+
+def linhas_circulo_preenchido(cx, cy, raio):
+    linhas = []
+    for dy in range(-raio, raio + 1):
+        dx = int(math.sqrt(raio * raio - dy * dy))
+        linhas.append((cy + dy, cx - dx, cx + dx))
+    return linhas
+
+def desenhar_circulo(superficie, centro, raio, cor, preenchido=False):
+    largura, altura = superficie.get_size()
+    cx, cy = int(centro[0]), int(centro[1])
+    raio = int(raio)
+
+    set_pixel = superficie.set_at
+    if preenchido:
+        for y, x1, x2 in linhas_circulo_preenchido(cx, cy, raio):
+            if 0 <= y < altura:
+                for x in range(max(x1, 0), min(x2, largura - 1) + 1):
+                    set_pixel((x, y), cor)
+    else:
+        for x, y in pontos_circulo(cx, cy, raio):
+            if 0 <= x < largura and 0 <= y < altura:
+                set_pixel((x, y), cor)
