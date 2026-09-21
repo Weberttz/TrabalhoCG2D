@@ -19,9 +19,14 @@ class Jogo:
         self.rodando = True
         self.debug = False
         self.fases = ["./Mapas/fase1.csv", "./Mapas/fase2.csv","./Mapas/fase3.csv"]
+        self.larguras = [len(carregar_mapa(self.fases[0])[0]) * TAMANHO_QUADRADO, 
+                         len(carregar_mapa(self.fases[1])[0]) * TAMANHO_QUADRADO, 
+                         len(carregar_mapa(self.fases[2])[0]) * TAMANHO_QUADRADO ]
+        
         self.fase_atual = 0
         self.max_fases = 3
         self.run_finalizada = False
+        self.voltando = False
 
         self.tempo_animacao = 0.0
         self.avancar_frame = False
@@ -53,7 +58,7 @@ class Jogo:
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
 
-        if self.fase_atual == 0:
+        if self.fase_atual == 0 and self.voltando == False:
             arma = Arma(60, POS_INICIO.copy(), "yellow")
             self.jogador = Jogador(POS_INICIO.copy(), self.plataformas, self.zumbis, 
                                 self.coletaveis, [arma], "red")
@@ -69,6 +74,7 @@ class Jogo:
             z.inimigos.append(self.jogador)
 
         self.mundo_surface = self.renderizar_mundo()
+        self.voltando = False
 
     def renderizar_mundo(self):
         """Desenha o mapa estático uma única vez numa superficie gigante."""
@@ -101,6 +107,7 @@ class Jogo:
         self.jogador.atualizar()
         self.verificar_morte_jogador()
         self.verificar_passou_de_fase()
+        self.verificar_voltou_fase()
         self.camera.atualizar()
 
         self.zumbis[:] = [z for z in self.zumbis if z.vivo]   # in-place: mantém a lista compartilhada
@@ -112,8 +119,17 @@ class Jogo:
 
     def verificar_morte_jogador(self):
         j = self.jogador
-        if j.vida <= 0 or j.pos.y > self.altura_mapa or j.pos.x < 0:
+        if j.vida <= 0 or j.pos.y > self.altura_mapa:
             j.resetar(POS_INICIO)
+            j.vida = 100
+
+    def verificar_voltou_fase(self):
+        j = self.jogador
+        if j.pos.x < 0 and self.fase_atual > 0:
+            self.fase_atual-=1
+            j.pos = Vetor(self.larguras[self.fase_atual] - TAMANHO_QUADRADO, 690)
+            self.voltando = True
+            self.carregar_fase(self.fases[self.fase_atual])
 
     def verificar_passou_de_fase(self):
         j = self.jogador
