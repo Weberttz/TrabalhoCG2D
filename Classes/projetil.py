@@ -21,14 +21,20 @@ class Projetil(pygame.sprite.Sprite):
 
         self.bala_inimiga = bala_inimiga
 
-        self.dano = 10 
+        self.dano = 30 
         self.ativo = True
         self.time = 0
     
-    def atualizar(self,dt):
+    def atualizar(self,dt, plataformas):
         self.pos += self.direcao * self.velocidade *dt
         self.pos = Vetor(self.pos)
         self.retangulo.topleft = self.pos
+        self.checar_colisao_com_plataforma(plataformas)
+
+    def checar_colisao_com_plataforma(self, plataformas):
+        for plataforma in plataformas:
+            if plataforma.retangulo.colidiu_com(self.retangulo):
+                self.ativo = False
 
     def desenhar(self, superficie, scroll, camera):
         tolerancia = 500
