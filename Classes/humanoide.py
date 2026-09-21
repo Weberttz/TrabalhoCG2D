@@ -51,7 +51,7 @@ class Humanoide(pygame.sprite.Sprite):
                                             (pos_equipamento_x, pos_equipamento_y - self.equipamento.altura),
                                             (pos_equipamento_x + self.equipamento.largura, pos_equipamento_y - self.equipamento.altura), 
                                             (pos_equipamento_x + self.equipamento.largura, pos_equipamento_y)]
-
+            
     def lidar_com_colisoes(self):
         # Movimento horizontal
         self.pos.x += self.vel_x

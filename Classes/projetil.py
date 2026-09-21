@@ -16,7 +16,7 @@ class Projetil(pygame.sprite.Sprite):
         self.angulo = self.direcao.angulo_para(vec)
         self.image = pygame.transform.rotate(self.imagem, self.angulo)
 
-        if self.direcao.pegar_tamanho() != 0:
+        if self.direcao.calcular_norma() != 0:
             self.direcao = self.direcao.normalizar()
 
         self.bala_inimiga = bala_inimiga

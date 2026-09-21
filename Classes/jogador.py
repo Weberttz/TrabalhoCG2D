@@ -16,7 +16,7 @@ class Jogador(Humanoide):
         self.vel_y = 0
         self.aceleracao = Vetor(0, 10) 
         self.no_chao = False
-        self.vida = 100
+        # self.vida = 100
         self.retangulo = Retangulo(self.pos.x, self.pos.y - self.tamanho,
                                 self.tamanho, self.tamanho)
         self.atualizar_vertices()

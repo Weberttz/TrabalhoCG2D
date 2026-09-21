@@ -27,7 +27,7 @@ class Retangulo():
         yield self.altura
 
 
-    # @property serve para usar como atributo sem chamar método
+    # @property serve para usar o retorno do método como atributo 
     # daí não precisa guardar variáveis 
     @property
     def left(self):
