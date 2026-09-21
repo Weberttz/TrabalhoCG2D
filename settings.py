@@ -1,4 +1,4 @@
-import pygame
+
 from Classes.vetor import Vetor
 from Classes.retangulo import Retangulo
 

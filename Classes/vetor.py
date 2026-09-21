@@ -1,3 +1,4 @@
+from Biblioteca.transformacoes import produto_matriz
 import math
 
 class Vetor:
@@ -27,7 +28,7 @@ class Vetor:
     def __add__(self, outro):
         return Vetor(self.x + outro[0], self.y + outro[1])
 
-    def __mul__(self, escalar):           # vetor * número
+    def __mult__(self, escalar):           # vetor * número
         return Vetor(self.x * escalar, self.y * escalar)
     
     def __sub__(self, outro):
@@ -36,18 +37,23 @@ class Vetor:
     def __neg__(self):
         return Vetor(-self.x, -self.y)
     
-    def pegar_tamanho(self):
+    def calcular_norma(self):
         return math.sqrt(self.x*self.x + self.y*self.y)
 
     def normalizar(self):
-        tamanho = self.pegar_tamanho()
-        if tamanho == 0:
-            raise ValueError("não dá para normalizar o vetor zero")
-        return Vetor(self.x / tamanho, self.y / tamanho)
+        norma = self.calcular_norma()
+        if norma == 0:
+            raise ValueError("Não dá para normalizar o vetor nulo")
+        return Vetor(self.x / norma, self.y / norma)
 
     def angulo_para(self, outro):
         # Calcula angulo para o vetor de destino
         angulo = math.degrees(math.atan2(outro[1], outro[0]) -
                               math.atan2(self.y, self.x))
         return (angulo + 180) % 360 - 180          # mantém em [-180, 180]
+
+    def aplicar_transformacao(self, matriz):
+        vetor = [self.x, self.y]
+        v = produto_matriz(matriz,vetor)
+        return Vetor(v[0],v[1])
 
