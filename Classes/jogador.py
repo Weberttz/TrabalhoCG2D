@@ -1,6 +1,6 @@
 import pygame 
 from Classes.humanoide import Humanoide
-from Classes.vetor import Vetor
+from settings import Vetor, Retangulo
 
 class Jogador(Humanoide):
     def __init__(self, pos, plataformas, inimigos, coletaveis, equipamentos, cor):
@@ -9,6 +9,17 @@ class Jogador(Humanoide):
         self.olhando = 1
         self.coletaveis = coletaveis
         self.quantidade_coletada = 0
+
+    def resetar(self, pos_inicial):
+        self.pos = pos_inicial.copy()
+        self.vel_x = 0
+        self.vel_y = 0
+        self.aceleracao = Vetor(0, 10) 
+        self.no_chao = False
+        self.vida = 100
+        self.retangulo = Retangulo(self.pos.x, self.pos.y - self.tamanho,
+                                self.tamanho, self.tamanho)
+        self.atualizar_vertices()
 
     def atualizar(self):
         self.lidar_com_inputs()
@@ -69,5 +80,8 @@ class Jogador(Humanoide):
             if self.retangulo.colidiu_com(coletavel.retangulo) and coletavel.ativo:
                 self.quantidade_coletada += 1
                 coletavel.ativo = False
+        for inimigo in self.inimigos:
+            if self.retangulo.colidiu_com(inimigo.retangulo):
+                self.vida -= 1
         return super().lidar_com_colisoes()
     
