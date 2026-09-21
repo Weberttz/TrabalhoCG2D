@@ -5,13 +5,13 @@ class Camera:
         self.alvo = alvo
         self.altura_mapa = altura_mapa
         self.largura_mapa = largura_mapa
-        self.camera = Retangulo(0, 0, LARGURA, ALTURA)
+        self.retangulo = Retangulo(0, 0, LARGURA, ALTURA)
 
     def aplicar(self, entidade):
-        return entidade.retangulo.move(self.camera.topleft)
+        return entidade.retangulo.move(self.retangulo.topleft)
 
     def aplicar_vertices(self, vertices):
-        dx, dy = self.camera.topleft
+        dx, dy = self.retangulo.topleft
         return [(x + dx, y + dy) for x, y in vertices]
 
     def atualizar(self):
@@ -24,4 +24,4 @@ class Camera:
         y = min(0, y)  # Topo
         y = max(-(self.altura_mapa - ALTURA), y)  # Base
         
-        self.camera = Retangulo(x, y, self.largura_mapa, self.altura_mapa)
+        self.retangulo = Retangulo(x, y, self.largura_mapa, self.altura_mapa)
