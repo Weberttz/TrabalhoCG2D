@@ -24,7 +24,15 @@ class Zumbi(Humanoide):
         for projetil in projetils:
             if projetil.retangulo.colidiu_com(self.retangulo):
                 self.vida -= projetil.dano
+                projetil.ativo = False
                 if self.vida <= 0: self.vida = 0
+
+
+    def lidar_com_colisoes(self):
+        for plataforma in self.plataformas:
+            if plataforma.retangulo.colidiu_com(self.retangulo):
+                self.vel_x = 0
+        return super().lidar_com_colisoes()
     
     def movimentar(self):
         # Move o zumbi baseado na direção atual
