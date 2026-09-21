@@ -3,10 +3,12 @@ from Classes.humanoide import Humanoide
 from Classes.vetor import Vetor
 
 class Jogador(Humanoide):
-    def __init__(self, pos, plataformas, inimigos, equipamentos, cor):
+    def __init__(self, pos, plataformas, inimigos, coletaveis, equipamentos, cor):
         super().__init__(plataformas, inimigos, equipamentos, pos, cor)
         self.tempo = pygame.time.get_ticks()
         self.olhando = 1
+        self.coletaveis = coletaveis
+        self.quantidade_coletada = 0
 
     def atualizar(self):
         self.lidar_com_inputs()
@@ -45,7 +47,6 @@ class Jogador(Humanoide):
         if pygame.key.get_pressed()[pygame.K_z]:
             self.equipamento.atacar(self.get_direcao_tiro(), pos)
 
-
     def lidar_com_inputs(self):
         keys = pygame.key.get_pressed()
 
@@ -62,3 +63,11 @@ class Jogador(Humanoide):
         if keys[pygame.K_SPACE] and self.no_chao:
             self.aceleracao.y = self.forca_pulo
             self.no_chao = False
+
+    def lidar_com_colisoes(self):
+        for coletavel in self.coletaveis:
+            if self.retangulo.colidiu_com(coletavel.retangulo) and coletavel.ativo:
+                self.quantidade_coletada += 1
+                coletavel.ativo = False
+        return super().lidar_com_colisoes()
+    
