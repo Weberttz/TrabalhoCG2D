@@ -5,7 +5,7 @@ class Camera:
         self.alvo = alvo
         self.altura_mapa = altura_mapa
         self.largura_mapa = largura_mapa
-        self.camera = pygame.Rect(0, 0, LARGURA, ALTURA)
+        self.camera = Retangulo(0, 0, LARGURA, ALTURA)
 
     def aplicar(self, entidade):
         return entidade.retangulo.move(self.camera.topleft)
@@ -24,4 +24,4 @@ class Camera:
         y = min(0, y)  # Topo
         y = max(-(self.altura_mapa - ALTURA), y)  # Base
         
-        self.camera = pygame.Rect(x, y, self.largura_mapa, self.altura_mapa)
+        self.camera = Retangulo(x, y, self.largura_mapa, self.altura_mapa)

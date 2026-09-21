@@ -11,14 +11,10 @@ class Arma(Equipamento):
         self.tempo = pygame.time.get_ticks()
         self.intervalo_tiro = 1000
 
-    def atacar(self, mouse_pos, scroll, pos):
-        keys = pygame.key.get_pressed()
-        if self.pode_atirar:
-            if (pygame.mouse.get_pressed()[0]) and self.municao > 0:
-                projetil = Projetil(pygame.Vector2(pos),
-                                mouse_pos + scroll)
-
-                self.projetils.append(projetil)
-                # self.shoot_sound.play()
-                self.pode_atirar = False
-                self.municao -= 1
+    def atacar(self, direcao, pos):
+        if self.pode_atirar and self.municao > 0:
+            pos = Vetor(pos)
+            projetil = Projetil(pos, pos + direcao)   # alvo = 1 unidade à frente
+            self.projetils.append(projetil)
+            self.pode_atirar = False
+            self.municao -= 1
