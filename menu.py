@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-from BibliotecaGrafica.algoritmos import linha_bresenham, flood_fill_iterativo, bresenham_circulo, desenhar_elipse
+from Biblioteca.algoritmos import linha_bresenham, flood_fill_iterativo, bresenham_circulo, desenhar_elipse
 
 LARGURA, ALTURA = 1262, 722
 CAMINHO_FONTE = "./Assets/PressStart2P-Regular.ttf"
@@ -187,4 +187,3 @@ if __name__ == "__main__":
     sys.exit()
 
 
-    

@@ -9,6 +9,8 @@ from Classes.camera import Camera
 from Classes.arma import Arma
 from Auxiliar.inicializacao import *
 
+from menu import iniciar_menu, desenhar_menu, acao_menu
+
 class Jogo:
     def __init__(self):
         pygame.init()
@@ -34,9 +36,13 @@ class Jogo:
         self.zumbis_visiveis = []
         self.coletaveis_visiveis = []
 
+        self.estado_jogo = "menu"
+        iniciar_menu()
+
         self.carregar_sprites()
         self.carregar_fase(self.fases[self.fase_atual])
 
+       
     # Inicialização
     def carregar_sprites(self):
         self.anim_idle = gerar_lista_animacoes("zumbi", "idle", 8)
@@ -100,9 +106,21 @@ class Jogo:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 self.rodando = False
-            elif evento.type == pygame.KEYDOWN:
-                if evento.key == pygame.K_h:
-                    self.debug = not self.debug
+
+            #pega a acao de determinado botao do menu e atualiza o estado do jogo
+            if self.estado_jogo == "menu":
+                if evento.type == pygame.MOUSEBUTTONDOWN:
+                    acao = acao_menu(pygame.mouse.get_pos())
+                    if acao == "jogar":
+                        self.estado_jogo = "jogando"
+                    elif acao == "sair":
+                        self.rodando = False
+
+            if self.estado_jogo == "jogando":
+                if evento.type == pygame.KEYDOWN:
+                    if evento.key == pygame.K_h:
+                        self.debug = not self.debug
+                
 
     # Atualização
     def atualizar(self, dt):
@@ -115,14 +133,20 @@ class Jogo:
 
     # Renderização
     def desenhar(self):
-        self.tela.fill(AZUL_NOTURNO)
-        self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
+        #comeca desenhando o menu q é o estado inicial do jogo
+        if self.estado_jogo == "menu":
+            desenhar_menu(self.tela, (pygame.mouse.get_pos()))
 
-        Renderizador.desenhar_jogador(self)
-        Renderizador.desenhar_coletaveis(self)
-        Renderizador.desenhar_projeteis(self)
-        Renderizador.desenhar_zumbis(self)
-        Renderizador.desenhar_hud(self)
+        #comeca o jogo apenas se o estado foi alterado para "jogando" a partir do retorno de acao_menu
+        elif self.estado_jogo == "jogando":
+            self.tela.fill(AZUL_NOTURNO)
+            self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
+
+            Renderizador.desenhar_jogador(self)
+            Renderizador.desenhar_coletaveis(self)
+            Renderizador.desenhar_projeteis(self)
+            Renderizador.desenhar_zumbis(self)
+            Renderizador.desenhar_hud(self)
 
         pygame.display.flip()
 
