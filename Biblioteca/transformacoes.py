@@ -92,4 +92,3 @@ def aplica_transformacao(m, pontos):
         )
 
     return novos
-    
