@@ -1,3 +1,5 @@
+import math
+
 def set_pixel(superficie, x, y, cor):
     superficie.set_at((int(x), int(y)), cor)
 
@@ -82,8 +84,7 @@ def flood_fill_iterativo(superficie, x, y, cor_preenchimento, cor_borda):
         if not (0 <= x < largura and 0 <= y < altura):
             continue
 
-        cor_atual = superficie.get_at((x, y))[:3]
-
+        cor_atual = superficie.get_at((x, y))
         if cor_atual == cor_borda or cor_atual == cor_preenchimento:
             continue
 
@@ -93,6 +94,63 @@ def flood_fill_iterativo(superficie, x, y, cor_preenchimento, cor_borda):
         pilha.append((x - 1, y))
         pilha.append((x, y + 1))
         pilha.append((x, y - 1))
+
+
+def desenhar_aabb(superficie, aabb, cor):
+
+    x1, y1, x2, y2 = aabb
+
+    pontos = [
+        (x1, y1),
+        (x2, y1),
+        (x2, y2),
+        (x1, y2)
+    ]
+
+    draw_polygonon(superficie, pontos, cor)
+
+def pontos_circulo(cx, cy, raio):
+    pontos = []
+    x, y = 0, raio
+    d = 1 - raio                     # para decisão
+
+    while x <= y:
+        # simetria de 8 vias
+        for px, py in ((x, y), (y, x), (-x, y), (-y, x),
+                       (x, -y), (y, -x), (-x, -y), (-y, -x)):
+            pontos.append((cx + px, cy + py))
+
+        x += 1
+        if d < 0:                  
+            d += 2 * x + 1
+        else:                       
+            y -= 1
+            d += 2 * (x - y) + 1
+
+    return pontos
+
+def linhas_circulo_preenchido(cx, cy, raio):
+    linhas = []
+    for dy in range(-raio, raio + 1):
+        dx = int(math.sqrt(raio * raio - dy * dy))
+        linhas.append((cy + dy, cx - dx, cx + dx))
+    return linhas
+
+def desenhar_circulo(superficie, centro, raio, cor, preenchido=False):
+    largura, altura = superficie.get_size()
+    cx, cy = int(centro[0]), int(centro[1])
+    raio = int(raio)
+
+    set_pixel = superficie.set_at
+    if preenchido:
+        for y, x1, x2 in linhas_circulo_preenchido(cx, cy, raio):
+            if 0 <= y < altura:
+                for x in range(max(x1, 0), min(x2, largura - 1) + 1):
+                    set_pixel((x, y), cor)
+    else:
+        for x, y in pontos_circulo(cx, cy, raio):
+            if 0 <= x < largura and 0 <= y < altura:
+                set_pixel((x, y), cor)
 
 
 def bresenham_circulo(superficie, xc, yc, r, cor):
@@ -121,3 +179,49 @@ def plotar8(superficie, xc, yc, x, y, cor):
     set_pixel(superficie, xc - y, yc + x, cor)
     set_pixel(superficie, xc + y, yc - x, cor)
     set_pixel(superficie, xc - y, yc - x, cor)
+
+def plotar4(superficie, xc, yc, x, y, cor):
+    set_pixel(superficie, xc + x, yc + y, cor)
+    set_pixel(superficie, xc - x, yc + y, cor)
+    set_pixel(superficie, xc + x, yc - y, cor)
+    set_pixel(superficie, xc - x, yc - y, cor)
+
+
+def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
+    x = 0
+    y = ry
+
+    rx2 = rx * rx
+    ry2 = ry * ry
+
+    dx = 2 * ry2 * x
+    dy = 2 * rx2 * y
+
+    d1 = ry2 - (rx2 * ry) + (0.25 * rx2)
+
+    while dx < dy:
+        plotar4(superficie, xc, yc, x, y, cor)
+        x += 1
+        dx += 2 * ry2
+
+        if d1 < 0:
+            d1 += dx + ry2
+        else:
+            y -= 1
+            dy -= 2 * rx2
+            d1 += dx - dy + ry2
+
+    d2 = (ry2 * ((x + 0.5) ** 2)) + (rx2 * ((y - 1) ** 2)) - (rx2 * ry2)
+
+    while y >= 0:
+        plotar4(superficie, xc, yc, x, y, cor)
+
+        y -= 1
+        dy -= 2 * rx2
+
+        if d2 > 0:
+            d2 += rx2 - dy
+        else:
+            x += 1
+            dx += 2 * ry2
+            d2 += dx - dy + rx2
