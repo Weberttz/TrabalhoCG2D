@@ -8,4 +8,4 @@ class Tapioca(Coletavel):
         self.centro = centro
         self.raio = raio
         self.cor = cor
-        self.retangulo = Retangulo(self.centro.x - math.sqrt(raio), self.centro.y, raio, raio)
+        self.retangulo = Retangulo(self.centro.x - math.sqrt(raio), self.centro.y - math.sqrt(raio), raio, raio)

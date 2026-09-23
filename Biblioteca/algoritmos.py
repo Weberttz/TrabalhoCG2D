@@ -1,4 +1,5 @@
 import math
+from Biblioteca import transformacoes
 
 def set_pixel(superficie, x, y, cor):
     superficie.set_at((int(x), int(y)), cor)
@@ -225,3 +226,62 @@ def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
             x += 1
             dx += 2 * ry2
             d2 += dx - dy + rx2
+
+def janela_viewport(janela, viewport):
+
+    Wxmin, Wymin, Wxmax, Wymax = janela
+    Vxmin, Vymin, Vxmax, Vymax = viewport
+
+    sx = (
+        (Vxmax - Vxmin)
+        / (Wxmax - Wxmin)
+    )
+
+    sy = (
+        (Vymax - Vymin)
+        / (Wymax - Wymin)
+    )
+
+
+    # -------------------------------------------------
+    # 1. Janela -> origem
+    # -------------------------------------------------
+
+    M = transformacoes.identidade()
+
+    M = transformacoes.produto_matriz(
+        transformacoes.translacao(
+            -Wxmin,
+            -Wymin
+        ),
+        M
+    )
+
+
+    # -------------------------------------------------
+    # 2. Escala
+    # -------------------------------------------------
+
+    M = transformacoes.produto_matriz(
+        transformacoes.escala(
+            sx,
+            sy
+        ),
+        M
+    )
+
+
+    # -------------------------------------------------
+    # 3. Origem -> viewport
+    # -------------------------------------------------
+
+    M = transformacoes.produto_matriz(
+        transformacoes.translacao(
+            Vxmin,
+            Vymin
+        ),
+        M
+    )
+
+    return M
+

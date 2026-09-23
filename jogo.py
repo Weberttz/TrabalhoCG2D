@@ -1,13 +1,13 @@
 import sys
 from Gerenciador import Renderizador 
 from Gerenciador import Atualizador
+from Gerenciador import Inicializador
 
 from settings import *
 from Biblioteca.algoritmos import *
 from Classes.jogador import Jogador
 from Classes.camera import Camera
 from Classes.arma import Arma
-from Auxiliar.inicializacao import *
 
 from menu import iniciar_menu, desenhar_menu, acao_menu
 
@@ -22,10 +22,10 @@ class Jogo:
         self.rodando = True
         self.debug = False
         self.fases = ["./Mapas/fase1.csv", "./Mapas/fase2.csv","./Mapas/fase3.csv"]
-        self.larguras = [len(carregar_mapa(self.fases[0])[0]) * TAMANHO_QUADRADO, 
-                         len(carregar_mapa(self.fases[1])[0]) * TAMANHO_QUADRADO, 
-                         len(carregar_mapa(self.fases[2])[0]) * TAMANHO_QUADRADO ]
-        
+        self.larguras = [len(Inicializador.carregar_mapa(self.fases[0])[0]) * TAMANHO_QUADRADO, 
+                         len(Inicializador.carregar_mapa(self.fases[1])[0]) * TAMANHO_QUADRADO, 
+                         len(Inicializador.carregar_mapa(self.fases[2])[0]) * TAMANHO_QUADRADO ]
+         
         self.fase_atual = 0
         self.max_fases = 3
         self.run_finalizada = False
@@ -45,22 +45,22 @@ class Jogo:
        
     # Inicialização
     def carregar_sprites(self):
-        self.anim_idle = gerar_lista_animacoes("zumbi", "idle", 8)
-        self.anim_esquerda = gerar_lista_animacoes("zumbi", "walk_left", 8)
-        self.anim_direita = gerar_lista_animacoes("zumbi", "walk_right", 8)
+        self.anim_idle = Inicializador.gerar_lista_animacoes("zumbi", "idle", 1)
+        self.anim_esquerda = Inicializador.gerar_lista_animacoes("zumbi", "walk_left", 7)
+        self.anim_direita = Inicializador.gerar_lista_animacoes("zumbi", "walk_right", 7)
 
         imagens = {}
         for lista in (self.anim_idle, self.anim_esquerda, self.anim_direita):
-            imagens |= carregar_animacoes(lista)
+            imagens |= Inicializador.carregar_animacoes(lista)
 
         # redimensiona uma vez só, na carga -> matrizes de escala
-        self.imagens_zumbi = {nome: pygame.transform.scale(img, (30, 30))
+        self.imagens_zumbi = {nome: pygame.transform.scale(img, (32, 32))
                               for nome, img in imagens.items()}
 
     def carregar_fase(self, caminho):
-        mapa = carregar_mapa(caminho)
-        self.plataformas, self.blocks, self.coletaveis = criar_level(mapa)
-        self.zumbis = criar_zumbis(self.plataformas, self.blocks)
+        mapa = Inicializador.carregar_mapa(caminho)
+        self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
+        self.zumbis = Inicializador.criar_zumbis(self.plataformas, self.blocks)
 
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
