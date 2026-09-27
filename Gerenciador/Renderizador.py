@@ -61,16 +61,34 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         (Vxmin, Vymax)
     ]
 
+    limites_camera = jogo.camera.retangulo
     j = jogo.jogador
 
-    jogador_view = transformacoes.aplica_transformacao(matriz_viewport, j.retangulo.vertices)
+    jogador_view = [transformacoes.produto_matriz(matriz_viewport,
+                    [[vertice[0]+ limites_camera.left],[vertice[1]+ limites_camera.top],[1]])
+                     for vertice in j.retangulo.vertices]
+         
+    bibgraf.scanline_fill(jogo.tela, jogador_view, j.cor)
 
-    bibgraf.scanline_fill(jogo.tela , jogador_view, j.cor)
-
-    plataformas = [p for p in jogo.plataformas if p.x1 < LARGURA and p.y0 < ALTURA]
+    # o jogador tá sendo acompanhado até que ok
+    # mas as plataformas acompanham por um tempo e depois somem
+    # não por que ainda
+    # e seria interessante colocar o clipping aqui para as plataformas
+    # que ficam meio dentro, meio fora
+    plataformas = [p for p in jogo.plataformas 
+                if p.x0 <= limites_camera.right 
+                and p.x1 >= - limites_camera.left
+                and p.y0 <= limites_camera.bottom
+                and p.y1 >= - limites_camera.top]
+    
+    #print("camera:",limites_camera.left,limites_camera.right)
 
     for plataforma in plataformas:
-        plataforma_view = transformacoes.aplica_transformacao(matriz_viewport, plataforma.vertices)
+        
+        plataforma_view =[transformacoes.produto_matriz(matriz_viewport,
+            [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
+            for vertice in plataforma.vertices]
+        
         bibgraf.scanline_fill(jogo.tela, plataforma_view, plataforma.cor)
 
     bibgraf.draw_polygonon(jogo.tela, borda, WHITE)
@@ -85,8 +103,11 @@ def desenhar_hud(jogo):
     jogo.tela.blit(texto_vida, (30, 10))
     jogo.tela.blit(texto_municao, (30, 40))
     jogo.tela.blit(texto_coletaveis, (30, 70))
+
     viewport_minimapa = (1000, 10, 1250, 200)
     janela_mundo = (0, 0, LARGURA, ALTURA + 10)
-    M_minimapa = bibgraf.janela_viewport(janela_mundo, viewport_minimapa)
+
+    M_minimapa = bibgraf.matriz_janela_viewport(janela_mundo, viewport_minimapa)
+
     desenhar_viewport(jogo, M_minimapa,  viewport_minimapa)
 

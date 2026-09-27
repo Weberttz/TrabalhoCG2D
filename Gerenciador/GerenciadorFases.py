@@ -1,0 +1,29 @@
+from Gerenciador import Inicializador
+
+class GerenciadorFases:
+    def __init__(self, fases, TAMANHO_QUADRADO):
+        self.fases = fases
+        self.fase_atual = 0
+        self.max_fases = len(fases)
+        self.larguras = [len(Inicializador.carregar_mapa(fase)[0]) * TAMANHO_QUADRADO 
+                        for fase in self.fases]           
+
+    def caminho_fase_atual(self):
+        return self.fases[self.fase_atual]
+
+    def largura_fase_atual(self):
+        return self.larguras[self.fase_atual]
+    
+    def avancar(self):
+        if(self.fase_atual < len(self.fases)):
+            self.fase_atual += 1
+
+    def voltar(self):
+        if self.fase_atual > 0 :
+            self.fase_atual -= 1
+
+    def terminou(self):
+        return self.fase_atual >= len(self.fases)
+
+    def reiniciar(self):
+        self.fase_atual = 0

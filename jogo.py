@@ -1,7 +1,9 @@
 import sys
+
 from Gerenciador import Renderizador 
 from Gerenciador import Atualizador
 from Gerenciador import Inicializador
+from Gerenciador.GerenciadorFases import GerenciadorFases
 
 from settings import *
 from Biblioteca.algoritmos import *
@@ -21,13 +23,9 @@ class Jogo:
 
         self.rodando = True
         self.debug = False
-        self.fases = ["./Mapas/fase1.csv", "./Mapas/fase2.csv","./Mapas/fase3.csv"]
-        self.larguras = [len(Inicializador.carregar_mapa(self.fases[0])[0]) * TAMANHO_QUADRADO, 
-                         len(Inicializador.carregar_mapa(self.fases[1])[0]) * TAMANHO_QUADRADO, 
-                         len(Inicializador.carregar_mapa(self.fases[2])[0]) * TAMANHO_QUADRADO ]
-         
-        self.fase_atual = 0
-        self.max_fases = 3
+        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
+             "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
+        
         self.run_finalizada = False
         self.voltando = False
 
@@ -40,7 +38,7 @@ class Jogo:
         iniciar_menu()
 
         self.carregar_sprites()
-        self.carregar_fase(self.fases[self.fase_atual])
+        self.carregar_fase(self.gerenciadorFases.caminho_fase_atual())
 
        
     # Inicialização
@@ -65,7 +63,7 @@ class Jogo:
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
 
-        if self.fase_atual == 0 and self.voltando == False:
+        if self.gerenciadorFases.fase_atual == 0 and self.voltando == False:
             arma = Arma(60, POS_INICIO.copy(), "yellow")
             self.jogador = Jogador(POS_INICIO.copy(), self.plataformas, self.zumbis, 
                                 self.coletaveis, [arma], "red")
@@ -82,6 +80,8 @@ class Jogo:
 
         self.mundo_surface = self.renderizar_mundo()
         self.voltando = False
+
+        
 
     def renderizar_mundo(self):
         """Desenha o mapa estático uma única vez numa superficie gigante."""

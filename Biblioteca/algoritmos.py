@@ -39,7 +39,7 @@ def linha_bresenham(superficie, x0, y0, x1, y1, cor):
         set_pixel((int(x0), int(y0)), cor)
 
 def scanline_fill(superficie, pontos, cor_preenchimento):
-    ys = [ p[1] for p in pontos] # Lista só de Y
+    ys = [p[1] for p in pontos] # Lista só de Y
     y_min = min(ys) 
     y_max = max(ys)
 
@@ -227,61 +227,33 @@ def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
             dx += 2 * ry2
             d2 += dx - dy + rx2
 
-def janela_viewport(janela, viewport):
+def matriz_janela_viewport(janela, viewport):
 
     Wxmin, Wymin, Wxmax, Wymax = janela
     Vxmin, Vymin, Vxmax, Vymax = viewport
 
-    sx = (
-        (Vxmax - Vxmin)
-        / (Wxmax - Wxmin)
-    )
+    sx = ((Vxmax - Vxmin)
+        / (Wxmax - Wxmin))
 
-    sy = (
-        (Vymax - Vymin)
-        / (Wymax - Wymin)
-    )
-
-
-    # -------------------------------------------------
-    # 1. Janela -> origem
-    # -------------------------------------------------
+    sy = ((Vymax - Vymin)
+        / (Wymax - Wymin))
 
     M = transformacoes.identidade()
+    # Janela -> Origem
+    M = transformacoes.produto_matriz(
+        transformacoes.translacao(-Wxmin,-Wymin),
+        M)
+
+    # Escala
+    M = transformacoes.produto_matriz(
+        transformacoes.escala(sx, sy),
+        M)
+
+    # Origem -> viewport
 
     M = transformacoes.produto_matriz(
-        transformacoes.translacao(
-            -Wxmin,
-            -Wymin
-        ),
-        M
-    )
-
-
-    # -------------------------------------------------
-    # 2. Escala
-    # -------------------------------------------------
-
-    M = transformacoes.produto_matriz(
-        transformacoes.escala(
-            sx,
-            sy
-        ),
-        M
-    )
-
-
-    # -------------------------------------------------
-    # 3. Origem -> viewport
-    # -------------------------------------------------
-
-    M = transformacoes.produto_matriz(
-        transformacoes.translacao(
-            Vxmin,
-            Vymin
-        ),
-        M
-    )
+        transformacoes.translacao(Vxmin,Vymin),
+        M)
 
     return M
 
