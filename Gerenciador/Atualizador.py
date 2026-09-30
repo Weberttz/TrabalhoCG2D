@@ -62,6 +62,8 @@ def verificar_voltou_fase(jogo):
 def remover_entidades_inativas(jogo):
     jogo.zumbis[:] = [z for z in jogo.zumbis if z.vivo]
     jogo.cachorros[:] = [c for c in jogo.cachorros if c.vivo]
+    jogador = jogo.jogador
+    jogador.inimigos[:] = [i for i in jogador.inimigos if i.vivo]
 
 def atualizar_visiveis(jogo):
     dx, _ = jogo.camera.retangulo.topleft
