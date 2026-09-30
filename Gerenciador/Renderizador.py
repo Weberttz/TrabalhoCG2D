@@ -81,7 +81,7 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
                 and p.y0 <= limites_camera.bottom
                 and p.y1 >= - limites_camera.top]
     
-    print("camera:",limites_camera.left,limites_camera.largura)
+    # print("camera:",limites_camera.left,limites_camera.largura)
 
     for plataforma in plataformas:
         
