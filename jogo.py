@@ -10,14 +10,13 @@ from Biblioteca.algoritmos import *
 from Classes.jogador import Jogador
 from Classes.camera import Camera
 from Classes.arma import Arma
-from Classes.cenario import desenhar_cenario, iniciar_cenario
+from Classes.cenario import desenhar_cenario, iniciar_cenario, carregar_estruturas_fase
 
 from menu import iniciar_menu, desenhar_menu, acao_menu
 
 class Jogo:
     def __init__(self):
         pygame.init()        
-        iniciar_cenario()
         pygame.display.set_caption("Jogo")
         self.tela = pygame.display.set_mode((LARGURA, ALTURA))
         self.clock = pygame.time.Clock()
@@ -28,6 +27,8 @@ class Jogo:
         self.debug = False
         self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
              "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
+
+        iniciar_cenario()
         
         self.run_finalizada = False
         self.voltando = False
@@ -43,7 +44,6 @@ class Jogo:
         self.carregar_sprites()
         self.carregar_fase(self.gerenciadorFases.caminho_fase_atual())
 
-       
     # Inicialização
     def carregar_sprites(self):
         self.anim_idle = Inicializador.gerar_lista_animacoes("zumbi", "idle", 1)
@@ -65,6 +65,8 @@ class Jogo:
 
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
+
+        carregar_estruturas_fase(self.gerenciadorFases.fase_atual)
 
         if self.gerenciadorFases.fase_atual == 0 and self.voltando == False:
             arma = Arma(60, POS_INICIO.copy(), "yellow")

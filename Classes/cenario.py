@@ -37,7 +37,10 @@ superficie_predio_r = None
 superficie_predio_generico1 = None
 superficie_predio_generico2 = None
 superficie_predio_generico3 = None
-predios_cenario = []
+
+estruturas_fase = {}
+
+estruturas_fase_atual = []
 
 def desenhar_NC2A():
     largura, altura = 360, 300
@@ -87,6 +90,21 @@ def desenhar_predio_generico1():
 
     return superficie_predio_generico1
 
+def desenhar_predio_generido2():
+    largura, altura = 300, 300
+    superficie_predio_generico2 = pygame.Surface((largura, altura), pygame.SRCALPHA)
+
+    vertices_predio = retangulo_para_poligono(0, 0, largura, altura)
+    scanline_fill(superficie_predio_generico2, vertices_predio, BRANCO)
+    return superficie_predio_generico2
+
+def desenhar_predio_generico3():
+    largura, altura = 200, 350
+    superficie_predio_generico3 = pygame.Surface((largura, altura), pygame.SRCALPHA)
+
+    vertices_predio = retangulo_para_poligono(0, 0, largura, altura)
+    scanline_fill(superficie_predio_generico3, vertices_predio, BEGE)
+    return superficie_predio_generico3
 
 def desenhar_arvore():
     largura, altura = 150, 300
@@ -342,7 +360,8 @@ def desenhar_predio_r():
 
 
 def iniciar_cenario():
-    global superficie_lua, superficie_nuvem, superficie_arbusto, superficie_nc2a, superficie_arvore, superficie_predio_r, superficie_predio_generico1, predios_cenario
+    global superficie_lua, superficie_nuvem, superficie_arbusto, superficie_nc2a, superficie_arvore, superficie_predio_r, superficie_predio_generico1, superficie_predio_generico2, superficie_predio_generico3, estruturas_fase
+
     superficie_lua = desenhar_lua(50)
     superficie_arvore = desenhar_arvore()
     superficie_nc2a = desenhar_NC2A()
@@ -350,13 +369,39 @@ def iniciar_cenario():
     superficie_nuvem = desenhar_nuvem()
     superficie_predio_r = desenhar_predio_r()
     superficie_predio_generico1 = desenhar_predio_generico1()
+    superficie_predio_generico2 = desenhar_predio_generido2()
+    superficie_predio_generico3 = desenhar_predio_generico3()
 
-    predios_cenario = [
-        (100, superficie_nc2a),
-        (500, superficie_predio_generico1),
-        (1000, superficie_predio_r),
-        (1500, superficie_predio_generico1),
-    ]
+    estruturas_fase = {
+        #largura das fases: [5632, 6464, 6304]
+        #largura nc2a: 360
+        #largura reitoria 500
+        #largura prediog1 250
+        #largura prediog2 300
+        #largura predio g3 200
+        0 : [
+            (100, superficie_predio_generico1),
+            (450, superficie_arvore),
+            (550, superficie_arbusto),
+            (1000, superficie_nc2a),
+            (1500, superficie_predio_generico2),
+            (2000, superficie_arvore),
+            (2100, superficie_arbusto),
+            (2200, superficie_predio_generico3),
+        ],
+
+        # 1: [
+
+        # ], 
+
+        # 2: [
+
+        # ]
+    }
+
+def carregar_estruturas_fase(indice_fase):
+    global estruturas_fase_atual
+    estruturas_fase_atual = estruturas_fase.get(indice_fase, [])
 
 
 def desenhar_cenario(superficie, x_camera, y_chao=690, largura_tela=1262):
@@ -364,13 +409,13 @@ def desenhar_cenario(superficie, x_camera, y_chao=690, largura_tela=1262):
     superficie.fill(COR_CEU)
     parallax_predios = 0.3
 
-    for x_mundo, superficie_predio in predios_cenario:
+    for x_mundo, superficie_estrutura in estruturas_fase_atual:
         x_tela = x_mundo - int(x_camera * parallax_predios)
-        largura_predio = superficie_predio.get_width()
+        largura_predio = superficie_estrutura.get_width()
 
         if -largura_predio <= x_tela <= largura_tela:
-            posicao_y = y_chao - superficie_predio.get_height()
-            superficie.blit(superficie_predio, (x_tela, posicao_y))
+            posicao_y = y_chao - superficie_estrutura.get_height()
+            superficie.blit(superficie_estrutura, (x_tela, posicao_y))
 
     if superficie_lua:
         superficie.blit(superficie_lua, (1000, 50))
