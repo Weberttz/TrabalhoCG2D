@@ -16,15 +16,16 @@ def desenhar_jogador(jogo):
 
 def desenhar_coletaveis(jogo):
     for coletavel in jogo.coletaveis_visiveis:
-        if coletavel.tipo == "moeda":
-            vertices = jogo.camera.aplicar_vertices(coletavel.retangulo.vertices)
+        vertices = jogo.camera.aplicar_vertices(coletavel.retangulo.vertices)
+        if coletavel.tipo != "tapioca" and coletavel.tipo != "moeda":
             bibgraf.scanline_fill(jogo.tela, vertices, coletavel.cor)
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
         else:
-            vertices = jogo.camera.aplicar_vertices(coletavel.retangulo.vertices)
-            bibgraf.scanline_fill(jogo.tela, vertices, coletavel.cor)
-            bibgraf.draw_polygonon(jogo.tela, vertices, "red")
-            # bibgraf.desenhar_circulo(jogo.tela, coletavel.centro, coletavel.raio, coletavel.cor, True)
+            centro_na_tela = jogo.camera.aplicar_posicao(coletavel.centro)
+            bibgraf.desenhar_circulo(jogo.tela, centro_na_tela, coletavel.raio, coletavel.cor, True)
+            if jogo.debug:
+                bibgraf.draw_polygonon(jogo.tela, vertices, "red")
+
 
 def desenhar_projeteis(jogo):
     scroll = -v.Vetor(jogo.camera.retangulo.topleft)
@@ -76,12 +77,12 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
     # e seria interessante colocar o clipping aqui para as plataformas
     # que ficam meio dentro, meio fora
     plataformas = [p for p in jogo.plataformas 
-                if p.x0 <= limites_camera.right 
+                if p.x0 <= LARGURA - limites_camera.left
                 and p.x1 >= - limites_camera.left
                 and p.y0 <= limites_camera.bottom
                 and p.y1 >= - limites_camera.top]
     
-    #print("camera:",limites_camera.left,limites_camera.right)
+    # print("camera:",limites_camera.left,limites_camera.largura)
 
     for plataforma in plataformas:
         
