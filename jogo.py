@@ -79,9 +79,7 @@ class Jogo:
             z.inimigos.append(self.jogador)
 
         self.mundo_surface = self.renderizar_mundo()
-        self.voltando = False
-
-        
+        self.voltando = False 
 
     def renderizar_mundo(self):
         """Desenha o mapa estático uma única vez numa superficie gigante."""
@@ -121,7 +119,6 @@ class Jogo:
                     if evento.key == pygame.K_h:
                         self.debug = not self.debug
                 
-
     # Atualização
     def atualizar(self, dt):
         Atualizador.atualizar_jogador(self)
