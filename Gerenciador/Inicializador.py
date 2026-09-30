@@ -1,7 +1,6 @@
 from Classes.plataforma import Plataforma
 from Classes.zumbi import Zumbi
 from Classes.coletavel import Coletavel
-from Classes.tapioca import Tapioca
 from settings import *
 from random import randint
 import csv
@@ -29,14 +28,15 @@ def carregar_mapa(nome_arquivo):
     return mapa
  
 def criar_level(layout):
-    VERDE = (0, 168, 0)
-    AMARELO = (254, 204, 0)
-    MARROM = (137, 76, 47)
     cores = [None, MARROM, VERDE, AMARELO, WHITE, AZUL_NOTURNO]
     plataformas = []
     blocks = []
     coletaveis = []
     largura, altura = 30, 30
+
+    # 1, 2, 3, 4 são plataformas
+    # 5 é block
+    # 6, 7, 8 são coletáveis
 
     for y, row in enumerate(layout):
         for x, tile in enumerate(row):
@@ -44,11 +44,14 @@ def criar_level(layout):
                 block = Plataforma(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO, largura, altura, cores[tile])
                 blocks.append(block)
             elif tile == 6:
-                tapioca = Tapioca(Vetor(x * TAMANHO_QUADRADO + TAMANHO_QUADRADO // 2, 
-                                        y * TAMANHO_QUADRADO - TAMANHO_QUADRADO ), 10, WHITE)
+                tapioca = Coletavel(Vetor(x * TAMANHO_QUADRADO + TAMANHO_QUADRADO, 
+                                        y * TAMANHO_QUADRADO - TAMANHO_QUADRADO ), 10, WHITE, "tapioca")
                 coletaveis.append(tapioca)
             elif tile == 7:
-                coletavel = Coletavel(Vetor(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO), 10, AMARELO, "moeda")
+                coletavel = Coletavel(Vetor(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO), 8, AMARELO, "moeda")
+                coletaveis.append(coletavel)
+            elif tile == 8:
+                coletavel = Coletavel(Vetor(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO), 10, VERMELHO, "municao")
                 coletaveis.append(coletavel)
             elif tile != 0:
                 plataforma = Plataforma(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO, largura, altura, cores[tile])
