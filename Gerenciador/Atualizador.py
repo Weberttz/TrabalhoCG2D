@@ -24,10 +24,7 @@ def atualizar_entidades(jogo, dt):
     atualizar_coletaveis(jogo)
     atualizar_projeteis(jogo, dt)
     atualizar_zumbis(jogo)
-
-
-
-    
+    atualizar_cachorros(jogo)
 
 def verificar_morte_jogador(jogo):
     j = jogo.jogador
@@ -62,10 +59,9 @@ def verificar_voltou_fase(jogo):
     jogo.voltando = True
     jogo.carregar_fase(jogo.gerenciadorFases.caminho_fase_atual())
 
-
-
 def remover_entidades_inativas(jogo):
     jogo.zumbis[:] = [z for z in jogo.zumbis if z.vivo]
+    jogo.cachorros[:] = [c for c in jogo.cachorros if c.vivo]
 
 def atualizar_visiveis(jogo):
     dx, _ = jogo.camera.retangulo.topleft
@@ -75,6 +71,10 @@ def atualizar_visiveis(jogo):
     ]
     jogo.coletaveis_visiveis = [
         c for c in jogo.coletaveis
+        if -dx - c.tamanho <= c.pos.x <= -dx + LARGURA
+    ]
+    jogo.cachorros_visiveis = [
+        c for c in jogo.cachorros
         if -dx - c.tamanho <= c.pos.x <= -dx + LARGURA
     ]
 
@@ -92,4 +92,11 @@ def atualizar_zumbis(jogo):
     for zumbi in jogo.zumbis_visiveis:
         zumbi.atualizar(projeteis)
         if jogo.avancar_frame:
-            zumbi.animar(jogo.anim_idle, jogo.anim_esquerda, jogo.anim_direita)
+            zumbi.animar(jogo.anim_zumbi_idle, jogo.anim_zumbi_esquerda, jogo.anim_zumbi_direita)
+
+def atualizar_cachorros(jogo):
+    projeteis = jogo.jogador.equipamento.projetils
+    for cachorro in jogo.cachorros_visiveis:
+        cachorro.atualizar(projeteis)
+        if jogo.avancar_frame:
+            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_esquerda, jogo.anim_cachorro_direita)
