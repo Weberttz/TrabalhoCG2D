@@ -38,7 +38,7 @@ class Jogador(Humanoide):
 
         y = 0
         if keys[pygame.K_UP]:   y -= 1    # cima
-        if keys[pygame.K_DOWN] and not self.no_chao: y += 1  # baixo só no ar
+        # if keys[pygame.K_DOWN] and not self.no_chao: y += 1  # baixo só no ar
 
         if x == 0 and y == 0:
             x = self.olhando              # parado: atira para onde olha
@@ -78,6 +78,11 @@ class Jogador(Humanoide):
     def lidar_com_colisoes(self):
         for coletavel in self.coletaveis:
             if self.retangulo.colidiu_com(coletavel.retangulo) and coletavel.ativo:
+                if coletavel.tipo == "tapioca":
+                    self.vida+= 30 
+                if coletavel.tipo == "municao":
+                    self.equipamento.municao+=1
+                    
                 self.quantidade_coletada += 1
                 coletavel.ativo = False
         for inimigo in self.inimigos:
