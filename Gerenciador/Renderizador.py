@@ -2,7 +2,7 @@ import Classes.vetor as v
 from Classes.retangulo import Retangulo as r
 import Biblioteca.algoritmos as bibgraf
 from Biblioteca import transformacoes
-from settings import WHITE, BLACK, LARGURA, ALTURA
+from settings import WHITE, BLACK, LARGURA, ALTURA, AZUL_NOTURNO
 
 def desenhar_jogador(jogo):
     vertices = jogo.camera.aplicar_vertices(jogo.jogador.vertices)
@@ -29,7 +29,7 @@ def desenhar_coletaveis(jogo):
 
 def desenhar_projeteis(jogo):
     scroll = -v.Vetor(jogo.camera.retangulo.topleft)
-    for projetil in jogo.jogador.equipamento.projetils:
+    for projetil in jogo.jogador.equipamento.projeteis:
         projetil.desenhar(jogo.tela, scroll, jogo.camera)
 
 def desenhar_zumbis(jogo):
@@ -52,7 +52,7 @@ def desenhar_zumbis(jogo):
             bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
 def desenhar_viewport(jogo, matriz_viewport, viewport):
-
+    
     Vxmin, Vymin, Vxmax, Vymax = viewport
 
     borda = [
@@ -61,6 +61,7 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         (Vxmax, Vymax),
         (Vxmin, Vymax)
     ]
+    bibgraf.preencher_retangulo(jogo.tela, viewport, AZUL_NOTURNO)
 
     limites_camera = jogo.camera.retangulo
     j = jogo.jogador
@@ -79,10 +80,8 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
     plataformas = [p for p in jogo.plataformas 
                 if p.x0 <= LARGURA - limites_camera.left
                 and p.x1 >= - limites_camera.left
-                and p.y0 <= limites_camera.bottom
+                and p.y0 <= ALTURA - limites_camera.top
                 and p.y1 >= - limites_camera.top]
-    
-    # print("camera:",limites_camera.left,limites_camera.largura)
 
     for plataforma in plataformas:
         
@@ -105,10 +104,9 @@ def desenhar_hud(jogo):
     jogo.tela.blit(texto_municao, (30, 40))
     jogo.tela.blit(texto_coletaveis, (30, 70))
 
-    viewport_minimapa = (1000, 10, 1250, 200)
     janela_mundo = (0, 0, LARGURA, ALTURA + 10)
 
-    M_minimapa = bibgraf.matriz_janela_viewport(janela_mundo, viewport_minimapa)
+    M_minimapa = bibgraf.matriz_janela_viewport(janela_mundo, jogo.viewport)
 
-    desenhar_viewport(jogo, M_minimapa,  viewport_minimapa)
+    desenhar_viewport(jogo, M_minimapa, jogo.viewport)
 

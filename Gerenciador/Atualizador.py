@@ -82,13 +82,13 @@ def atualizar_coletaveis(jogo):
     jogo.coletaveis[:] = [c for c in jogo.coletaveis if c.ativo]
 
 def atualizar_projeteis(jogo, dt):
-    projeteis = jogo.jogador.equipamento.projetils
+    projeteis = jogo.jogador.equipamento.projeteis
     projeteis[:] = [p for p in projeteis if p.ativo]
     for projetil in projeteis:
         projetil.atualizar(dt, jogo.plataformas)  
 
 def atualizar_zumbis(jogo):
-    projeteis = jogo.jogador.equipamento.projetils
+    projeteis = jogo.jogador.equipamento.projeteis
     for zumbi in jogo.zumbis_visiveis:
         zumbi.atualizar(projeteis)
         if jogo.avancar_frame:

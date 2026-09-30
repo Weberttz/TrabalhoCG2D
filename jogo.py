@@ -20,10 +20,11 @@ class Jogo:
         self.tela = pygame.display.set_mode((LARGURA, ALTURA))
         self.clock = pygame.time.Clock()
         self.fonte = pygame.font.SysFont("Myriad Pro", 30)
+        self.viewport = (1000, 10, 1250, 200)
 
         self.rodando = True
         self.debug = False
-        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
+        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase3.csv",
              "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
         
         self.run_finalizada = False

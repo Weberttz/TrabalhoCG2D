@@ -87,6 +87,6 @@ class Jogador(Humanoide):
                 coletavel.ativo = False
         for inimigo in self.inimigos:
             if self.retangulo.colidiu_com(inimigo.retangulo):
-                self.vida -= 1
+                self.vida -= inimigo.dano
         return super().lidar_com_colisoes()
     

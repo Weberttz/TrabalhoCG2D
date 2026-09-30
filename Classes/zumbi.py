@@ -7,21 +7,22 @@ class Zumbi(Humanoide):
         self.vertices = []
         self.tempo_mudar_direcao = 0
         self.vivo = True
+        self.dano = 1
 
-    def atualizar(self, projetils):
+    def atualizar(self, projeteis):
         self.aplicar_gravidade()
         self.atualizar_vertices()
         self.lidar_com_colisoes()
         self.movimentar()
         self.atualizar_vertices_equipamento()
-        self.checar_atingido(projetils)
+        self.checar_atingido(projeteis)
         self.morrer()
 
     def morrer(self):
         if self.vida == 0: self.vivo = False
 
-    def checar_atingido(self, projetils):
-        for projetil in projetils:
+    def checar_atingido(self, projeteis):
+        for projetil in projeteis:
             if projetil.retangulo.colidiu_com(self.retangulo):
                 self.vida -= projetil.dano
                 projetil.ativo = False
