@@ -51,6 +51,25 @@ def desenhar_zumbis(jogo):
             aabb = r.calcular_aabb(vertices_rect)
             bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
+def desenhar_cachorros(jogo):
+     for cachorro in jogo.cachorros_visiveis:
+            vertices = jogo.camera.aplicar_vertices(cachorro.vertices)
+            imagem = jogo.imagens_cachorro.get(cachorro.image)
+    
+            if imagem is not None:
+                pos_tela = vertices[1]   # canto superior-esquerdo já com câmera
+                jogo.tela.blit(imagem, pos_tela)
+            else:
+                bibgraf.scanline_fill(jogo.tela, vertices, cachorro.cor)
+                bibgraf.draw_polygonon(jogo.tela, vertices, "red")
+    
+            if jogo.debug:
+                texto = jogo.fonte.render(f"Vida: {cachorro.vida}", 1, WHITE)
+                jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
+                vertices_rect = jogo.camera.aplicar_vertices(cachorro.retangulo.vertices)
+                aabb = r.calcular_aabb(vertices_rect)
+                bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+
 def desenhar_viewport(jogo, matriz_viewport, viewport):
 
     Vxmin, Vymin, Vxmax, Vymax = viewport
