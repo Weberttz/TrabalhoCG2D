@@ -54,7 +54,6 @@ def criar_superficie_circulo(raio, cor):
 
     return superficie
 
-
 def criar_superficie_elipse(raio_x, raio_y, cor_borda, cor_preenchimento=None):
     largura = 2 * raio_x + 1 
     altura = 2 * raio_y + 1 

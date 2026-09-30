@@ -257,3 +257,16 @@ def matriz_janela_viewport(janela, viewport):
 
     return M
 
+def retangulo_para_poligono(
+    x,
+    y,
+    largura,
+    altura
+):
+
+    return [
+        (x, y),
+        (x + largura, y),
+        (x + largura, y + altura),
+        (x, y + altura)
+    ]

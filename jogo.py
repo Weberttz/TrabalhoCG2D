@@ -10,16 +10,19 @@ from Biblioteca.algoritmos import *
 from Classes.jogador import Jogador
 from Classes.camera import Camera
 from Classes.arma import Arma
+from Classes.cenario import desenhar_cenario, iniciar_cenario
 
 from menu import iniciar_menu, desenhar_menu, acao_menu
 
 class Jogo:
     def __init__(self):
-        pygame.init()
+        pygame.init()        
+        iniciar_cenario()
         pygame.display.set_caption("Jogo")
         self.tela = pygame.display.set_mode((LARGURA, ALTURA))
         self.clock = pygame.time.Clock()
         self.fonte = pygame.font.SysFont("Myriad Pro", 30)
+
 
         self.rodando = True
         self.debug = False
@@ -139,7 +142,9 @@ class Jogo:
 
         #comeca o jogo apenas se o estado foi alterado para "jogando" a partir do retorno de acao_menu
         elif self.estado_jogo == "jogando":
-            self.tela.fill(AZUL_NOTURNO)
+            x_camera = abs(self.camera.retangulo.x)
+            desenhar_cenario(self.tela, x_camera)
+            # self.tela.fill(AZUL_NOTURNO)
             self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
 
             Renderizador.desenhar_jogador(self)
