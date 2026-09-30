@@ -76,12 +76,12 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
     # e seria interessante colocar o clipping aqui para as plataformas
     # que ficam meio dentro, meio fora
     plataformas = [p for p in jogo.plataformas 
-                if p.x0 <= limites_camera.right 
+                if p.x0 <= LARGURA - limites_camera.left
                 and p.x1 >= - limites_camera.left
                 and p.y0 <= limites_camera.bottom
                 and p.y1 >= - limites_camera.top]
     
-    #print("camera:",limites_camera.left,limites_camera.right)
+    print("camera:",limites_camera.left,limites_camera.largura)
 
     for plataforma in plataformas:
         
