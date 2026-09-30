@@ -2,24 +2,7 @@ import math
 from Biblioteca import transformacoes
 
 def set_pixel(superficie, x, y, cor, clip_atual = None):
-    x = int(x)
-    y = int(y)
-
-    # Limites da tela
-    if not (0 <= x < superficie.get_width()
-        and 0 <= y < superficie.get_height()):
-        return
-
-    # Corte para não desenhar o mundo encima da viewport
-    '''if clip_atual is not None:
-        xmin, ymin, xmax, ymax = clip_atual
-        if (x >= xmin
-            and x <= xmax
-            and y >= ymin
-            and y <= ymax):
-            return'''
-
-    superficie.set_at((x, y), cor)
+    superficie.set_at((int(x), int(y)), cor)
 
 def preencher_retangulo(superficie, retangulo, cor ):
     xmin, ymin, xmax, ymax = retangulo
@@ -246,34 +229,84 @@ def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
             x += 1
             dx += 2 * ry2
             d2 += dx - dy + rx2
+# Clipping Cohen-Sutherland
+INSIDE = 0
+LEFT = 1
+RIGHT = 2
+BOTTOM = 4
+TOP = 8
 
-def matriz_janela_viewport(janela, viewport):
+def codigo_regiao(x, y, xmin, ymin, xmax, ymax):
+    codigo = INSIDE
+    if x < xmin:
+        codigo |= LEFT
 
-    Wxmin, Wymin, Wxmax, Wymax = janela
-    Vxmin, Vymin, Vxmax, Vymax = viewport
+    elif x > xmax:
+        codigo |= RIGHT
 
-    sx = ((Vxmax - Vxmin)
-        / (Wxmax - Wxmin))
+    if y < ymin:
+        codigo |= TOP
 
-    sy = ((Vymax - Vymin)
-        / (Wymax - Wymin))
+    elif y > ymax:
+        codigo |= BOTTOM
 
-    M = transformacoes.identidade()
-    # Janela -> Origem
-    M = transformacoes.produto_matriz(
-        transformacoes.translacao(-Wxmin,-Wymin),
-        M)
+    return codigo
 
-    # Escala
-    M = transformacoes.produto_matriz(
-        transformacoes.escala(sx, sy),
-        M)
+def cohen_sutherland(x0, y0, x1, y1, xmin, ymin, xmax, ymax):
 
-    # Origem -> viewport
+    c0 = codigo_regiao(x0, y0, xmin, ymin, xmax, ymax)
 
-    M = transformacoes.produto_matriz(
-        transformacoes.translacao(Vxmin,Vymin),
-        M)
+    c1 = codigo_regiao(x1, y1, xmin, ymin, xmax, ymax)
 
-    return M
+    while True:
+        if not (c0 | c1):
+            return (True, x0, y0, x1, y1)
+        
+        if c0 & c1:
+            return (False, 0, 0, 0, 0)
+
+        c_out = c0 if c0 else c1
+
+        if c_out & TOP:
+            x = ( x0 + (x1 - x0) * (ymin - y0) / (y1 - y0))
+            y = ymin
+
+        elif c_out & BOTTOM:
+            x = (x0 + (x1 - x0) * (ymax - y0) / (y1 - y0))
+            y = ymax
+
+        elif c_out & RIGHT:
+
+            y = ( y0 + (y1 - y0) * (xmax - x0) / (x1 - x0))
+            x = xmax
+
+        else:
+            y = (y0 + (y1 - y0) * (xmin - x0) / (x1 - x0))
+            x = xmin
+
+        if c_out == c0:
+            x0 = x
+            y0 = y
+            c0 = codigo_regiao(x0, y0, xmin, ymin, xmax, ymax)
+
+        else:
+            x1 = x
+            y1 = y
+            c1 = codigo_regiao(x1, y1, xmin, ymin, xmax, ymax)
+
+def desenhar_linha_recortada(superficie, x0, y0, x1, y1, janela, cor):
+    xmin, ymin, xmax, ymax = janela
+    visivel, rx0, ry0, rx1, ry1 = cohen_sutherland(
+        x0, y0, x1, y1,
+        xmin, ymin, xmax, ymax)
+
+    if visivel:
+        linha_bresenham(superficie,
+            rx0, ry0,
+            rx1, ry1,
+            cor
+        )
+
+
+
 

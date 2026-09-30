@@ -89,7 +89,20 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         plataforma_view =[transformacoes.produto_matriz(matriz_viewport,
             [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
             for vertice in plataforma.vertices]
+        plataforma_blocos_borda = []
+        for plataforma in plataforma_view:
+            # intersceção com a direita
+            if plataforma.x1 > Vxmax:
+                plataforma_blocos_borda.append(plataforma)
+            elif plataforma.x0 < Vxmin:
+                plataforma_blocos_borda.append(plataforma)
+            elif plataforma.y0 < Vymin:
+                plataforma_blocos_borda.append(plataforma)
+            elif plataforma.y1 > Vymax:
+                plataforma_blocos_borda.append(plataforma)
+
         
+
         bibgraf.scanline_fill(jogo.tela, plataforma_view, plataforma.cor)
 
     bibgraf.draw_polygonon(jogo.tela, borda, WHITE)
