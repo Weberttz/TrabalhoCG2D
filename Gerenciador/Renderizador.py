@@ -61,7 +61,8 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         (Vxmax, Vymax),
         (Vxmin, Vymax)
     ]
-    bibgraf.preencher_retangulo(jogo.tela, viewport, AZUL_NOTURNO)
+
+    jogo.tela.blit(jogo.viewport_surface, borda[0])
 
     limites_camera = jogo.camera.retangulo
     j = jogo.jogador
