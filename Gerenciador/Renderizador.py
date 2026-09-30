@@ -89,6 +89,8 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         plataforma_view =[transformacoes.produto_matriz(matriz_viewport,
             [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
             for vertice in plataforma.vertices]
+        # remover da view cortar e pegar os novos vertices 
+        # depois colocar de volta na view e usar o scanline_fill pra desenhar tudo
         plataforma_blocos_borda = []
         for plataforma in plataforma_view:
             # intersceção com a direita
@@ -100,8 +102,9 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
                 plataforma_blocos_borda.append(plataforma)
             elif plataforma.y1 > Vymax:
                 plataforma_blocos_borda.append(plataforma)
-
         
+        
+            
 
         bibgraf.scanline_fill(jogo.tela, plataforma_view, plataforma.cor)
 
