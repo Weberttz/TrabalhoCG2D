@@ -33,6 +33,7 @@ class Jogo:
         self.avancar_frame = False
         self.zumbis_visiveis = []
         self.coletaveis_visiveis = []
+        self.cachorros_visiseis = []
 
         self.estado_jogo = "menu"
         iniciar_menu()
@@ -43,40 +44,58 @@ class Jogo:
        
     # Inicialização
     def carregar_sprites(self):
-        self.anim_idle = Inicializador.gerar_lista_animacoes("zumbi", "idle", 1)
-        self.anim_esquerda = Inicializador.gerar_lista_animacoes("zumbi", "walk_left", 7)
-        self.anim_direita = Inicializador.gerar_lista_animacoes("zumbi", "walk_right", 7)
+        self.anim_zumbi_idle = Inicializador.gerar_lista_animacoes("zumbi", "idle", 8)
+        self.anim_zumbi_esquerda = Inicializador.gerar_lista_animacoes("zumbi", "walk_left", 8)
+        self.anim_zumbi_direita = Inicializador.gerar_lista_animacoes("zumbi", "walk_right", 8)
 
         imagens = {}
-        for lista in (self.anim_idle, self.anim_esquerda, self.anim_direita):
+        for lista in (self.anim_zumbi_idle, self.anim_zumbi_esquerda, self.anim_zumbi_direita):
             imagens |= Inicializador.carregar_animacoes(lista)
 
         # redimensiona uma vez só, na carga -> matrizes de escala
         self.imagens_zumbi = {nome: pygame.transform.scale(img, (32, 32))
                               for nome, img in imagens.items()}
 
+        self.anim_cachorro_idle = Inicializador.gerar_lista_animacoes("dog", "idle", 5)
+        self.anim_cachorro_esquerda = Inicializador.gerar_lista_animacoes("dog", "walk_left", 8)
+        self.anim_cachorro_direita = Inicializador.gerar_lista_animacoes("dog", "walk_right", 8)
+
+        imagens = {}
+        for lista in (self.anim_cachorro_idle, self.anim_cachorro_esquerda, self.anim_cachorro_direita):
+            imagens |= Inicializador.carregar_animacoes(lista)
+
+        # redimensiona uma vez só, na carga -> matrizes de escala
+        self.imagens_cachorro = {nome: pygame.transform.scale(img, (32, 32))
+                                      for nome, img in imagens.items()}
+        
+
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
         self.zumbis = Inicializador.criar_zumbis(self.plataformas, self.blocks)
+        self.cachorros = Inicializador.criar_cachorros(self.plataformas, self.blocks)
 
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
 
         if self.gerenciadorFases.fase_atual == 0 and self.voltando == False:
             arma = Arma(60, POS_INICIO.copy(), "yellow")
-            self.jogador = Jogador(POS_INICIO.copy(), self.plataformas, self.zumbis, 
+            self.jogador = Jogador(POS_INICIO.copy(), self.plataformas, self.zumbis + self.cachorros, 
                                 self.coletaveis, [arma], "red")
         else:
             self.jogador.plataformas = self.plataformas
             self.jogador.coletaveis = self.coletaveis
-            self.jogador.inimigos = self.zumbis
+            self.jogador.inimigos = self.zumbis + self.cachorros
 
         self.camera = Camera(self.jogador, self.largura_mapa, self.altura_mapa)
 
         for z in self.zumbis:
-            z.image = self.anim_idle[0]
+            z.image = self.anim_zumbi_idle[0]
             z.inimigos.append(self.jogador)
+
+        for c in self.cachorros:
+            c.image = self.anim_cachorro_idle[0]
+            c.inimigos.append(self.jogador)
 
         self.mundo_surface = self.renderizar_mundo()
         self.voltando = False 
@@ -104,7 +123,6 @@ class Jogo:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 self.rodando = False
-
             #pega a acao de determinado botao do menu e atualiza o estado do jogo
             if self.estado_jogo == "menu":
                 if evento.type == pygame.MOUSEBUTTONDOWN:
@@ -123,8 +141,6 @@ class Jogo:
     def atualizar(self, dt):
         Atualizador.atualizar_jogador(self)
         self.camera.atualizar()
-
-        self.zumbis[:] = [z for z in self.zumbis if z.vivo]   # in-place: mantém a lista compartilhada
         Atualizador.atualizar_animacao(self, dt)
         Atualizador.atualizar_entidades(self, dt)
 
@@ -143,6 +159,7 @@ class Jogo:
             Renderizador.desenhar_coletaveis(self)
             Renderizador.desenhar_projeteis(self)
             Renderizador.desenhar_zumbis(self)
+            Renderizador.desenhar_cachorros(self)
             Renderizador.desenhar_hud(self)
 
         pygame.display.flip()
