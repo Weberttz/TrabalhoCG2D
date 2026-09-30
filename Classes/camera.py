@@ -14,6 +14,15 @@ class Camera:
         dx, dy = self.retangulo.topleft
         return [(x + dx, y + dy) for x, y in vertices]
 
+    def aplicar_posicao(self, posicao):
+        mundo_x, mundo_y = posicao
+        dx, dy = self.retangulo.topleft
+
+        tela_x = mundo_x + dx
+        tela_y = mundo_y # + dy
+        
+        return (tela_x, tela_y)
+
     def atualizar(self):
         x = -self.alvo.retangulo.centerx + LARGURA // 2
         y = -self.alvo.retangulo.centery + ALTURA // 2
