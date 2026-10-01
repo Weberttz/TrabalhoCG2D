@@ -19,7 +19,7 @@ class Camera:
         dx, dy = self.retangulo.topleft
 
         tela_x = mundo_x + dx
-        tela_y = mundo_y # + dy
+        tela_y = mundo_y + dy
         
         return (tela_x, tela_y)
 

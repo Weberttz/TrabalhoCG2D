@@ -37,7 +37,7 @@ class Jogador(Humanoide):
         if keys[pygame.K_LEFT]:  x -= 1
 
         y = 0
-        if keys[pygame.K_UP]:   y -= 1    # cima
+        if keys[pygame.K_UP] and x == 0:   y -= 1    # cima
         # if keys[pygame.K_DOWN] and not self.no_chao: y += 1  # baixo só no ar
 
         if x == 0 and y == 0:
