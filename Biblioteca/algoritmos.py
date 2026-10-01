@@ -236,6 +236,8 @@ RIGHT = 2
 BOTTOM = 4
 TOP = 8
 
+# Recebe um ponto e determina a localização dele em relacao a uma janela
+# dada por dois pontos
 def codigo_regiao(x, y, xmin, ymin, xmax, ymax):
     codigo = INSIDE
     if x < xmin:
@@ -252,6 +254,8 @@ def codigo_regiao(x, y, xmin, ymin, xmax, ymax):
 
     return codigo
 
+# Recebe dois pontos que determinando uma reta e uma janela
+# Return se tem alguma parte visivel e as coordenadas de intersceção com a janela
 def cohen_sutherland(x0, y0, x1, y1, xmin, ymin, xmax, ymax):
 
     c0 = codigo_regiao(x0, y0, xmin, ymin, xmax, ymax)
@@ -294,6 +298,7 @@ def cohen_sutherland(x0, y0, x1, y1, xmin, ymin, xmax, ymax):
             y1 = y
             c1 = codigo_regiao(x1, y1, xmin, ymin, xmax, ymax)
 
+# Acho que não precisa desse agora
 def desenhar_linha_recortada(superficie, x0, y0, x1, y1, janela, cor):
     xmin, ymin, xmax, ymax = janela
     visivel, rx0, ry0, rx1, ry1 = cohen_sutherland(

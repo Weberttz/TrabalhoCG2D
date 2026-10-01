@@ -90,9 +90,9 @@ class Humanoide(pygame.sprite.Sprite):
         if self.vel_x == 0:
             self.mudar_frame(lista_idle)
         elif self.vel_x < 0:
-            self.mudar_frame(lista_walk_right)
-        else:
             self.mudar_frame(lista_walk_left)
+        else:
+            self.mudar_frame(lista_walk_right)
 
     def mudar_frame(self, lista_animacao):
         # Avança para o próximo quadro da animação
