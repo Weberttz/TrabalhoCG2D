@@ -106,8 +106,13 @@ class Jogo:
         """Desenha o mapa estático uma única vez numa superficie gigante."""
         surface = pygame.Surface((self.largura_mapa, self.altura_mapa), pygame.SRCALPHA)
         for plataforma in self.plataformas:
-            draw_polygonon(surface, plataforma.vertices, BLACK)
-            scanline_fill(surface, plataforma.vertices, plataforma.cor)
+            if plataforma.tipo == "normal":
+                draw_polygonon(surface, plataforma.vertices, BLACK)
+                scanline_fill(surface, plataforma.vertices, plataforma.cor)
+            elif plataforma.tipo == "teleport":
+                desenhar_elipse(surface, plataforma.x0 + plataforma.largura // 2, plataforma.y1 - plataforma.altura,
+                                8, 28, plataforma.cor)
+                
         return surface
     def criar_surface_viewport(self):
         surface = pygame.Surface((self.viewport[2] - self.viewport[0],
