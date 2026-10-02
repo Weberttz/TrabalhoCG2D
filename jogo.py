@@ -121,8 +121,6 @@ class Jogo:
             for x in range(surface.get_width()):
                 set_pixel(surface, x, y, AZUL_NOTURNO)
         return surface
-        
-
 
     # Loop principal
     def rodar(self):

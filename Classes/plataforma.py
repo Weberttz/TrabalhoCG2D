@@ -1,4 +1,3 @@
-import pygame
 from settings import Retangulo
 
 class Plataforma():
