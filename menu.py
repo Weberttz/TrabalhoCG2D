@@ -5,13 +5,13 @@ from Biblioteca.algoritmos import linha_bresenham, flood_fill_iterativo, bresenh
 
 LARGURA, ALTURA = 1262, 722
 CAMINHO_FONTE = "./Assets/PressStart2P-Regular.ttf"
-CAMINHO_FUNDO = "./Assets/uece-noite.png"
-COR_BOTAO = pygame.Color('#538645')
-COR_HOVER =  pygame.Color("#729D65") #VERDE + CLARO
-COR_BORDA_BOTAO = pygame.Color("#335F27") #VERDE + ESCURO
+CAMINHO_FUNDO = "./Assets/uece-noite-comum21.png"
+COR_BOTAO = pygame.Color("#427133")
+COR_HOVER =  pygame.Color("#4E7D41") #VERDE + CLARO
+COR_BORDA_BOTAO = pygame.Color("#325828") #VERDE + ESCURO
 COR_TEXTO = pygame.Color("#D1F4C7")
-COR_TITULO = pygame.Color("#508640")
-COR_LUA = (238, 220, 130)
+COR_TITULO = pygame.Color("#325828")
+COR_LUA = (219, 204, 129)
 COR_NUVEM = (255, 255, 255, 80) #Com parametro alpha de transparencia
 
 fonte = None
@@ -22,9 +22,9 @@ superficie_elipse = None
 superficie_nuvem = None
 
 botoes = [
-    {"nome": "JOGAR", "acao": "jogar", "x0": 431, "y0": 250, "x1": 831, "y1": 330},
-    {"nome": "INSTRUÇÕES", "acao": "instrucoes", "x0": 431, "y0": 360, "x1": 831, "y1": 440},
-    {"nome": "SAIR", "acao": "sair", "x0": 431, "y0": 470, "x1": 831, "y1": 550}
+    {"nome": "JOGAR", "acao": "jogar", "x0": 150, "y0": 250, "x1": 550, "y1": 330},
+    {"nome": "INSTRUÇÕES", "acao": "instrucoes", "x0": 150, "y0": 360, "x1": 550, "y1": 440},
+    {"nome": "SAIR", "acao": "sair", "x0": 150, "y0": 470, "x1": 550, "y1": 550}
 ]
 
 def criar_superficie_botao(largura, altura, cor, cor_borda):
@@ -53,7 +53,6 @@ def criar_superficie_circulo(raio, cor):
     flood_fill_iterativo(superficie, centro, centro, cor, cor)
 
     return superficie
-
 
 def criar_superficie_elipse(raio_x, raio_y, cor_borda, cor_preenchimento=None):
     largura = 2 * raio_x + 1 
@@ -119,10 +118,13 @@ def desenhar_menu(superficie, posicao_mouse):
 
     texto_titulo = fonte_titulo.render("ZUMBI GAME", True, COR_TITULO)
 
-    titulo_x = LARGURA // 2 - texto_titulo.get_width() // 2
+    # titulo_x = LARGURA // 2 - texto_titulo.get_width() // 4
+    titulo_x = 160
 
+    superficie.blit(superficie_nuvem, (650, 40))
     superficie.blit(texto_titulo, (titulo_x, 100))
-    superficie.blit(superficie_nuvem, (80, 40))
+
+
 
     for botao in botoes:
         if ponto_no_botao(posicao_mouse[0], posicao_mouse[1], botao["x0"], botao["y0"], botao["x1"], botao["y1"]):
