@@ -12,6 +12,7 @@ class Coletavel():
         self.converter()
     
     def converter(self):
+        """Caso o coletável seja circular, esse método faz conversão de retangulo para circunferência"""
         aux = 16 # TAMANHO_QUADRADO // 2
         self.raio = self.tamanho
         self.centro = (self.pos.x + aux, self.pos.y)

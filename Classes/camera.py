@@ -15,6 +15,7 @@ class Camera:
         return [(x + dx, y + dy) for x, y in vertices]
 
     def aplicar_posicao(self, posicao):
+        """Converte posição de mundo em posição da tela"""
         mundo_x, mundo_y = posicao
         dx, dy = self.retangulo.topleft
 

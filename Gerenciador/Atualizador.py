@@ -34,8 +34,9 @@ def verificar_morte_jogador(jogo):
 
 def verificar_passou_de_fase(jogo):
     j = jogo.jogador
+    x_inicial = 10
     if j.pos.x > jogo.largura_mapa:
-        j.resetar(POS_INICIO)
+        j.resetar(Vetor(x_inicial, j.pos.y - j.tamanho))
         jogo.gerenciadorFases.avancar()
 
         if jogo.gerenciadorFases.terminou():
@@ -60,12 +61,14 @@ def verificar_voltou_fase(jogo):
     jogo.carregar_fase(jogo.gerenciadorFases.caminho_fase_atual())
 
 def remover_entidades_inativas(jogo):
-    jogo.zumbis[:] = [z for z in jogo.zumbis if z.vivo]
-    jogo.cachorros[:] = [c for c in jogo.cachorros if c.vivo]
+    """Altera a lista em memória, sem duplicar"""
+    jogo.zumbis[:] = [z for z in jogo.zumbis if z.vivo] # remove os zumbis mortos da lista
+    # jogo.cachorros[:] = [c for c in jogo.cachorros if c.vivo] #  remove os cachorros mortos
     jogador = jogo.jogador
-    jogador.inimigos[:] = [i for i in jogador.inimigos if i.vivo]
+    jogador.inimigos[:] = [i for i in jogador.inimigos if i.vivo] # remove da 'visão' do jogador todos os inimigos
 
 def atualizar_visiveis(jogo):
+    """Atualiza listas colocando apenas os inimigos que estão na tela"""
     dx, _ = jogo.camera.retangulo.topleft
     jogo.zumbis_visiveis = [
         z for z in jogo.zumbis
@@ -81,9 +84,11 @@ def atualizar_visiveis(jogo):
     ]
 
 def atualizar_coletaveis(jogo):
+    """Remove os coletáveis que já foram pegos"""
     jogo.coletaveis[:] = [c for c in jogo.coletaveis if c.ativo]
 
 def atualizar_projeteis(jogo, dt):
+    """Atualiza o estado do projétil e remove os que estão inativos da lista"""
     projeteis = jogo.jogador.equipamento.projeteis
     projeteis[:] = [p for p in projeteis if p.ativo]
     for projetil in projeteis:

@@ -10,7 +10,7 @@ class Jogador(Humanoide):
         self.coletaveis = coletaveis
         self.quantidade_coletada = 0
         self.invulneravel = False
-        self.tempo_invulnerabilidade = 1.0          # 1 seg
+        self.tempo_invulnerabilidade = 1.0  # 1 seg
         self.momento_ultimo_dano = 0
 
     def resetar(self, pos_inicial):
@@ -90,7 +90,6 @@ class Jogador(Humanoide):
             self.no_chao = False
 
     def lidar_com_colisoes(self):
-
         self.colidir_com_coletavel()
         self.colidir_com_inimigo()
 

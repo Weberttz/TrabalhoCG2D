@@ -22,6 +22,7 @@ def gerar_lista_animacoes(nome, acao, tamanho):
     return [f"{nome}_{acao}_{i}" for i in range(tamanho)]
  
 def carregar_mapa(nome_arquivo):
+    """Ler o arquivo .csv e recolhe todas as  linhas, adiciona cada numero da linha em mapa"""
     mapa = []
     with open(nome_arquivo, "r") as f:
         for linha in csv.reader(f):
@@ -35,7 +36,7 @@ def criar_level(layout):
     coletaveis = []
     largura, altura = 30, 30
 
-    # 1, 2, 3, 4 são plataformas
+    # 1, 2, 3, 4 são plataformas - 4 vai ser teleport - usar gradiente
     # 5 é block
     # 6, 7, 8 são coletáveis
 
