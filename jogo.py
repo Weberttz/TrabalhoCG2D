@@ -16,7 +16,8 @@ from menu import iniciar_menu, desenhar_menu, acao_menu
 
 class Jogo:
     def __init__(self):
-        pygame.init()        
+        pygame.init() 
+        pygame.mixer.init()       
         pygame.display.set_caption("Jogo")
         self.tela = pygame.display.set_mode((LARGURA, ALTURA))
         self.clock = pygame.time.Clock()
@@ -76,8 +77,8 @@ class Jogo:
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
-        self.zumbis = Inicializador.criar_zumbis(self.plataformas, self.blocks, self.nivel_dificuldade)
-        self.cachorros = Inicializador.criar_cachorros(self.plataformas, self.blocks, self.nivel_dificuldade)
+        self.zumbis = Inicializador.criar_zumbis(self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
+        self.cachorros = Inicializador.criar_cachorros(self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
 
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
@@ -126,6 +127,7 @@ class Jogo:
 
     # Loop principal
     def rodar(self):
+        self.tocar_musica()
         while self.rodando:
             dt = self.clock.tick(60) / 1000 # único tick por frame
             self.tratar_eventos()
@@ -134,6 +136,11 @@ class Jogo:
 
         pygame.quit()
         sys.exit()
+
+    def tocar_musica(self):
+        pygame.mixer.music.load("Sons/suspense_sobrenatural_loop.wav")
+        pygame.mixer.music.set_volume(1.0) # volume: 0 - mudo, 1 - máximo
+        pygame.mixer.music.play(-1)
 
     def tratar_eventos(self):
         for evento in pygame.event.get():

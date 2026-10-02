@@ -2,12 +2,12 @@ import random
 from Classes.humanoide import Humanoide
 
 class Zumbi(Humanoide):
-    def __init__(self, plataformas, pos, equipamentos, cor):
+    def __init__(self, plataformas, pos, equipamentos, cor, nivel_dificuldade):
         super().__init__(plataformas, [], equipamentos, pos, cor)
         self.vertices = []
         self.tempo_mudar_direcao = 0
         self.vivo = True
-        self.dano = self.definir_dano('medio')
+        self.dano = self.definir_dano(nivel_dificuldade)
         self.campo_visao = 10 * 32 # enxerga 15 blocos
         self.bateu_cabeca = False
 

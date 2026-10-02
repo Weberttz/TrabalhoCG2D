@@ -91,6 +91,7 @@ def criar_superficie_nuvem(cor_borda, cor_preenchimento):
     return superficie_nuvem
 
 def iniciar_menu():
+    '''Inicializa o menu, criando as superfícies pré-renderizadas.'''
     global fonte, fonte_titulo, imagem_fundo, superficie_circulo, superficie_nuvem
 
     fonte = pygame.font.Font(CAMINHO_FONTE, 18)
@@ -113,6 +114,7 @@ def ponto_no_botao(ponto_x, ponto_y, x0, y0, x1, y1):
     return x0 <= ponto_x <= x1 and y0 <= ponto_y <= y1
 
 def desenhar_menu(superficie, posicao_mouse):
+    '''Desenha menu pré-renderizado na tela.'''
     superficie.blit(imagem_fundo, (0, 0))
 
     texto_titulo = fonte_titulo.render("ZUMBI GAME", True, COR_TITULO)
@@ -142,8 +144,10 @@ def desenhar_menu(superficie, posicao_mouse):
 
     superficie.blit(superficie_circulo, (1000, 35))
 
-#identifica o clique do mouse e retorna o nome da acao associada ao botao
+
 def acao_menu(posicao_mouse):
+    '''Identifica o clique do mouse e retorna o 
+        nome da ação associada ao botão.'''
     mouse_x, mouse_y = posicao_mouse
 
     for botao in botoes:
