@@ -1,6 +1,6 @@
 from settings import *
 
-class Projetil(pygame.sprite.Sprite):
+class Projetil():
     def __init__(self, pos:Vetor, disparou_para:Vetor, bala_inimiga=False):
         super().__init__()
         self.pos = pos
