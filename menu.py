@@ -112,7 +112,6 @@ def iniciar_menu():
 def ponto_no_botao(ponto_x, ponto_y, x0, y0, x1, y1):
     return x0 <= ponto_x <= x1 and y0 <= ponto_y <= y1
 
-
 def desenhar_menu(superficie, posicao_mouse):
     superficie.blit(imagem_fundo, (0, 0))
 

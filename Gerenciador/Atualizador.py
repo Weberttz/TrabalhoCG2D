@@ -24,10 +24,7 @@ def atualizar_entidades(jogo, dt):
     atualizar_coletaveis(jogo)
     atualizar_projeteis(jogo, dt)
     atualizar_zumbis(jogo)
-
-
-
-    
+    atualizar_cachorros(jogo)
 
 def verificar_morte_jogador(jogo):
     j = jogo.jogador
@@ -37,8 +34,9 @@ def verificar_morte_jogador(jogo):
 
 def verificar_passou_de_fase(jogo):
     j = jogo.jogador
+    x_inicial = 10
     if j.pos.x > jogo.largura_mapa:
-        j.resetar(POS_INICIO)
+        j.resetar(Vetor(x_inicial, j.pos.y - j.tamanho))
         jogo.gerenciadorFases.avancar()
 
         if jogo.gerenciadorFases.terminou():
@@ -62,12 +60,15 @@ def verificar_voltou_fase(jogo):
     jogo.voltando = True
     jogo.carregar_fase(jogo.gerenciadorFases.caminho_fase_atual())
 
-
-
 def remover_entidades_inativas(jogo):
-    jogo.zumbis[:] = [z for z in jogo.zumbis if z.vivo]
+    """Altera a lista em memória, sem duplicar"""
+    jogo.zumbis[:] = [z for z in jogo.zumbis if z.vivo] # remove os zumbis mortos da lista
+    # jogo.cachorros[:] = [c for c in jogo.cachorros if c.vivo] #  remove os cachorros mortos
+    jogador = jogo.jogador
+    jogador.inimigos[:] = [i for i in jogador.inimigos if i.vivo] # remove da 'visão' do jogador todos os inimigos
 
 def atualizar_visiveis(jogo):
+    """Atualiza listas colocando apenas os inimigos que estão na tela"""
     dx, _ = jogo.camera.retangulo.topleft
     jogo.zumbis_visiveis = [
         z for z in jogo.zumbis
@@ -77,19 +78,31 @@ def atualizar_visiveis(jogo):
         c for c in jogo.coletaveis
         if -dx - c.tamanho <= c.pos.x <= -dx + LARGURA
     ]
+    jogo.cachorros_visiveis = [
+        c for c in jogo.cachorros
+        if -dx - c.tamanho <= c.pos.x <= -dx + LARGURA
+    ]
 
 def atualizar_coletaveis(jogo):
+    """Remove os coletáveis que já foram pegos"""
     jogo.coletaveis[:] = [c for c in jogo.coletaveis if c.ativo]
 
 def atualizar_projeteis(jogo, dt):
-    projeteis = jogo.jogador.equipamento.projetils
+    """Atualiza o estado do projétil e remove os que estão inativos da lista"""
+    projeteis = jogo.jogador.equipamento.projeteis
     projeteis[:] = [p for p in projeteis if p.ativo]
     for projetil in projeteis:
         projetil.atualizar(dt, jogo.plataformas)  
 
 def atualizar_zumbis(jogo):
-    projeteis = jogo.jogador.equipamento.projetils
+    projeteis = jogo.jogador.equipamento.projeteis
     for zumbi in jogo.zumbis_visiveis:
         zumbi.atualizar(projeteis)
         if jogo.avancar_frame:
-            zumbi.animar(jogo.anim_idle, jogo.anim_esquerda, jogo.anim_direita)
+            zumbi.animar(jogo.anim_zumbi_idle, jogo.anim_zumbi_esquerda, jogo.anim_zumbi_direita)
+
+def atualizar_cachorros(jogo):
+    for cachorro in jogo.cachorros_visiveis:
+        cachorro.atualizar()
+        if jogo.avancar_frame:
+            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_esquerda, jogo.anim_cachorro_direita)

@@ -1,6 +1,6 @@
 from settings import *
 
-class Humanoide(pygame.sprite.Sprite): 
+class Humanoide(): 
     def __init__(self, plataformas, inimigos, equipamentos, pos, cor):
         self.vida = 100
         self.cor = cor
@@ -51,13 +51,14 @@ class Humanoide(pygame.sprite.Sprite):
                                             (pos_equipamento_x, pos_equipamento_y - self.equipamento.altura),
                                             (pos_equipamento_x + self.equipamento.largura, pos_equipamento_y - self.equipamento.altura), 
                                             (pos_equipamento_x + self.equipamento.largura, pos_equipamento_y)]
-            
+         
     def lidar_com_colisoes(self):
+        '''Trata colisões com as plataformas'''
         # Movimento horizontal
         self.pos.x += self.vel_x
         self.retangulo.x = self.pos.x
         
-        objetos = self.plataformas
+        objetos = [p for p in self.plataformas if not p.tipo == "teleport"]
 
         # Colisão com eixo X
         for objeto in objetos:
@@ -90,12 +91,13 @@ class Humanoide(pygame.sprite.Sprite):
         if self.vel_x == 0:
             self.mudar_frame(lista_idle)
         elif self.vel_x < 0:
-            self.mudar_frame(lista_walk_right)
-        else:
             self.mudar_frame(lista_walk_left)
+        else:
+            self.mudar_frame(lista_walk_right)
 
     def mudar_frame(self, lista_animacao):
-        # Avança para o próximo quadro da animação
+        '''Avança para o próximo quadro da animação '''
+        
         # O operador '%' (módulo) faz com que a contagem volte a 0 quando chegar ao fim da lista.
         self.frame = (self.frame + 1) % len(lista_animacao)
         

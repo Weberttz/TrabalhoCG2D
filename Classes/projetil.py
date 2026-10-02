@@ -1,12 +1,12 @@
 from settings import *
 
-class Projetil(pygame.sprite.Sprite):
+class Projetil():
     def __init__(self, pos:Vetor, disparou_para:Vetor, bala_inimiga=False):
         super().__init__()
         self.pos = pos
         self.disparou_para = disparou_para
-        self.imagem = pygame.surface.Surface((10,10)).convert()
-        self.imagem.fill('white')
+        self.image = pygame.surface.Surface((10,10)).convert() # ajeitar isso, se precisar
+        self.image.fill('white')
         self.retangulo = Retangulo(pos.x, pos.y, 10, 10)
         self.retangulo.topleft = self.pos
         self.velocidade = 400
@@ -14,7 +14,6 @@ class Projetil(pygame.sprite.Sprite):
         vec = Vetor(1,0)
 
         self.angulo = self.direcao.angulo_para(vec)
-        self.image = pygame.transform.rotate(self.imagem, self.angulo)
 
         if self.direcao.calcular_norma() != 0:
             self.direcao = self.direcao.normalizar()
