@@ -61,7 +61,7 @@ def criar_level(layout):
 
     return plataformas, blocks, coletaveis
 
-def criar_zumbis(plataformas, blocks, max_tentativas=1000):
+def criar_zumbis(plataformas, blocks, max_tentativas=1000, nivel_dificuldade = None):
     zumbis = []
     usadas = set()
     tamanho_zumbi = 30
@@ -74,7 +74,7 @@ def criar_zumbis(plataformas, blocks, max_tentativas=1000):
             continue
 
         x0, y1 = plataformas[rnd].x0,  plataformas[rnd].y0 - tamanho_zumbi
-        zumbi = Zumbi(plataformas + blocks, Vetor(x0, y1), [], (53, 66, 35))
+        zumbi = Zumbi(plataformas + blocks, Vetor(x0, y1), [], (53, 66, 35), nivel_dificuldade)
 
         # não pode nascer dentro de outra plataforma
         if any(p.retangulo.colidiu_com(zumbi.retangulo) and p != plataformas[rnd]
@@ -86,7 +86,7 @@ def criar_zumbis(plataformas, blocks, max_tentativas=1000):
 
     return zumbis
 
-def criar_cachorros(plataformas, blocks, max_tentativas=1000):
+def criar_cachorros(plataformas, blocks, max_tentativas=1000, nivel_dificuldade = None):
     cachorros = []
     usadas = set()
     tamanho_cachorros = 30
@@ -99,7 +99,7 @@ def criar_cachorros(plataformas, blocks, max_tentativas=1000):
             continue
 
         x0, y1 = plataformas[rnd].x0,  plataformas[rnd].y0 - tamanho_cachorros
-        cachorro = Cachorro(plataformas + blocks, Vetor(x0, y1), [], (53, 66, 35))
+        cachorro = Cachorro(plataformas + blocks, Vetor(x0, y1), [], (53, 66, 35),nivel_dificuldade)
 
         # não pode nascer dentro de outra plataforma
         if any(p.retangulo.colidiu_com(cachorro.retangulo) and p != plataformas[rnd]

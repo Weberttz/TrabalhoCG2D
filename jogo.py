@@ -39,6 +39,7 @@ class Jogo:
         self.coletaveis_visiveis = []
         self.cachorros_visiseis = []
 
+        self.nivel_dificuldade = None
         self.estado_jogo = "menu"
         iniciar_menu()
 
@@ -75,8 +76,8 @@ class Jogo:
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
-        self.zumbis = Inicializador.criar_zumbis(self.plataformas, self.blocks)
-        self.cachorros = Inicializador.criar_cachorros(self.plataformas, self.blocks)
+        self.zumbis = Inicializador.criar_zumbis(self.plataformas, self.blocks, self.nivel_dificuldade)
+        self.cachorros = Inicializador.criar_cachorros(self.plataformas, self.blocks, self.nivel_dificuldade)
 
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO

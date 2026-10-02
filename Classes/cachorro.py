@@ -2,18 +2,29 @@ import random
 from Classes.humanoide import Humanoide
 
 class Cachorro(Humanoide):
-    def __init__(self, plataformas, pos, equipamentos, cor):
+    def __init__(self, plataformas, pos, equipamentos, cor, nivel_dificuldade):
         super().__init__(plataformas, [], equipamentos, pos, cor)
         self.vertices = []
         self.tempo_mudar_direcao = 0
         self.vivo = True
-        self.dano = 10
+        self.dano = self.definir_dano(nivel_dificuldade)
 
     def atualizar(self):
         self.aplicar_gravidade()
         self.atualizar_vertices()
         self.lidar_com_colisoes()
         self.movimentar()
+
+    def definir_dano(self,nivel_dificuldade):
+        '''Define o dano do inimigo pelo nível de dificuldade escolhido pelo jogador.'''
+        if nivel_dificuldade == None:
+            return 10
+        elif nivel_dificuldade == 'facil':
+            return 10
+        elif nivel_dificuldade == 'medio':
+            return 20
+        elif nivel_dificuldade == 'dificil':
+            return 40
 
     def lidar_com_colisoes(self):
         for plataforma in self.plataformas:

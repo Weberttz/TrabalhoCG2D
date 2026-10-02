@@ -7,7 +7,7 @@ class Zumbi(Humanoide):
         self.vertices = []
         self.tempo_mudar_direcao = 0
         self.vivo = True
-        self.dano = 30
+        self.dano = self.definir_dano('medio')
         self.campo_visao = 10 * 32 # enxerga 15 blocos
         self.bateu_cabeca = False
 
@@ -19,6 +19,17 @@ class Zumbi(Humanoide):
         self.atualizar_vertices_equipamento()
         self.checar_atingido(projeteis)
         self.morrer()
+
+    def definir_dano(self,nivel_dificuldade):
+        '''Define o dano do inimigo pelo nível de dificuldade escolhido pelo jogador.'''
+        if nivel_dificuldade == None:
+            return 10
+        elif nivel_dificuldade == 'facil':
+            return 10
+        elif nivel_dificuldade == 'medio':
+            return 20
+        elif nivel_dificuldade == 'dificil':
+            return 40
 
     def morrer(self):
         if self.vida == 0: self.vivo = False
