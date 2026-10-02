@@ -1,6 +1,6 @@
 from settings import *
 
-class Humanoide(pygame.sprite.Sprite): 
+class Humanoide(): 
     def __init__(self, plataformas, inimigos, equipamentos, pos, cor):
         self.vida = 100
         self.cor = cor
@@ -58,7 +58,7 @@ class Humanoide(pygame.sprite.Sprite):
         self.pos.x += self.vel_x
         self.retangulo.x = self.pos.x
         
-        objetos = self.plataformas
+        objetos = [p for p in self.plataformas if not p.tipo == "teleport"]
 
         # Colisão com eixo X
         for objeto in objetos:
