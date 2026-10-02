@@ -315,3 +315,16 @@ def desenhar_linha_recortada(superficie, x0, y0, x1, y1, janela, cor):
 
 
 
+def retangulo_para_poligono(
+    x,
+    y,
+    largura,
+    altura
+):
+
+    return [
+        (x, y),
+        (x + largura, y),
+        (x + largura, y + altura),
+        (x, y + altura)
+    ]
