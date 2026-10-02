@@ -20,7 +20,8 @@ class Jogo:
         self.tela = pygame.display.set_mode((LARGURA, ALTURA))
         self.clock = pygame.time.Clock()
         self.fonte = pygame.font.SysFont("Myriad Pro", 30)
-
+        self.viewport = (1000, 10, 1250, 200)
+       
         self.rodando = True
         self.debug = False
         self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
@@ -98,6 +99,7 @@ class Jogo:
             c.inimigos.append(self.jogador)
 
         self.mundo_surface = self.renderizar_mundo()
+        self.viewport_surface = self.criar_surface_viewport()
         self.voltando = False 
 
     def renderizar_mundo(self):
@@ -107,6 +109,15 @@ class Jogo:
             draw_polygonon(surface, plataforma.vertices, BLACK)
             scanline_fill(surface, plataforma.vertices, plataforma.cor)
         return surface
+    def criar_surface_viewport(self):
+        surface = pygame.Surface((self.viewport[2] - self.viewport[0],
+                                 self.viewport[3] - self.viewport[1]))
+        for y in range(surface.get_height()):
+            for x in range(surface.get_width()):
+                set_pixel(surface, x, y, AZUL_NOTURNO)
+        return surface
+        
+
 
     # Loop principal
     def rodar(self):

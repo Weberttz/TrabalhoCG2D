@@ -84,21 +84,14 @@ def atualizar_coletaveis(jogo):
     jogo.coletaveis[:] = [c for c in jogo.coletaveis if c.ativo]
 
 def atualizar_projeteis(jogo, dt):
-    projeteis = jogo.jogador.equipamento.projetils
+    projeteis = jogo.jogador.equipamento.projeteis
     projeteis[:] = [p for p in projeteis if p.ativo]
     for projetil in projeteis:
         projetil.atualizar(dt, jogo.plataformas)  
 
 def atualizar_zumbis(jogo):
-    projeteis = jogo.jogador.equipamento.projetils
+    projeteis = jogo.jogador.equipamento.projeteis
     for zumbi in jogo.zumbis_visiveis:
         zumbi.atualizar(projeteis)
         if jogo.avancar_frame:
-            zumbi.animar(jogo.anim_zumbi_idle, jogo.anim_zumbi_esquerda, jogo.anim_zumbi_direita)
-
-def atualizar_cachorros(jogo):
-    projeteis = jogo.jogador.equipamento.projetils
-    for cachorro in jogo.cachorros_visiveis:
-        cachorro.atualizar(projeteis)
-        if jogo.avancar_frame:
-            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_esquerda, jogo.anim_cachorro_direita)
+            zumbi.animar(jogo.anim_idle, jogo.anim_esquerda, jogo.anim_direita)

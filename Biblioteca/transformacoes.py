@@ -68,3 +68,34 @@ def safty_rotacao(x,y,pivo): # gera a matriz para ser aplicada nos pontos e usa 
     matriz_rotacao = produto_matriz(matriz_rotacao,translacao_volta)
 
     return matriz_rotacao
+
+def matriz_janela_viewport(janela, viewport):
+
+    Wxmin, Wymin, Wxmax, Wymax = janela
+    Vxmin, Vymin, Vxmax, Vymax = viewport
+
+    sx = ((Vxmax - Vxmin)
+        / (Wxmax - Wxmin))
+
+    sy = ((Vymax - Vymin)
+        / (Wymax - Wymin))
+
+    M = identidade()
+    # Janela -> Origem
+    M = produto_matriz(
+        translacao(-Wxmin,-Wymin),
+        M)
+
+    # Escala
+    M = produto_matriz(
+        escala(sx, sy),
+        M)
+
+    # Origem -> viewport
+
+    M = produto_matriz(
+        translacao(Vxmin,Vymin),
+        M)
+
+    return M
+
