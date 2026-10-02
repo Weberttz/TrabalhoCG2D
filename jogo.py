@@ -10,12 +10,14 @@ from Biblioteca.algoritmos import *
 from Classes.jogador import Jogador
 from Classes.camera import Camera
 from Classes.arma import Arma
+from Classes.cenario import desenhar_cenario, iniciar_cenario, carregar_estruturas_fase
 
 from menu import iniciar_menu, desenhar_menu, acao_menu
 
 class Jogo:
     def __init__(self):
-        pygame.init()
+        pygame.init() 
+        pygame.mixer.init()       
         pygame.display.set_caption("Jogo")
         self.tela = pygame.display.set_mode((LARGURA, ALTURA))
         self.clock = pygame.time.Clock()
@@ -26,6 +28,8 @@ class Jogo:
         self.debug = False
         self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
              "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
+
+        iniciar_cenario()
         
         self.run_finalizada = False
         self.voltando = False
@@ -36,13 +40,13 @@ class Jogo:
         self.coletaveis_visiveis = []
         self.cachorros_visiseis = []
 
+        self.nivel_dificuldade = None
         self.estado_jogo = "menu"
         iniciar_menu()
 
         self.carregar_sprites()
         self.carregar_fase(self.gerenciadorFases.caminho_fase_atual())
 
-       
     # Inicialização
     def carregar_sprites(self):
         self.anim_zumbi_idle = Inicializador.gerar_lista_animacoes("zumbi", "idle", 8)
@@ -73,11 +77,13 @@ class Jogo:
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
-        self.zumbis = Inicializador.criar_zumbis(self.plataformas, self.blocks)
-        self.cachorros = Inicializador.criar_cachorros(self.plataformas, self.blocks)
+        self.zumbis = Inicializador.criar_zumbis(self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
+        self.cachorros = Inicializador.criar_cachorros(self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
 
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
+
+        carregar_estruturas_fase(self.gerenciadorFases.fase_atual)
 
         if self.gerenciadorFases.fase_atual == 0 and self.voltando == False:
             arma = Arma(60, POS_INICIO.copy(), "yellow")
@@ -124,6 +130,7 @@ class Jogo:
 
     # Loop principal
     def rodar(self):
+        self.tocar_musica()
         while self.rodando:
             dt = self.clock.tick(60) / 1000 # único tick por frame
             self.tratar_eventos()
@@ -132,6 +139,11 @@ class Jogo:
 
         pygame.quit()
         sys.exit()
+
+    def tocar_musica(self):
+        pygame.mixer.music.load("Sons/suspense_sobrenatural_loop.wav")
+        pygame.mixer.music.set_volume(1.0) # volume: 0 - mudo, 1 - máximo
+        pygame.mixer.music.play(-1)
 
     def tratar_eventos(self):
         for evento in pygame.event.get():
@@ -166,7 +178,9 @@ class Jogo:
 
         #comeca o jogo apenas se o estado foi alterado para "jogando" a partir do retorno de acao_menu
         elif self.estado_jogo == "jogando":
-            self.tela.fill(AZUL_NOTURNO)
+            x_camera = abs(self.camera.retangulo.x)
+            desenhar_cenario(self.tela, x_camera)
+            # self.tela.fill(AZUL_NOTURNO)
             self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
 
             Renderizador.desenhar_jogador(self)
