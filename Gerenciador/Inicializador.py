@@ -30,7 +30,7 @@ def carregar_mapa(nome_arquivo):
     return mapa
  
 def criar_level(layout):
-    cores = [None, MARROM, VERDE, AMARELO, WHITE, AZUL_NOTURNO]
+    cores = [None, MARROM, VERDE, AMARELO, (98, 0, 234), AZUL_NOTURNO]
     plataformas = []
     blocks = []
     coletaveis = []
@@ -42,7 +42,10 @@ def criar_level(layout):
 
     for y, row in enumerate(layout):
         for x, tile in enumerate(row):
-            if tile == 5:
+            if tile == 4:
+                plataforma = Plataforma(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO, largura, altura, cores[tile], "teleport")
+                plataformas.append(plataforma) 
+            elif tile == 5:
                 block = Plataforma(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO, largura, altura, cores[tile])
                 blocks.append(block)
             elif tile == 6:
