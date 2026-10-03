@@ -30,8 +30,8 @@ class Camera:
         
         # Limitar a câmera aos limites do mundo
         x = min(0, x)  # Lado esquerdo
-        x = max(-(self.largura_mapa - LARGURA), x)  # Lado direito
+        x = max(-(self.largura_mapa - LARGURA), x) if self.largura_mapa > LARGURA else 0 # Lado direito
         y = min(0, y)  # Topo
-        y = max(-(self.altura_mapa - ALTURA), y)  # Base
+        y = max(-(self.altura_mapa - ALTURA), y) if self.altura_mapa > ALTURA else 0 # Base
         
         self.retangulo = Retangulo(x, y, self.largura_mapa, self.altura_mapa)

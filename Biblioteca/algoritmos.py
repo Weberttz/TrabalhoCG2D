@@ -2,7 +2,8 @@ import math
 from Biblioteca import transformacoes
 
 def set_pixel(superficie, x, y, cor, clip_atual = None):
-    superficie.set_at((int(x), int(y)), cor)
+    if 0 <= x < superficie.get_width() and 0 <= y < superficie.get_height():
+        superficie.set_at((int(x), int(y)), cor)
 
 def preencher_retangulo(superficie, retangulo, cor ):
     xmin, ymin, xmax, ymax = retangulo
@@ -190,8 +191,16 @@ def plotar4(superficie, xc, yc, x, y, cor):
     set_pixel(superficie, xc + x, yc - y, cor)
     set_pixel(superficie, xc - x, yc - y, cor)
 
+def linha_h(superficie, x1, x2, y, cor):
+    for x in range(x1, x2 + 1):
+        set_pixel(superficie, x, y, cor)
 
-def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
+def preencher4(superficie, xc, yc, x, y, cor): # passa a linha para fazer setpixel em cada ponto da linha
+    linha_h(superficie, xc - x, xc + x, yc + y, cor)
+    if y != 0:  # evita redesenhar a linha central
+        linha_h(superficie, xc - x, xc + x, yc - y, cor)
+
+def desenhar_elipse(superficie, xc, yc, rx, ry, cor, preenchida = False):
     x = 0
     y = ry
 
@@ -204,7 +213,10 @@ def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
     d1 = ry2 - (rx2 * ry) + (0.25 * rx2)
 
     while dx < dy:
-        plotar4(superficie, xc, yc, x, y, cor)
+        if not preenchida:
+            plotar4(superficie, xc, yc, x, y, cor)
+        else:
+            preencher4(superficie, xc, yc, x, y, cor)
         x += 1
         dx += 2 * ry2
 
@@ -218,7 +230,10 @@ def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
     d2 = (ry2 * ((x + 0.5) ** 2)) + (rx2 * ((y - 1) ** 2)) - (rx2 * ry2)
 
     while y >= 0:
-        plotar4(superficie, xc, yc, x, y, cor)
+        if not preenchida:
+            plotar4(superficie, xc, yc, x, y, cor)
+        else:
+            preencher4(superficie, xc, yc, x, y, cor)
 
         y -= 1
         dy -= 2 * rx2
@@ -229,6 +244,8 @@ def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
             x += 1
             dx += 2 * ry2
             d2 += dx - dy + rx2
+    
+
 # Clipping Cohen-Sutherland
 INSIDE = 0
 LEFT = 1

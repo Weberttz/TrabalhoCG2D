@@ -26,11 +26,32 @@ def desenhar_coletaveis(jogo):
             if jogo.debug:
                 bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
+def desenhar_aabb_de_portal(jogo):
+    for portal in jogo.portais_visiveis:
+        vertices = jogo.camera.aplicar_vertices(portal.retangulo.vertices)
+        bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
 def desenhar_projeteis(jogo):
     scroll = -v.Vetor(jogo.camera.retangulo.topleft)
     for projetil in jogo.jogador.equipamento.projeteis:
         projetil.desenhar(jogo.tela, scroll, jogo.camera)
+
+    for pombo in jogo.pombos:
+        for pedra in pombo.pedras:
+            pedra.desenhar(jogo.tela, scroll, jogo.camera)
+
+def desenhar_pombos(jogo):
+    for pombo in jogo.pombos_visiveis:
+        vertices = jogo.camera.aplicar_vertices(pombo.vertices)
+        bibgraf.scanline_fill(jogo.tela, vertices, pombo.cor)
+        bibgraf.draw_polygonon(jogo.tela, vertices, "red")
+
+        if jogo.debug:
+            texto = jogo.fonte.render(f"Vida: {pombo.vida}", 1, WHITE)
+            jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
+            vertices_rect = jogo.camera.aplicar_vertices(pombo.retangulo.vertices)
+            aabb = r.calcular_aabb(vertices_rect)
+            bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
 def desenhar_zumbis(jogo):
     for zumbi in jogo.zumbis_visiveis:
@@ -52,23 +73,23 @@ def desenhar_zumbis(jogo):
             bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
 def desenhar_cachorros(jogo):
-     for cachorro in jogo.cachorros_visiveis:
-            vertices = jogo.camera.aplicar_vertices(cachorro.vertices)
-            imagem = jogo.imagens_cachorro.get(cachorro.image)
-    
-            if imagem is not None:
-                pos_tela = vertices[1]   # canto superior-esquerdo já com câmera
-                jogo.tela.blit(imagem, pos_tela)
-            else:
-                bibgraf.scanline_fill(jogo.tela, vertices, cachorro.cor)
-                bibgraf.draw_polygonon(jogo.tela, vertices, "red")
-    
-            if jogo.debug:
-                texto = jogo.fonte.render(f"Vida: {cachorro.vida}", 1, WHITE)
-                jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
-                vertices_rect = jogo.camera.aplicar_vertices(cachorro.retangulo.vertices)
-                aabb = r.calcular_aabb(vertices_rect)
-                bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+    for cachorro in jogo.cachorros_visiveis:
+        vertices = jogo.camera.aplicar_vertices(cachorro.vertices)
+        imagem = jogo.imagens_cachorro.get(cachorro.image)
+
+        if imagem is not None:
+            pos_tela = vertices[1]   # canto superior-esquerdo já com câmera
+            jogo.tela.blit(imagem, pos_tela)
+        else:
+            bibgraf.scanline_fill(jogo.tela, vertices, cachorro.cor)
+            bibgraf.draw_polygonon(jogo.tela, vertices, "red")
+
+        if jogo.debug:
+            texto = jogo.fonte.render(f"Vida: {cachorro.vida}", 1, WHITE)
+            jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
+            vertices_rect = jogo.camera.aplicar_vertices(cachorro.retangulo.vertices)
+            aabb = r.calcular_aabb(vertices_rect)
+            bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
 def desenhar_viewport(jogo, matriz_viewport, viewport):
     
