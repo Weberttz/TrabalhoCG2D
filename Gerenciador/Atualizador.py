@@ -87,6 +87,10 @@ def atualizar_visiveis(jogo):
         p for p in jogo.pombos
         if -dx - p.tamanho <= p.pos.x <= -dx + LARGURA
     ]
+    jogo.portais_visiveis = [
+        p for p in jogo.portais
+        if -dx - p.largura <= p.x0 <= -dx + LARGURA
+    ]
 
 def atualizar_coletaveis(jogo):
     """Remove os coletáveis que já foram pegos"""
