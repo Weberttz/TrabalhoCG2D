@@ -1,4 +1,4 @@
-import sys
+import sys, faulthandler
 
 from Gerenciador import Renderizador 
 from Gerenciador import Atualizador
@@ -80,6 +80,7 @@ class Jogo:
         self.zumbis = Inicializador.criar_inimigos("zumbi", self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
         self.cachorros = Inicializador.criar_inimigos("cachorro", self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
         self.pombos = Inicializador.criar_inimigos("pombo", self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
+        self.portais = [p for p in self.plataformas if p.tipo == "teleport"]
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
 
@@ -139,6 +140,7 @@ class Jogo:
     # Loop principal
     def rodar(self):
         self.tocar_musica()
+        faulthandler.dump_traceback_later(5, repeat=True)
         while self.rodando:
             dt = self.clock.tick(60) / 1000 # único tick por frame
             self.tratar_eventos()
