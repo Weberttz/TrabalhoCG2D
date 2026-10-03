@@ -25,6 +25,7 @@ def atualizar_entidades(jogo, dt):
     atualizar_projeteis(jogo, dt)
     atualizar_zumbis(jogo)
     atualizar_cachorros(jogo)
+    atualizar_pombos(jogo)
 
 def verificar_morte_jogador(jogo):
     j = jogo.jogador
@@ -63,7 +64,7 @@ def verificar_voltou_fase(jogo):
 def remover_entidades_inativas(jogo):
     """Altera a lista em memória, sem duplicar"""
     jogo.zumbis[:] = [z for z in jogo.zumbis if z.vivo] # remove os zumbis mortos da lista
-    # jogo.cachorros[:] = [c for c in jogo.cachorros if c.vivo] #  remove os cachorros mortos
+    jogo.pombos[:] = [p for p in jogo.pombos if p.vivo] #  remove os cachorros mortos
     jogador = jogo.jogador
     jogador.inimigos[:] = [i for i in jogador.inimigos if i.vivo] # remove da 'visão' do jogador todos os inimigos
 
@@ -82,6 +83,10 @@ def atualizar_visiveis(jogo):
         c for c in jogo.cachorros
         if -dx - c.tamanho <= c.pos.x <= -dx + LARGURA
     ]
+    jogo.pombos_visiveis = [
+        p for p in jogo.pombos
+        if -dx - p.tamanho <= p.pos.x <= -dx + LARGURA
+    ]
 
 def atualizar_coletaveis(jogo):
     """Remove os coletáveis que já foram pegos"""
@@ -93,6 +98,19 @@ def atualizar_projeteis(jogo, dt):
     projeteis[:] = [p for p in projeteis if p.ativo]
     for projetil in projeteis:
         projetil.atualizar(dt, jogo.plataformas)  
+
+    colisores = [p for p in jogo.plataformas]
+    colisores.append(jogo.jogador)
+    for pombo in jogo.pombos:
+        pedras = pombo.pedras
+        pedras[:] = [p for p in pedras if p.ativo]
+        for pedra in pedras:
+            pedra.atualizar(dt, colisores)
+
+def atualizar_pombos(jogo):
+    projeteis = jogo.jogador.equipamento.projeteis
+    for pombo in jogo.pombos_visiveis:
+        pombo.atualizar(projeteis)
 
 def atualizar_zumbis(jogo):
     projeteis = jogo.jogador.equipamento.projeteis
