@@ -4,10 +4,8 @@ from Classes.cachorro import Cachorro
 from Classes.pombo import Pombo
 from Classes.coletavel import Coletavel
 from settings import *
-from random import randint
 import csv
 
-# --- cores das plataformas (fora da função, para reaproveitar) ---
 COR_ASFALTO, BORDA_ASFALTO = (74, 74, 74),   (44, 44, 48)
 COR_CAIXA,   BORDA_CAIXA   = (178, 122, 66), (104, 66, 32)
 COR_METAL,   BORDA_METAL   = (70, 130, 170), (36, 74, 104)
