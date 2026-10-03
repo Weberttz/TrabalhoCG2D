@@ -14,8 +14,9 @@ class Jogador(Humanoide):
         self.tempo_invulnerabilidade = 1.0  # 1 seg
         self.momento_ultimo_dano = 0
         self.tempo_teleport = 4.0
-        self.pode_teleportar = False
         self.momento_ultimo_teleport = 100
+        self.teleport_colidiu = None
+        self.momento_entrada_teleport = None 
 
     def resetar(self, pos_inicial):
         self.pos = pos_inicial.copy()
@@ -37,7 +38,6 @@ class Jogador(Humanoide):
         self.atualizar_vertices_equipamento()
         self.atirar()
         self.atualizar_invulnerabilidade()
-        self.atualizar_pode_teleportar()
 
     def get_direcao_tiro(self):
         '''Determina a direção do tiro.'''
@@ -102,36 +102,55 @@ class Jogador(Humanoide):
 
     def colidir_com_teleport(self):
         teleports = [p for p in self.plataformas if p.tipo == "teleport"]
-        teleport_colidiu = None
-        teleport_alvo = None
-        menor_distancia = 400 * 32
-        for teleport in teleports:
-            if self.retangulo.colidiu_com(teleport.retangulo):
-                teleport_colidiu = teleport
+
+        # encontrar teleport atual
+        atual = None
+        for t in teleports:
+            if self.retangulo.colidiu_com(t.retangulo):
+                atual = t
                 break
 
-        if teleport_colidiu != None:
-            for teleport in teleports:
-                x_teleport1 = teleport_colidiu.x0
-                y_teleport1 = teleport_colidiu.y0
-                x_teleport2 = teleport.x0
-                y_teleport2 = teleport.y0
+        # se saiu do teleport, então destrava
+        if atual is None:
+            self.teleport_colidiu = None
+            self.momento_entrada_teleport = None
+            return
+        
+        agora = pygame.time.get_ticks()
 
-                distancia = abs(x_teleport1 - x_teleport2) + abs(y_teleport1 - y_teleport2)
-                if menor_distancia > distancia and teleport != teleport_colidiu:
-                    teleport_alvo = teleport
-                    menor_distancia = distancia
+        # começou a encostar: inicia a contagem
+        if atual is not self.teleport_colidiu:
+            self.teleport_colidiu = atual
+            self.momento_entrada_teleport = agora
+            return
+        
+        # se não passou o tempo mínimo de 4 segundos
+        if agora - self.momento_entrada_teleport < self.tempo_teleport * 1000:
+            return
 
-        if self.pode_teleportar and teleport_alvo != None:
-            pos_atual = [[self.pos.x], [self.pos.y], [1]]
-            transladacao_origem = transformacoes.translacao(-self.pos.x, -self.pos.y)
-            transladacao_destino = transformacoes.translacao(teleport_alvo.x0, teleport_alvo.y1)
-            matriz_composta = transformacoes.produto_matriz(transladacao_origem, transladacao_destino)
-            pos_final = transformacoes.produto_matriz(matriz_composta, pos_atual)
-            self.pos = Vetor(pos_final[0], pos_final[1])
+        # encontrar o teleport mais próximo
+        alvo = None
+        menor_distancia = float("inf")
+        for t in teleports:
+            if t is atual:
+                continue
+            distancia = abs(atual.x0 - t.x0) + abs(atual.y0 - t.y0)
+            if distancia < menor_distancia:
+                menor_distancia = distancia
+                alvo = t
 
-            self.momento_ultimo_teleport = pygame.time.get_ticks()
-            self.pode_teleportar = False
+        if alvo is None:
+            return
+
+        pos_atual = [[self.pos.x], [self.pos.y], [1]]
+        transladacao_origem = transformacoes.translacao(-self.pos.x, -self.pos.y)
+        transladacao_destino = transformacoes.translacao(alvo.x0, alvo.y1)
+        matriz_composta = transformacoes.produto_matriz(transladacao_origem, transladacao_destino)
+        pos_final = transformacoes.produto_matriz(matriz_composta, pos_atual)
+        self.pos = Vetor(pos_final[0], pos_final[1])
+
+        self.teleport_colidiu = None
+        self.momento_entrada_teleport = None
     
     def colidir_com_coletavel(self):
         '''Trata colisão com coletáveis'''
@@ -161,8 +180,3 @@ class Jogador(Humanoide):
         if self.invulneravel:
             if (pygame.time.get_ticks() - self.momento_ultimo_dano) >= self.tempo_invulnerabilidade * 1000:
                 self.invulneravel = False
-
-    def atualizar_pode_teleportar(self):
-        if not self.pode_teleportar:
-            if (pygame.time.get_ticks() - self.momento_ultimo_teleport) >= self.tempo_teleport * 1000:
-                self.pode_teleportar = True
