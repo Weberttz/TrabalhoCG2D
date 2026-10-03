@@ -2,7 +2,8 @@ import math
 from Biblioteca import transformacoes
 
 def set_pixel(superficie, x, y, cor, clip_atual = None):
-    superficie.set_at((int(x), int(y)), cor)
+    if 0 <= x < superficie.get_width() and 0 <= y < superficie.get_height():
+        superficie.set_at((int(x), int(y)), cor)
 
 def preencher_retangulo(superficie, retangulo, cor ):
     xmin, ymin, xmax, ymax = retangulo
