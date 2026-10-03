@@ -123,10 +123,9 @@ class Jogo:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 self.rodando = False
-            #pega a acao de determinado botao do menu e atualiza o estado do jogo
+                
             if self.estado_jogo == "menu":
-                if evento.type == pygame.MOUSEBUTTONDOWN:
-                    acao = acao_menu(pygame.mouse.get_pos())
+                    acao = acao_menu(evento, pygame.mouse.get_pos())
                     if acao == "jogar":
                         self.estado_jogo = "jogando"
                     elif acao == "sair":

@@ -15,13 +15,8 @@ COR_LUA = (219, 204, 129)
 COR_NUVEM = (255, 255, 255, 80) #Com parametro alpha de transparencia
 COR_MEDIA = (189, 154, 40)
 COR_DIFICIL = (173, 31, 31)
-COR_HOVER_MEDIA = (204, 171, 65)
-COR_HOVER_DIFICIL = (181, 42, 42)
-COR_BORDA_MEDIA = (171, 138, 29)
-COR_BORDA_DIFICL =  (150, 20, 20)
 COR_VOLTAR = (47, 82, 122)
-COR_HOVER_VOLTAR = (54, 90, 133)
-COR_BORDA_VOLTAR = (20, 48, 82)
+
 
 fonte = None
 fonte_titulo = None
@@ -32,6 +27,8 @@ superficie_nuvem = None
 
 estado_menu = "INICIO"
 dificuldade = "FACIL"
+dificuldade_selecionada = 0
+#0, 1, 2, 3
 
 botoes_inicio = [
     {"nome": "JOGAR", "acao": "jogar", "x0": 150, "y0": 240, "x1": 550, "y1": 320},
@@ -40,13 +37,12 @@ botoes_inicio = [
     {"nome": "SAIR", "acao": "sair", "x0": 150, "y0": 570, "x1": 550, "y1": 650},
 ]
 
-botoes = botoes_inicio
 
 botoes_dificuldade = [
-    {"nome": "FACIL", "acao": "facil", "x0": 150, "y0": 250, "x1": 550, "y1": 330, "cor": COR_BOTAO, "hover": COR_HOVER, "borda": COR_BORDA_BOTAO},
-    {"nome": "MEDIA", "acao": "media", "x0": 150, "y0": 360, "x1": 550, "y1": 440, "cor": COR_MEDIA, "hover": COR_HOVER_MEDIA, "borda": COR_BORDA_MEDIA},
-    {"nome": "DIFICIL", "acao": "dificil", "x0": 150, "y0": 470, "x1": 550, "y1": 550, "cor": COR_DIFICIL, "hover": COR_HOVER_DIFICIL, "borda": COR_BORDA_DIFICL},
-    {"nome": "VOLTAR", "acao": "voltar", "x0": 150, "y0": 580, "x1": 550, "y1": 660, "cor": COR_VOLTAR, "hover": COR_HOVER_VOLTAR, "borda": COR_BORDA_VOLTAR},
+    {"nome": "FACIL", "acao": "facil", "x0": 150, "y0": 250, "x1": 550, "y1": 330, "cor": COR_BOTAO},
+    {"nome": "MEDIA", "acao": "media", "x0": 150, "y0": 360, "x1": 550, "y1": 440, "cor": COR_MEDIA},
+    {"nome": "DIFICIL", "acao": "dificil", "x0": 150, "y0": 470, "x1": 550, "y1": 550, "cor": COR_DIFICIL},
+    {"nome": "VOLTAR", "acao": "voltar", "x0": 150, "y0": 580, "x1": 550, "y1": 660, "cor": COR_VOLTAR},
 
 ]
 
@@ -133,13 +129,6 @@ def iniciar_menu():
         botao["superficie"] = criar_superficie_botao(largura_botao, altura_botao, COR_BOTAO, COR_BORDA_BOTAO)
         botao["superficie_hover"] = criar_superficie_botao(largura_botao, altura_botao, COR_HOVER, COR_BORDA_BOTAO)
 
-    for botao in botoes_dificuldade:
-        largura_botao = botao["x1"] - botao["x0"]
-        altura_botao = botao["y1"] - botao["y0"]
-
-        botao["superficie"] = criar_superficie_botao(largura_botao, altura_botao, botao["cor"], botao["borda"])
-        botao["superficie_hover"] = criar_superficie_botao(largura_botao, altura_botao, botao["hover"], botao["borda"])
-
 def ponto_no_botao(ponto_x, ponto_y, x0, y0, x1, y1):
     return x0 <= ponto_x <= x1 and y0 <= ponto_y <= y1
 
@@ -147,73 +136,91 @@ def ponto_no_botao(ponto_x, ponto_y, x0, y0, x1, y1):
 def desenhar_menu(superficie, posicao_mouse):
     global estado_menu
     superficie.blit(imagem_fundo, (0, 0))
-
-
-    if estado_menu == "INICIO":
-        botoes_ativos = botoes_inicio
-        texto = "ZUMBI GAME"
-    else:
-        botoes_ativos = botoes_dificuldade
-        texto = "DIFICULDADE"
-    # titulo_x = LARGURA // 2 - texto_titulo.get_width() // 4
-    titulo_x = 160
-    texto_titulo = fonte_titulo.render(texto, True, COR_TITULO)
-    print(texto_titulo.get_height())
-
     superficie.blit(superficie_nuvem, (650, 40))
-    superficie.blit(texto_titulo, (titulo_x, 121))
-
-    for botao in botoes_ativos:
-        if ponto_no_botao(posicao_mouse[0], posicao_mouse[1], botao["x0"], botao["y0"], botao["x1"], botao["y1"]):
-            superficie_botao = botao["superficie_hover"]
-        else:
-            superficie_botao = botao["superficie"]
-
-        superficie.blit(superficie_botao, (botao["x0"], botao["y0"]))
-
-        texto = fonte.render(botao["nome"], True, COR_TEXTO)
-
-        largura_botao = botao["x1"] - botao["x0"]
-        altura_botao = botao["y1"] - botao["y0"]
-
-        texto_x = botao["x0"] + largura_botao // 2 - texto.get_width() // 2
-        texto_y = botao["y0"] + altura_botao // 2 - texto.get_height() // 2
-
-        superficie.blit(texto, (texto_x, texto_y))
-
     superficie.blit(superficie_circulo, (1000, 35))
 
-#identifica o clique do mouse e retorna o nome da acao associada ao botao
-def acao_menu(posicao_mouse):
-    global estado_menu, dificuldade
-    mouse_x, mouse_y = posicao_mouse
 
     if estado_menu == "INICIO":
-        botoes = botoes_inicio
-    else:
-        botoes = botoes_dificuldade
-
-    for botao in botoes:
-        if ponto_no_botao(mouse_x, mouse_y, botao["x0"], botao["y0"], botao["x1"], botao["y1"]):
-            acao = botao["acao"]
-        
-            if acao == "dificuldade":
-                estado_menu = "DIFICULDADE"
-                return None
-            elif acao == "voltar":
-                estado_menu = "INICIO"
-                return None
-            elif acao == "facil":
-                dificuldade = "FACIL"
-                return None
-            elif acao == "media":
-                dificuldade = "MEDIA"
-                return None
-            elif acao == "dificil":
-                dificuldade = "DIFICIL"
-                return None
+        for botao in botoes_inicio:
+            if ponto_no_botao(posicao_mouse[0], posicao_mouse[1], botao["x0"], botao["y0"], botao["x1"], botao["y1"]):
+                superficie_botao = botao["superficie_hover"]
             else:
-                return acao
+                superficie_botao = botao["superficie"]
+
+            superficie.blit(superficie_botao, (botao["x0"], botao["y0"]))
+            texto_titulo = fonte_titulo.render("ZUMBI GAME", True, COR_TITULO)
+            superficie.blit(texto_titulo, (160, 121))
+
+            texto = fonte.render(botao["nome"], True, COR_TEXTO)
+
+            largura_botao = botao["x1"] - botao["x0"]
+            altura_botao = botao["y1"] - botao["y0"]
+
+            texto_x = botao["x0"] + largura_botao // 2 - texto.get_width() // 2
+            texto_y = botao["y0"] + altura_botao // 2 - texto.get_height() // 2
+
+            superficie.blit(texto, (texto_x, texto_y))
+    else:
+        texto_titulo = fonte_titulo.render("DIFICULDADE", True, COR_TITULO)
+        superficie.blit(texto_titulo, (160, 121))
+
+        for i, opcao in enumerate(botoes_dificuldade):
+            if i == dificuldade_selecionada:
+                cor = opcao["cor"]
+                texto_exibido = f"> {opcao["nome"]}"
+            else:
+                cor = COR_TEXTO
+                texto_exibido = opcao["nome"]
+
+            superficie_texto = fonte.render(texto_exibido, True, cor)
+            largura_opcao = opcao["x1"] - opcao["x0"]
+            altura_opcao  = opcao["y1"] - opcao["y0"]
+
+            x_opcao = opcao["x0"] + largura_opcao // 2 - superficie_texto.get_width() // 2
+            y_opcao = opcao["y0"] + altura_opcao // 2 - superficie_texto.get_height() // 2
+
+            superficie.blit(superficie_texto, (x_opcao, y_opcao))
+
+
+#identifica o clique do mouse e retorna o nome da acao associada ao botao
+#quando estiver na tela de selecionar dificuldade, identifica a tecla pressionada para navegar nas opcoes e para retornar a dificuldade
+def acao_menu(evento, posicao_mouse):
+    global estado_menu, dificuldade, dificuldade_selecionada
+
+    if estado_menu == "INICIO":
+        if evento.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = posicao_mouse
+
+            for botao in botoes_inicio:
+                if ponto_no_botao(posicao_mouse[0], posicao_mouse[1], botao["x0"], botao["y0"], botao["x1"], botao["y1"]):
+                    if botao["acao"] == "dificuldade":
+                       estado_menu = "DIFICULDADE"
+                       dificuldade_selecionada = 0
+                       return None
+                    else:
+                        return botao["acao"]
+
+    elif estado_menu == "DIFICULDADE":
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_DOWN:
+                dificuldade_selecionada += 1
+                if dificuldade_selecionada >= 4:
+                    dificuldade_selecionada = 0
+
+            elif evento.key == pygame.K_UP:
+                dificuldade_selecionada -= 1
+                if dificuldade_selecionada < 0:
+                    dificuldade_selecionada = 3
+
+            elif evento.key == pygame.K_RETURN:
+                opcao = botoes_dificuldade[dificuldade_selecionada]
+                if opcao["acao"] in ["facil", "media", "dificil"]:
+                    dificuldade = opcao["acao"].upper()
+                    estado_menu = "INICIO"
+                    return None
+                elif opcao["acao"] == "voltar":
+                    estado_menu = "INICIO"
+                    return None
 
     return None
 
