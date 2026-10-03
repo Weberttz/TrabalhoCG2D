@@ -4,6 +4,13 @@ import Biblioteca.algoritmos as bibgraf
 from Biblioteca import transformacoes
 from settings import WHITE, BLACK, LARGURA, ALTURA, AZUL_NOTURNO
 
+uvs = [
+    (0, 1),  # inferior-esquerdo
+    (0, 0),  # superior-esquerdo
+    (1, 0),  # superior-direito
+    (1, 1),  # inferior-direito
+]
+
 def desenhar_jogador(jogo):
     vertices = jogo.camera.aplicar_vertices(jogo.jogador.vertices)
     bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
@@ -44,8 +51,12 @@ def desenhar_projeteis(jogo):
 def desenhar_pombos(jogo):
     for pombo in jogo.pombos_visiveis:
         vertices = jogo.camera.aplicar_vertices(pombo.vertices)
-        bibgraf.scanline_fill(jogo.tela, vertices, pombo.cor)
-        bibgraf.draw_polygonon(jogo.tela, vertices, "red")
+        imagem = None # jogo.imagens_pombo.get(pombo.image)
+        if imagem is not None:
+            bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem)
+        else:
+            bibgraf.scanline_fill(jogo.tela, vertices, pombo.cor)
+            bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
         if jogo.debug:
             texto = jogo.fonte.render(f"Vida: {pombo.vida}", 1, WHITE)
@@ -55,13 +66,6 @@ def desenhar_pombos(jogo):
             bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
 def desenhar_zumbis(jogo):
-    uvs = [
-        (0, 1),  # inferior-esquerdo
-        (0, 0),  # superior-esquerdo
-        (1, 0),  # superior-direito
-        (1, 1),  # inferior-direito
-    ]
-
     for zumbi in jogo.zumbis_visiveis:
         vertices = jogo.camera.aplicar_vertices(zumbi.vertices)
         imagem = jogo.imagens_zumbi.get(zumbi.image)
@@ -84,8 +88,7 @@ def desenhar_cachorros(jogo):
         imagem = jogo.imagens_cachorro.get(cachorro.image)
 
         if imagem is not None:
-            pos_tela = vertices[1]   # canto superior-esquerdo já com câmera
-            jogo.tela.blit(imagem, pos_tela)
+            bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem)
         else:
             bibgraf.scanline_fill(jogo.tela, vertices, cachorro.cor)
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
