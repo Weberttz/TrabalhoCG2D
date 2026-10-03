@@ -61,7 +61,7 @@ def criar_level(layout):
                 plataforma = Plataforma(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO, largura, 2 * altura, cores[tile], BLACK, "teleport")
                 plataformas.append(plataforma) 
             elif tile == 5:
-                block = Plataforma(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO, largura, altura, cores[tile], BLACK)
+                block = Plataforma(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO, largura, altura, cores[tile], BLACK, "block")
                 blocks.append(block)
             elif tile == 6:
                 tapioca = Coletavel(Vetor(x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO), 10, WHITE, "tapioca")
