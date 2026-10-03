@@ -60,7 +60,10 @@ class Zumbi(Humanoide):
             esta_no_campo_de_visao = (abs(self.inimigo.pos.x - self.pos.x) < self.campo_visao)
 
             if esta_no_campo_de_visao:
-                self.vel_x = ((self.inimigo.pos.x - self.pos.x) / abs(self.inimigo.pos.x - self.pos.x))
+                if self.inimigo.pos.x != self.pos.x:
+                    self.vel_x = ((self.inimigo.pos.x - self.pos.x) / abs(self.inimigo.pos.x - self.pos.x))
+                else:
+                    self.vel_x = 0
             else: 
                 self.vel_x = random.choice([-1, 0, 1])
 
