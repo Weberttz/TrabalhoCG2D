@@ -26,6 +26,8 @@ def draw_polygonon(superficie, vertices, color, clip_atual = None):
     superficie.unlock()
   
 def linha_bresenham(superficie, x0, y0, x1, y1, cor, clip_atual = None):
+    x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
+
     dx = abs(x1 - x0)
     dy = abs(y1 - y0)
     sx = 1 if x0 < x1 else -1
@@ -345,3 +347,82 @@ def retangulo_para_poligono(
         (x + largura, y + altura),
         (x, y + altura)
     ]
+
+def scanline_texture(superficie, pontos, uvs, textura):
+    tex_w = textura.get_width()
+    tex_h = textura.get_height()
+
+    n = len(pontos)
+    ys = [p[1] for p in pontos]
+    y_min = int(min(ys))
+    y_max = int(max(ys))
+
+    for y in range(y_min, y_max):
+        intersecoes = []
+
+        for i in range(n):
+            x0, y0 = pontos[i]
+            x1, y1 = pontos[(i + 1) % n]
+            u0, v0 = uvs[i]
+            u1, v1 = uvs[(i + 1) % n]
+
+            if y0 == y1:
+                continue
+
+            if y0 > y1:
+                x0, y0, x1, y1 = x1, y1, x0, y0
+                u0, v0, u1, v1 = u1, v1, u0, v0
+
+            if y < y0 or y >= y1:
+                continue
+
+            t = (y - y0) / (y1 - y0)
+            x = x0 + t * (x1 - x0)
+            u = u0 + t * (u1 - u0)
+            v = v0 + t * (v1 - v0)
+            intersecoes.append((x, u, v))
+
+        intersecoes.sort(key=lambda item: item[0])
+
+        for i in range(0, len(intersecoes), 2):
+            if i + 1 >= len(intersecoes):
+                continue
+
+            x_ini, u_ini, v_ini = intersecoes[i]
+            x_fim, u_fim, v_fim = intersecoes[i + 1]
+
+            if x_fim == x_ini:
+                continue
+
+            for x in range(int(x_ini), int(x_fim) + 1):
+                t = (x - x_ini) / (x_fim - x_ini)
+                u = u_ini + t * (u_fim - u_ini)
+                v = v_ini + t * (v_fim - v_ini)
+
+                tx = int(u * (tex_w - 1))
+                ty = int(v * (tex_h - 1))
+
+                if 0 <= tx < tex_w and 0 <= ty < tex_h: 
+                    # ao invés de só pintar, temos que retirar os quadrados transparentes
+                    cor = textura.get_at((tx, ty))
+                    a = cor.a
+
+                    if a == 0:
+                        continue
+
+                    if not (0 <= x < superficie.get_width()
+                            and 0 <= y < superficie.get_height()):
+                        continue
+
+                    if a < 255:
+                        fundo = superficie.get_at((x, y))
+                        fator = a / 255
+                        cor = (
+                            int(cor.r * fator + fundo.r * (1 - fator)),
+                            int(cor.g * fator + fundo.g * (1 - fator)),
+                            int(cor.b * fator + fundo.b * (1 - fator)),
+                        )
+                    else:
+                        cor = (cor.r, cor.g, cor.b)
+
+                    set_pixel(superficie, x, y, cor)
