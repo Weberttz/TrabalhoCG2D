@@ -22,7 +22,8 @@ def desenhar_coletaveis(jogo):
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
         else:
             centro_na_tela = jogo.camera.aplicar_posicao(coletavel.centro)
-            bibgraf.desenhar_circulo(jogo.tela, centro_na_tela, coletavel.raio, coletavel.cor, True)
+            bibgraf.desenhar_circulo(jogo.tela, centro_na_tela, coletavel.raio+1, BLACK, True)
+            bibgraf.desenhar_circulo(jogo.tela, centro_na_tela, coletavel.raio-1, coletavel.cor, True)
             if jogo.debug:
                 bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
@@ -54,13 +55,18 @@ def desenhar_pombos(jogo):
             bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
 def desenhar_zumbis(jogo):
+    uvs = [
+        (0, 1),  # inferior-esquerdo
+        (0, 0),  # superior-esquerdo
+        (1, 0),  # superior-direito
+        (1, 1),  # inferior-direito
+    ]
+
     for zumbi in jogo.zumbis_visiveis:
         vertices = jogo.camera.aplicar_vertices(zumbi.vertices)
         imagem = jogo.imagens_zumbi.get(zumbi.image)
-
         if imagem is not None:
-            pos_tela = vertices[1]   # canto superior-esquerdo já com câmera
-            jogo.tela.blit(imagem, pos_tela)
+            bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem)
         else:
             bibgraf.scanline_fill(jogo.tela, vertices, zumbi.cor)
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
