@@ -58,7 +58,7 @@ class Jogo:
             imagens |= Inicializador.carregar_animacoes(lista)
 
         # redimensiona uma vez só, na carga -> matrizes de escala
-        self.imagens_zumbi = {nome: pygame.transform.scale(img, (32, 32))
+        self.imagens_zumbi = {nome: pygame.transform.scale(img, (TAMANHO_QUADRADO, TAMANHO_QUADRADO))
                               for nome, img in imagens.items()}
 
         self.anim_cachorro_idle = Inicializador.gerar_lista_animacoes("dog", "idle", 5)
@@ -70,16 +70,14 @@ class Jogo:
             imagens |= Inicializador.carregar_animacoes(lista)
 
         # redimensiona uma vez só, na carga -> matrizes de escala
-        self.imagens_cachorro = {nome: pygame.transform.scale(img, (32, 32))
+        self.imagens_cachorro = {nome: pygame.transform.scale(img, (TAMANHO_QUADRADO, TAMANHO_QUADRADO))
                                       for nome, img in imagens.items()}
         
 
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
-        self.zumbis = Inicializador.criar_inimigos("zumbi", self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
-        self.cachorros = Inicializador.criar_inimigos("cachorro", self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
-        self.pombos = Inicializador.criar_inimigos("pombo", self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
+        self.zumbis, self.cachorros, self.pombos = Inicializador.criar_inimigos(mapa, self.plataformas, self.blocks)
         self.portais = [p for p in self.plataformas if p.tipo == "teleport"]
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
