@@ -27,8 +27,7 @@ def desenhar_coletaveis(jogo):
                 bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
 def desenhar_aabb_de_portal(jogo):
-    portais = [p for p in jogo.plataformas if p.tipo == "teleport"]
-    for portal in portais:
+    for portal in jogo.portais_visiveis:
         vertices = jogo.camera.aplicar_vertices(portal.retangulo.vertices)
         bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
