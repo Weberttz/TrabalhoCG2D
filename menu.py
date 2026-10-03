@@ -6,13 +6,17 @@ from Biblioteca.algoritmos import linha_bresenham, flood_fill_iterativo, bresenh
 LARGURA, ALTURA = 1262, 722
 CAMINHO_FONTE = "./Assets/PressStart2P-Regular.ttf"
 CAMINHO_FUNDO = "./Assets/uece-noite.png"
-COR_BOTAO = pygame.Color('#538645')
-COR_HOVER =  pygame.Color("#729D65") #VERDE + CLARO
-COR_BORDA_BOTAO = pygame.Color("#335F27") #VERDE + ESCURO
+COR_BOTAO = pygame.Color("#427133")
+COR_HOVER =  pygame.Color("#4E7D41") #VERDE + CLARO
+COR_BORDA_BOTAO = pygame.Color("#325828") #VERDE + ESCURO
 COR_TEXTO = pygame.Color("#D1F4C7")
-COR_TITULO = pygame.Color("#508640")
-COR_LUA = (238, 220, 130)
+COR_TITULO = pygame.Color("#325828")
+COR_LUA = (219, 204, 129)
 COR_NUVEM = (255, 255, 255, 80) #Com parametro alpha de transparencia
+COR_MEDIA = (189, 154, 40)
+COR_DIFICIL = (173, 31, 31)
+COR_VOLTAR = (47, 82, 122)
+
 
 fonte = None
 fonte_titulo = None
@@ -21,10 +25,25 @@ superficie_circulo = None
 superficie_elipse = None
 superficie_nuvem = None
 
-botoes = [
-    {"nome": "JOGAR", "acao": "jogar", "x0": 431, "y0": 250, "x1": 831, "y1": 330},
-    {"nome": "INSTRUÇÕES", "acao": "instrucoes", "x0": 431, "y0": 360, "x1": 831, "y1": 440},
-    {"nome": "SAIR", "acao": "sair", "x0": 431, "y0": 470, "x1": 831, "y1": 550}
+estado_menu = "INICIO"
+dificuldade = "FACIL"
+dificuldade_selecionada = 0
+#0, 1, 2, 3
+
+botoes_inicio = [
+    {"nome": "JOGAR", "acao": "jogar", "x0": 150, "y0": 240, "x1": 550, "y1": 320},
+    {"nome": "DIFICULDADE", "acao": "dificuldade", "x0": 150, "y0": 350, "x1": 550, "y1": 430},
+    {"nome": "INSTRUÇÕES", "acao": "instrucoes", "x0": 150, "y0": 460, "x1": 550, "y1": 540},
+    {"nome": "SAIR", "acao": "sair", "x0": 150, "y0": 570, "x1": 550, "y1": 650},
+]
+
+
+botoes_dificuldade = [
+    {"nome": "FACIL", "acao": "facil", "x0": 150, "y0": 250, "x1": 550, "y1": 330, "cor": COR_BOTAO},
+    {"nome": "MEDIA", "acao": "media", "x0": 150, "y0": 360, "x1": 550, "y1": 440, "cor": COR_MEDIA},
+    {"nome": "DIFICIL", "acao": "dificil", "x0": 150, "y0": 470, "x1": 550, "y1": 550, "cor": COR_DIFICIL},
+    {"nome": "VOLTAR", "acao": "voltar", "x0": 150, "y0": 580, "x1": 550, "y1": 660, "cor": COR_VOLTAR},
+
 ]
 
 def criar_superficie_botao(largura, altura, cor, cor_borda):
@@ -102,8 +121,9 @@ def iniciar_menu():
     #pre renderiza o circulo/lua
     superficie_circulo = criar_superficie_circulo(50, COR_LUA)
     superficie_nuvem = criar_superficie_nuvem(COR_NUVEM, COR_NUVEM)
+    
     #pre renderiza cada botao no estado normal e no estado de hover
-    for botao in botoes:
+    for botao in botoes_inicio:
         largura_botao = botao["x1"] - botao["x0"]
         altura_botao = botao["y1"] - botao["y0"]
 
@@ -114,48 +134,98 @@ def ponto_no_botao(ponto_x, ponto_y, x0, y0, x1, y1):
     return x0 <= ponto_x <= x1 and y0 <= ponto_y <= y1
 
 def desenhar_menu(superficie, posicao_mouse):
-    '''Desenha menu pré-renderizado na tela.'''
+    global estado_menu
     superficie.blit(imagem_fundo, (0, 0))
-
-    texto_titulo = fonte_titulo.render("ZUMBI GAME", True, COR_TITULO)
-
-    titulo_x = LARGURA // 2 - texto_titulo.get_width() // 2
-
-    superficie.blit(texto_titulo, (titulo_x, 100))
-    superficie.blit(superficie_nuvem, (80, 40))
-
-    for botao in botoes:
-        if ponto_no_botao(posicao_mouse[0], posicao_mouse[1], botao["x0"], botao["y0"], botao["x1"], botao["y1"]):
-            superficie_botao = botao["superficie_hover"]
-        else:
-            superficie_botao = botao["superficie"]
-
-        superficie.blit(superficie_botao, (botao["x0"], botao["y0"]))
-
-        texto = fonte.render(botao["nome"], True, COR_TEXTO)
-
-        largura_botao = botao["x1"] - botao["x0"]
-        altura_botao = botao["y1"] - botao["y0"]
-
-        texto_x = botao["x0"] + largura_botao // 2 - texto.get_width() // 2
-        texto_y = botao["y0"] + altura_botao // 2 - texto.get_height() // 2
-
-        superficie.blit(texto, (texto_x, texto_y))
-
+    superficie.blit(superficie_nuvem, (650, 40))
     superficie.blit(superficie_circulo, (1000, 35))
 
 
-def acao_menu(posicao_mouse):
-    '''Identifica o clique do mouse e retorna o 
-        nome da ação associada ao botão.'''
-    mouse_x, mouse_y = posicao_mouse
+    if estado_menu == "INICIO":
+        for botao in botoes_inicio:
+            if ponto_no_botao(posicao_mouse[0], posicao_mouse[1], botao["x0"], botao["y0"], botao["x1"], botao["y1"]):
+                superficie_botao = botao["superficie_hover"]
+            else:
+                superficie_botao = botao["superficie"]
 
-    for botao in botoes:
-        if ponto_no_botao(mouse_x, mouse_y, botao["x0"], botao["y0"], botao["x1"], botao["y1"]):
-            return botao["acao"]
+            superficie.blit(superficie_botao, (botao["x0"], botao["y0"]))
+            texto_titulo = fonte_titulo.render("ZUMBI GAME", True, COR_TITULO)
+            superficie.blit(texto_titulo, (160, 121))
+
+            texto = fonte.render(botao["nome"], True, COR_TEXTO)
+
+            largura_botao = botao["x1"] - botao["x0"]
+            altura_botao = botao["y1"] - botao["y0"]
+
+            texto_x = botao["x0"] + largura_botao // 2 - texto.get_width() // 2
+            texto_y = botao["y0"] + altura_botao // 2 - texto.get_height() // 2
+
+            superficie.blit(texto, (texto_x, texto_y))
+    else:
+        texto_titulo = fonte_titulo.render("DIFICULDADE", True, COR_TITULO)
+        superficie.blit(texto_titulo, (160, 121))
+
+        for i, opcao in enumerate(botoes_dificuldade):
+            if i == dificuldade_selecionada:
+                cor = opcao["cor"]
+                texto_exibido = f"> {opcao["nome"]}"
+            else:
+                cor = COR_TEXTO
+                texto_exibido = opcao["nome"]
+
+            superficie_texto = fonte.render(texto_exibido, True, cor)
+            largura_opcao = opcao["x1"] - opcao["x0"]
+            altura_opcao  = opcao["y1"] - opcao["y0"]
+
+            x_opcao = opcao["x0"] + largura_opcao // 2 - superficie_texto.get_width() // 2
+            y_opcao = opcao["y0"] + altura_opcao // 2 - superficie_texto.get_height() // 2
+
+            superficie.blit(superficie_texto, (x_opcao, y_opcao))
+
+
+#identifica o clique do mouse e retorna o nome da acao associada ao botao
+#quando estiver na tela de selecionar dificuldade, identifica a tecla pressionada para navegar nas opcoes e para retornar a dificuldade
+def acao_menu(evento, posicao_mouse):
+    global estado_menu, dificuldade, dificuldade_selecionada
+
+    if estado_menu == "INICIO":
+        if evento.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = posicao_mouse
+
+            for botao in botoes_inicio:
+                if ponto_no_botao(posicao_mouse[0], posicao_mouse[1], botao["x0"], botao["y0"], botao["x1"], botao["y1"]):
+                    if botao["acao"] == "dificuldade":
+                       estado_menu = "DIFICULDADE"
+                       dificuldade_selecionada = 0
+                       return None
+                    else:
+                        return botao["acao"]
+
+    elif estado_menu == "DIFICULDADE":
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_DOWN:
+                dificuldade_selecionada += 1
+                if dificuldade_selecionada >= 4:
+                    dificuldade_selecionada = 0
+
+            elif evento.key == pygame.K_UP:
+                dificuldade_selecionada -= 1
+                if dificuldade_selecionada < 0:
+                    dificuldade_selecionada = 3
+
+            elif evento.key == pygame.K_RETURN:
+                opcao = botoes_dificuldade[dificuldade_selecionada]
+                if opcao["acao"] in ["facil", "media", "dificil"]:
+                    dificuldade = opcao["acao"].upper()
+                    estado_menu = "INICIO"
+                    return None
+                elif opcao["acao"] == "voltar":
+                    estado_menu = "INICIO"
+                    return None
 
     return None
 
+def get_dificuldade():
+    return dificuldade
 
 if __name__ == "__main__":
     pygame.init()
