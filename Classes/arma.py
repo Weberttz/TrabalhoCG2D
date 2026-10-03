@@ -7,7 +7,7 @@ class Arma(Equipamento):
         super().__init__(quantidade_uso, pos, cor, 20, 8)
         self.municao = 100
         self.pode_atirar = True
-        self.projetils = []
+        self.projeteis = []
         self.tempo = pygame.time.get_ticks()
         self.intervalo_tiro = 1000
 
@@ -15,6 +15,6 @@ class Arma(Equipamento):
         if self.pode_atirar and self.municao > 0:
             pos = Vetor(pos)
             projetil = Projetil(pos, pos + direcao)   # alvo = 1 unidade à frente
-            self.projetils.append(projetil)
+            self.projeteis.append(projetil)
             self.pode_atirar = False
             self.municao -= 1

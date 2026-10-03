@@ -7,7 +7,9 @@
 │   └── transformacoes.py (matrizes de transformações lineares)
 ├── Classes
 │   ├── arma.py  (arma do jogador)
+|   ├── cachorro (classe de inimigo)
 │   ├── camera.py 
+│   ├── cenario.py
 │   ├── coletavel.py (classe mãe de todos os coletáveis)
 │   ├── equipamento.py (equipamento do jogador ou zumbi)
 │   ├── humanoide.py (classe mãe de jogador e zumbi)
@@ -17,7 +19,7 @@
 │   ├── retangulo.py (classe para colisão)
 │   ├── tapioca.py (classe de alimento coletável que aumenta vida)
 │   ├── vetor.py (classe para física)
-│   └── zumbi.py (classe do inimigo)
+│   └── zumbi.py (classe de inimigo)
 ├── converter.py (script de conversão de txt para csv)
 ├── Docs
 │   └── jogo.gdd (ideias do jogo)
@@ -87,6 +89,7 @@ Pombo tóxico - inimigo aéreo
 ## Estruturas 
 ```
 NC2A - prédio top - fusível vai está lá
+Reitoria
 Carrinho do Billy - melhor lugar para lanchar
 RU - muita comida - tapioca tem que existir
 Biblioteca central - documentos importantes
@@ -128,8 +131,7 @@ Refrigerante ( aumentar velocidade - pulo duplo? dash? )
 
 # Dificuldades
 ```
-Fácil - Dano de inimigo = 5
-Normal - Dano de inimigo = 10
-Médio -  Dano de inimigo = 34
-Difícil - Dano de inimigo = 50
+Fácil - Dano de inimigo = 10
+Médio -  Dano de inimigo = 20
+Difícil - Dano de inimigo = 40
 ```

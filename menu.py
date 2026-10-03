@@ -110,6 +110,7 @@ def criar_superficie_nuvem(cor_borda, cor_preenchimento):
     return superficie_nuvem
 
 def iniciar_menu():
+    '''Inicializa o menu, criando as superfícies pré-renderizadas.'''
     global fonte, fonte_titulo, imagem_fundo, superficie_circulo, superficie_nuvem
 
     fonte = pygame.font.Font(CAMINHO_FONTE, 18)
@@ -131,7 +132,6 @@ def iniciar_menu():
 
 def ponto_no_botao(ponto_x, ponto_y, x0, y0, x1, y1):
     return x0 <= ponto_x <= x1 and y0 <= ponto_y <= y1
-
 
 def desenhar_menu(superficie, posicao_mouse):
     global estado_menu

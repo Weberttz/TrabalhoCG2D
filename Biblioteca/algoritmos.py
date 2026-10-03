@@ -1,30 +1,36 @@
 import math
 from Biblioteca import transformacoes
 
-def set_pixel(superficie, x, y, cor):
-    superficie.set_at((int(x), int(y)), cor)
+def set_pixel(superficie, x, y, cor, clip_atual = None):
+    if 0 <= x < superficie.get_width() and 0 <= y < superficie.get_height():
+        superficie.set_at((int(x), int(y)), cor)
+
+def preencher_retangulo(superficie, retangulo, cor ):
+    xmin, ymin, xmax, ymax = retangulo
+
+    for y in range(ymin, ymax + 1):
+        for x in range(xmin, xmax + 1):
+            superficie.set_at((x, y), cor)
 
 def draw_line(superficie, pontos, cor):
     for (x, y) in pontos:
         set_pixel(superficie, x, y, cor)
 
-def draw_polygonon(superficie, vertices, color):
+def draw_polygonon(superficie, vertices, color, clip_atual = None):
     n = len(vertices)
     superficie.lock()
     for i in range(n):
         x0, y0 = vertices[i]
         x1, y1 = vertices[(i+1) % n]
-        linha_bresenham(superficie, x0, y0, x1, y1, color)
+        linha_bresenham(superficie, x0, y0, x1, y1, color, clip_atual)
     superficie.unlock()
   
-def linha_bresenham(superficie, x0, y0, x1, y1, cor):
+def linha_bresenham(superficie, x0, y0, x1, y1, cor, clip_atual = None):
     dx = abs(x1 - x0)
     dy = abs(y1 - y0)
     sx = 1 if x0 < x1 else -1
     sy = 1 if y0 < y1 else -1
     err = dx - dy
-
-    set_pixel = superficie.set_at
 
     while True:
         if x0 == x1 and y0 == y1:
@@ -36,9 +42,9 @@ def linha_bresenham(superficie, x0, y0, x1, y1, cor):
         if e2 < dx:
             err += dx
             y0 += sy
-        set_pixel((int(x0), int(y0)), cor)
+        set_pixel(superficie, x0, y0, cor, clip_atual)
 
-def scanline_fill(superficie, pontos, cor_preenchimento):
+def scanline_fill(superficie, pontos, cor_preenchimento, clip_atual = None):
     ys = [p[1] for p in pontos] # Lista só de Y
     y_min = min(ys) 
     y_max = max(ys)
@@ -69,9 +75,8 @@ def scanline_fill(superficie, pontos, cor_preenchimento):
             x_inicio = int(round(interseccoes_x[i]) + 1) # x inicio e x fim 
             x_fim =  int(round(interseccoes_x[i+1]))
 
-            set_pixel = superficie.set_at
             for x in range(x_inicio, x_fim):
-                set_pixel((x, y), cor_preenchimento)
+                set_pixel(superficie, x, y, cor_preenchimento, clip_atual)
 
 def flood_fill_iterativo(superficie, x, y, cor_preenchimento, cor_borda):
     largura = superficie.get_width()
@@ -142,16 +147,15 @@ def desenhar_circulo(superficie, centro, raio, cor, preenchido=False):
     cx, cy = int(centro[0]), int(centro[1])
     raio = int(raio)
 
-    set_pixel = superficie.set_at
     if preenchido:
         for y, x1, x2 in linhas_circulo_preenchido(cx, cy, raio):
             if 0 <= y < altura:
                 for x in range(max(x1, 0), min(x2, largura - 1) + 1):
-                    set_pixel((x, y), cor)
+                    set_pixel(superficie, x, y, cor)
     else:
         for x, y in pontos_circulo(cx, cy, raio):
             if 0 <= x < largura and 0 <= y < altura:
-                set_pixel((x, y), cor)
+                set_pixel(superficie, x, y, cor)
 
 
 def bresenham_circulo(superficie, xc, yc, r, cor):
@@ -187,8 +191,16 @@ def plotar4(superficie, xc, yc, x, y, cor):
     set_pixel(superficie, xc + x, yc - y, cor)
     set_pixel(superficie, xc - x, yc - y, cor)
 
+def linha_h(superficie, x1, x2, y, cor):
+    for x in range(x1, x2 + 1):
+        set_pixel(superficie, x, y, cor)
 
-def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
+def preencher4(superficie, xc, yc, x, y, cor): # passa a linha para fazer setpixel em cada ponto da linha
+    linha_h(superficie, xc - x, xc + x, yc + y, cor)
+    if y != 0:  # evita redesenhar a linha central
+        linha_h(superficie, xc - x, xc + x, yc - y, cor)
+
+def desenhar_elipse(superficie, xc, yc, rx, ry, cor, preenchida = False):
     x = 0
     y = ry
 
@@ -201,7 +213,10 @@ def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
     d1 = ry2 - (rx2 * ry) + (0.25 * rx2)
 
     while dx < dy:
-        plotar4(superficie, xc, yc, x, y, cor)
+        if not preenchida:
+            plotar4(superficie, xc, yc, x, y, cor)
+        else:
+            preencher4(superficie, xc, yc, x, y, cor)
         x += 1
         dx += 2 * ry2
 
@@ -215,7 +230,10 @@ def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
     d2 = (ry2 * ((x + 0.5) ** 2)) + (rx2 * ((y - 1) ** 2)) - (rx2 * ry2)
 
     while y >= 0:
-        plotar4(superficie, xc, yc, x, y, cor)
+        if not preenchida:
+            plotar4(superficie, xc, yc, x, y, cor)
+        else:
+            preencher4(superficie, xc, yc, x, y, cor)
 
         y -= 1
         dy -= 2 * rx2
@@ -226,34 +244,104 @@ def desenhar_elipse(superficie, xc, yc, rx, ry, cor):
             x += 1
             dx += 2 * ry2
             d2 += dx - dy + rx2
+    
 
-def matriz_janela_viewport(janela, viewport):
+# Clipping Cohen-Sutherland
+INSIDE = 0
+LEFT = 1
+RIGHT = 2
+BOTTOM = 4
+TOP = 8
 
-    Wxmin, Wymin, Wxmax, Wymax = janela
-    Vxmin, Vymin, Vxmax, Vymax = viewport
+# Recebe um ponto e determina a localização dele em relacao a uma janela
+# dada por dois pontos
+def codigo_regiao(x, y, xmin, ymin, xmax, ymax):
+    codigo = INSIDE
+    if x < xmin:
+        codigo |= LEFT
 
-    sx = ((Vxmax - Vxmin)
-        / (Wxmax - Wxmin))
+    elif x > xmax:
+        codigo |= RIGHT
 
-    sy = ((Vymax - Vymin)
-        / (Wymax - Wymin))
+    if y < ymin:
+        codigo |= TOP
 
-    M = transformacoes.identidade()
-    # Janela -> Origem
-    M = transformacoes.produto_matriz(
-        transformacoes.translacao(-Wxmin,-Wymin),
-        M)
+    elif y > ymax:
+        codigo |= BOTTOM
 
-    # Escala
-    M = transformacoes.produto_matriz(
-        transformacoes.escala(sx, sy),
-        M)
+    return codigo
 
-    # Origem -> viewport
+# Recebe dois pontos que determinando uma reta e uma janela
+# Return se tem alguma parte visivel e as coordenadas de intersceção com a janela
+def cohen_sutherland(x0, y0, x1, y1, xmin, ymin, xmax, ymax):
 
-    M = transformacoes.produto_matriz(
-        transformacoes.translacao(Vxmin,Vymin),
-        M)
+    c0 = codigo_regiao(x0, y0, xmin, ymin, xmax, ymax)
 
-    return M
+    c1 = codigo_regiao(x1, y1, xmin, ymin, xmax, ymax)
 
+    while True:
+        if not (c0 | c1):
+            return (True, x0, y0, x1, y1)
+        
+        if c0 & c1:
+            return (False, 0, 0, 0, 0)
+
+        c_out = c0 if c0 else c1
+
+        if c_out & TOP:
+            x = ( x0 + (x1 - x0) * (ymin - y0) / (y1 - y0))
+            y = ymin
+
+        elif c_out & BOTTOM:
+            x = (x0 + (x1 - x0) * (ymax - y0) / (y1 - y0))
+            y = ymax
+
+        elif c_out & RIGHT:
+
+            y = ( y0 + (y1 - y0) * (xmax - x0) / (x1 - x0))
+            x = xmax
+
+        else:
+            y = (y0 + (y1 - y0) * (xmin - x0) / (x1 - x0))
+            x = xmin
+
+        if c_out == c0:
+            x0 = x
+            y0 = y
+            c0 = codigo_regiao(x0, y0, xmin, ymin, xmax, ymax)
+
+        else:
+            x1 = x
+            y1 = y
+            c1 = codigo_regiao(x1, y1, xmin, ymin, xmax, ymax)
+
+# Acho que não precisa desse agora
+def desenhar_linha_recortada(superficie, x0, y0, x1, y1, janela, cor):
+    xmin, ymin, xmax, ymax = janela
+    visivel, rx0, ry0, rx1, ry1 = cohen_sutherland(
+        x0, y0, x1, y1,
+        xmin, ymin, xmax, ymax)
+
+    if visivel:
+        linha_bresenham(superficie,
+            rx0, ry0,
+            rx1, ry1,
+            cor
+        )
+
+
+
+
+def retangulo_para_poligono(
+    x,
+    y,
+    largura,
+    altura
+):
+
+    return [
+        (x, y),
+        (x + largura, y),
+        (x + largura, y + altura),
+        (x, y + altura)
+    ]

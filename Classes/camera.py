@@ -15,11 +15,12 @@ class Camera:
         return [(x + dx, y + dy) for x, y in vertices]
 
     def aplicar_posicao(self, posicao):
+        """Converte posição de mundo em posição da tela"""
         mundo_x, mundo_y = posicao
         dx, dy = self.retangulo.topleft
 
         tela_x = mundo_x + dx
-        tela_y = mundo_y # + dy
+        tela_y = mundo_y + dy
         
         return (tela_x, tela_y)
 
@@ -29,8 +30,8 @@ class Camera:
         
         # Limitar a câmera aos limites do mundo
         x = min(0, x)  # Lado esquerdo
-        x = max(-(self.largura_mapa - LARGURA), x)  # Lado direito
+        x = max(-(self.largura_mapa - LARGURA), x) if self.largura_mapa > LARGURA else 0 # Lado direito
         y = min(0, y)  # Topo
-        y = max(-(self.altura_mapa - ALTURA), y)  # Base
+        y = max(-(self.altura_mapa - ALTURA), y) if self.altura_mapa > ALTURA else 0 # Base
         
         self.retangulo = Retangulo(x, y, self.largura_mapa, self.altura_mapa)
