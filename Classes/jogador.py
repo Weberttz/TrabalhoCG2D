@@ -13,7 +13,10 @@ class Jogador(Humanoide):
         self.invulneravel = False
         self.tempo_invulnerabilidade = 1.0  # 1 seg
         self.momento_ultimo_dano = 0
-        self.tempo_teleport = 4.0
+        self.forca_afastamento = 20
+        self.atrito_afastamento = 0.85
+        self.vel_afastamento = 0
+        self.tempo_teleport = 2.0
         self.momento_ultimo_teleport = 100
         self.teleport_colidiu = None
         self.momento_entrada_teleport = None 
@@ -94,6 +97,11 @@ class Jogador(Humanoide):
             self.aceleracao.y = self.forca_pulo
             self.no_chao = False
 
+        self.vel_x += self.vel_afastamento
+        self.vel_afastamento *= self.atrito_afastamento
+
+        print(f" vel_x = {self.vel_x}")
+
     def lidar_com_colisoes(self):
         self.colidir_com_coletavel()
         self.colidir_com_inimigo()
@@ -101,6 +109,7 @@ class Jogador(Humanoide):
         return super().lidar_com_colisoes()
 
     def colidir_com_teleport(self):
+        '''Detecta se o jogador está na área de teletransporte e teleporta.'''
         teleports = [p for p in self.plataformas if p.tipo == "teleport"]
 
         # encontrar teleport atual
@@ -165,10 +174,16 @@ class Jogador(Humanoide):
                 coletavel.ativo = False   
     
     def colidir_com_inimigo(self):
-        '''Trata colisão com inimigos''' 
+        '''Trata colisão com inimigos.
+        \n Ordem dos acontecimentos da reação - o jogador:
+        \n - Perde vida;
+        \n - É afastado do inimigo; 
+        \n - Torna-se temporariamente invulnerável. ''' 
         for inimigo in self.inimigos:
             if self.retangulo.colidiu_com(inimigo.retangulo) and not self.invulneravel:
+                print(f'Dano inimigo: {inimigo.dano}')
                 self.vida -= inimigo.dano
+                self.afastar_do_inimigo(inimigo)
                 self.invulneravel = True
                 self.momento_ultimo_dano = pygame.time.get_ticks() 
 
@@ -180,3 +195,14 @@ class Jogador(Humanoide):
         if self.invulneravel:
             if (pygame.time.get_ticks() - self.momento_ultimo_dano) >= self.tempo_invulnerabilidade * 1000:
                 self.invulneravel = False
+                self.vel_afastamento = 0
+
+    def afastar_do_inimigo(self, inimigo):
+        # primeiro afasta e depois torna invulneravel
+        # pq assim afasta so uma vez por segundo tbm
+        # se colidir pela esquerda, empurra pra esquerda
+        if self.pos.x < inimigo.pos.x:
+            direcao = -1
+        else:
+            direcao = 1
+        self.vel_afastamento = direcao * self.forca_afastamento

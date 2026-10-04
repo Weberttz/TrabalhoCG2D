@@ -57,10 +57,10 @@ class Pombo():
         self.atingiu_jogador()
 
     def atualizar_vertices(self):
-            self.vertices = [(self.pos.x, self.pos.y), 
-                                        (self.pos.x, self.pos.y - self.tamanho),
-                                        (self.pos.x + self.tamanho, self.pos.y - self.tamanho), 
-                                        (self.pos.x + self.tamanho, self.pos.y)]
+        self.vertices = [(self.pos.x, self.pos.y), 
+                            (self.pos.x, self.pos.y - self.tamanho),
+                            (self.pos.x + self.tamanho, self.pos.y - self.tamanho), 
+                            (self.pos.x + self.tamanho, self.pos.y)]
 
     def atingiu_jogador(self):
         jogador = self.inimigo

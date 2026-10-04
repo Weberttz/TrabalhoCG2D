@@ -12,7 +12,7 @@ from Classes.camera import Camera
 from Classes.arma import Arma
 from Classes.cenario import desenhar_cenario, iniciar_cenario, carregar_estruturas_fase
 
-from menu import iniciar_menu, desenhar_menu, acao_menu
+from menu import iniciar_menu, desenhar_menu, acao_menu, get_dificuldade
 
 class Jogo:
     def __init__(self):
@@ -40,7 +40,8 @@ class Jogo:
         self.coletaveis_visiveis = []
         self.cachorros_visiseis = []
 
-        self.nivel_dificuldade = None
+        # tudo é criado com o default pq a pre renderização é antes da escolha da dificuldade
+        self.nivel_dificuldade = get_dificuldade()
         self.estado_jogo = "menu"
         iniciar_menu()
 
@@ -77,7 +78,7 @@ class Jogo:
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
-        self.zumbis, self.cachorros, self.pombos = Inicializador.criar_inimigos(mapa, self.plataformas, self.blocks)
+        self.zumbis, self.cachorros, self.pombos = Inicializador.criar_inimigos(mapa, self.plataformas, self.blocks, self.nivel_dificuldade)
         self.portais = [p for p in self.plataformas if p.tipo == "teleport"]
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
@@ -164,6 +165,8 @@ class Jogo:
                         self.estado_jogo = "jogando"
                     elif acao == "sair":
                         self.rodando = False
+                    elif acao in ["facil", "medio", "dificil"]:
+                        self.nivel_dificuldade = acao
 
             if self.estado_jogo == "jogando":
                 if evento.type == pygame.KEYDOWN:
