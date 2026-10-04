@@ -33,6 +33,9 @@ COR_JANELA_RU2 = (46, 45, 45)
 PRETO = (26, 26, 26)
 COR_TELHADO_BLOCO = (69, 13, 8)
 COR_GRADES = (8, 48, 15)
+AZUL_CLARO = (25, 54, 105)
+VERMELHO = (112, 15, 15)
+CAMINHO_FONTE = "Assets/PressStart2P-Regular.ttf"
 
 superficie_nuvem = None
 superficie_lua = None
@@ -58,6 +61,7 @@ predios_cenario_atual = []
 vegetacao_cenario_atual = []
 
 textura_tijolos = pygame.image.load("Assets/textura-tijolos.jpg")
+textura_tapioca = pygame.image.load("Assets/tapioca.png")
 
 def desenhar_NC2A():
     largura, altura = 360, 300
@@ -229,15 +233,28 @@ def desenhar_carrinho_billy():
     largura_base, altura_base  = 150, 80
     largura_teto, altura_teto = 160, 20
     largura_pilar, altura_pilar = 8, 50
+    largura_total = largura_teto
     raio_roda = 8
     altura_total = altura_teto + altura_pilar + altura_base + raio_roda + 2
 
-    superficie_carrinho = pygame.Surface((largura_teto, altura_total), pygame.SRCALPHA)
+    superficie_carrinho = pygame.Surface((largura_total, altura_total), pygame.SRCALPHA)
 
     x_base = (largura_teto - largura_base) // 2
     y_base = altura_teto + altura_pilar
     vertices_base = retangulo_para_poligono(x_base, y_base, largura_base, altura_base)
-    scanline_fill(superficie_carrinho, vertices_base, BRANCO)
+    scanline_fill(superficie_carrinho, vertices_base, AZUL_CLARO)
+    uvs = [
+        (0,0),
+        (1,0),
+        (1,1),
+        (0,1)
+    ]
+    
+    scanline_texture(superficie_carrinho, vertices_base, uvs, textura_tapioca)
+    fonte_titulo = pygame.font.Font(CAMINHO_FONTE, 10)
+    
+    texto_tapioca = fonte_titulo.render("tapioca billy", True, BRANCO)
+    superficie_carrinho.blit(texto_tapioca, (x_base + 10, y_base + 50))
 
     vertices_teto = retangulo_para_poligono(0, 0, largura_teto, altura_teto)
     scanline_fill(superficie_carrinho, vertices_teto, BRANCO)
@@ -264,7 +281,7 @@ def desenhar_blocoG():
     largura_bloco, altura_bloco = 800, 320
     largura_telhado, altura_telhado = 830, 20
     altura_total = altura_bloco + altura_telhado
-
+    largura_total = largura_telhado + 500
     largura_faixa = largura_bloco 
     altura_faixa = 30
 #105 - meio, altura grade 20
@@ -272,7 +289,7 @@ def desenhar_blocoG():
     largura_topo_grade, altura_topo_grade = largura_bloco, 5
 
     x_bloco = 15
-    superficie_blocoG = pygame.Surface((largura_telhado, altura_total), pygame.SRCALPHA)
+    superficie_blocoG = pygame.Surface((largura_total, altura_total), pygame.SRCALPHA)
 
     vertices_bloco = retangulo_para_poligono(x_bloco, altura_telhado, largura_bloco, altura_bloco)
     scanline_fill(superficie_blocoG, vertices_bloco, BRANCO)
@@ -293,6 +310,10 @@ def desenhar_blocoG():
     vertices_sombra2 = retangulo_para_poligono(x_bloco, altura_telhado + 150 + altura_faixa - 2, largura_bloco, 8)
     scanline_fill(superficie_blocoG, vertices_sombra2, COR_SOMBRA)
 
+    cores_portas = [
+        COR_JANELA_RU, COR_JANELA_RU, COR_JANELA_RU2, COR_JANELA_RU2
+    ]
+
     largura_porta, altura_porta = 50, 80
     num_portas = 5
     y_porta_baixo = altura_telhado + altura_bloco - altura_porta
@@ -303,14 +324,14 @@ def desenhar_blocoG():
         x_porta = x_centro - (largura_porta // 2)
     
         vertices_porta = retangulo_para_poligono(x_porta, y_porta_baixo, largura_porta, altura_porta)
-        scanline_fill(superficie_blocoG, vertices_porta, CINZA_ESCURO)
+        scanline_fill_gradiente(superficie_blocoG, vertices_porta, cores_portas)
 
     for i in range(num_portas):
         x_centro = x_bloco + (i * distancia) + (distancia // 2)
         x_porta = x_centro - (largura_porta // 2)
         
         vertices_porta = retangulo_para_poligono(x_porta, y_porta_cima, largura_porta, altura_porta)
-        scanline_fill(superficie_blocoG, vertices_porta, CINZA_ESCURO)
+        scanline_fill_gradiente(superficie_blocoG, vertices_porta, cores_portas)
 
     x_fim = largura_bloco + 15 - largura_grade
     x_colunas_grade = list(range(x_bloco, x_fim + 1, 70))
@@ -322,8 +343,21 @@ def desenhar_blocoG():
     vertices_topo_grade = retangulo_para_poligono(x_bloco, altura_telhado + 110, largura_topo_grade, altura_topo_grade)
     scanline_fill(superficie_blocoG, vertices_topo_grade, COR_GRADES)
 
-    return superficie_blocoG
 
+    largura_g, altura_g = 160, 160
+    vertices_g = retangulo_para_poligono(largura_telhado + 20, altura_telhado + altura_bloco - altura_g, largura_g, altura_g)
+    scanline_fill(superficie_blocoG, vertices_g, BRANCO)    
+    largura_g_menor, altura_g_menor = 80, 80
+    vertices_g_menor = retangulo_para_poligono(largura_telhado + 60, altura_telhado + altura_bloco - 1.5 * altura_g_menor  , largura_g_menor, altura_g_menor)
+    scanline_fill(superficie_blocoG, vertices_g_menor, AZUL_ESCURO)
+    
+    fonte_titulo = pygame.font.Font(CAMINHO_FONTE, 35)
+
+    texto_G = fonte_titulo.render("G", True, BRANCO)
+    superficie_blocoG.blit(texto_G, (largura_telhado + 85, altura_telhado + altura_bloco -  altura_g_menor -16 ))
+
+
+    return superficie_blocoG
 
 def desenhar_rua():
     largura_calcada, altura_calcada = 1262, 50
@@ -622,10 +656,10 @@ def iniciar_cenario():
             "predios" : [
                 # (100, superficie_ru),
                 # (100, superficie_nupeinsc),
-                #(300, superficie_carrinho),
-                (250, superficie_blocoG),
-                (1100, superficie_predio_generico1),
-                (1700, superficie_predio_generico2),
+                (300, superficie_carrinho),
+                # (250, superficie_blocoG),
+                # (1100, superficie_predio_generico1),
+                (1700, superficie_carrinho),
                 (2300, superficie_predio_generico3),
             ],
             "vegetacao" : [
