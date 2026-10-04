@@ -1,10 +1,11 @@
 from settings import Retangulo
 class Coletavel():
-    def __init__(self, pos, largura, altura, cor, tipo, forma = "retangular"):
+    def __init__(self, pos, largura, altura, cor, tipo, forma = "retangular", imagem = None):
         self.tipo = tipo
         self.pos = pos
         self.largura = largura
         self.altura = altura
+        self.imagem = imagem
         self.cor = cor
         self.forma = forma
         self.ativo = True
