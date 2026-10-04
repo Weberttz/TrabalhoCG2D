@@ -73,9 +73,13 @@ def criar_level(layout):
 
                 case 8:  # munição
                     coletaveis.append(
-                        Coletavel(Vetor(px + T // 2, py), 14, 20, VERMELHO, "municao"))
+                        Coletavel(Vetor(px + T // 2, py), 20, 14, VERMELHO, "municao"))
+                    
+                case 9: # item de missão 
+                    imagem = pygame.image.load("Sprites/seringa.png").convert_alpha()
+                    coletaveis.append(Coletavel(Vetor(px + T // 2, py), T, T, VERMELHO, "remedio", imagem=imagem))
 
-                case _:  # 0 (vazio), 9-14 (inimigos/missão) e qualquer outro
+                case _:  # 0 (vazio), 11-13 (inimigos/missão) e qualquer outro
                     pass
 
     return plataformas, blocks, coletaveis
