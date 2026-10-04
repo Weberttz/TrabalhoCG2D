@@ -4,7 +4,7 @@ class Humanoide():
     def __init__(self, plataformas, inimigos, equipamentos, pos, cor):
         self.vida = 100
         self.cor = cor
-        self.tamanho = 30
+        self.tamanho = TAMANHO_QUADRADO
         self.equipamentos = equipamentos
         self.vertices = []
 
@@ -24,7 +24,7 @@ class Humanoide():
 
         # Movimento
         self.velocidade = 5
-        self.forca_pulo = -15
+        self.forca_pulo = -20
         self.plataformas = plataformas
         self.inimigos = inimigos
 
