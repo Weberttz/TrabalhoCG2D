@@ -44,6 +44,7 @@ def carregar_mapa(nome_arquivo):
 def criar_level(layout):
     imagem_seringa = pygame.image.load("Sprites/seringa.png").convert_alpha()
     imagem_tapioca = pygame.image.load("Sprites/tapioca.png").convert_alpha()
+    imagem_municao = pygame.image.load("Sprites/municao.png").convert_alpha()
         
     plataformas, blocks, coletaveis = [], [], []
     T = TAMANHO_QUADRADO
@@ -67,7 +68,7 @@ def criar_level(layout):
 
                 case 6:  # tapioca
                     raio = 16
-                    coletaveis.append(Coletavel(Vetor(px, py), raio, raio, WHITE, "tapioca", "circular", imagem_tapioca))
+                    coletaveis.append(Coletavel(Vetor(px, py + T // 2), raio, raio, WHITE, "tapioca", "circular", imagem_tapioca))
 
                 case 7:  # moeda
                     raio = 8
@@ -76,7 +77,7 @@ def criar_level(layout):
 
                 case 8:  # munição
                     coletaveis.append(
-                        Coletavel(Vetor(px + T // 2, py), 20, 14, VERMELHO, "municao"))
+                        Coletavel(Vetor(px, py), T, T, VERMELHO, "municao", imagem=imagem_municao))
                     
                 case 9: # item de missão 
                     coletaveis.append(Coletavel(Vetor(px, py), T, T, VERMELHO, "remedio", imagem=imagem_seringa))
