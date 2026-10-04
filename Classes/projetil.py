@@ -1,12 +1,13 @@
 from settings import *
 
 class Projetil():
-    def __init__(self, pos:Vetor, disparou_para:Vetor, bala_inimiga=False):
+    def __init__(self, pos:Vetor, disparou_para:Vetor, cor,bala_inimiga=False):
         super().__init__()
         self.pos = pos
         self.disparou_para = disparou_para
+        self.pos_incial = pos
         self.image = pygame.surface.Surface((10,10)).convert() # ajeitar isso, se precisar
-        self.image.fill('white')
+        self.image.fill(cor)
         self.retangulo = Retangulo(pos.x, pos.y, 10, 10)
         self.retangulo.topleft = self.pos
         self.velocidade = 400
@@ -36,8 +37,11 @@ class Projetil():
                 self.ativo = False
 
     def desenhar(self, superficie, scroll, camera):
-        tolerancia = 500
-        pos = self.pos - scroll
-        if pos.x < -tolerancia or pos.x > LARGURA+tolerancia  or pos.y < -tolerancia or pos.y  >  ALTURA+tolerancia:
+        tolerancia = 12 * TAMANHO_QUADRADO
+        novo_vetor = self.pos_incial - self.pos
+        distancia = novo_vetor.calcular_norma()
+
+        if distancia > tolerancia:
             self.ativo = False
+            
         superficie.blit(self.image, camera.aplicar(self))

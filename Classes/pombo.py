@@ -1,4 +1,4 @@
-from settings import TAMANHO_QUADRADO, Vetor, Retangulo, pygame, random
+from settings import TAMANHO_QUADRADO, Vetor, Retangulo, pygame, random, LARGURA, CINZA
 from Classes.projetil import Projetil
 
 class Pombo():
@@ -84,7 +84,7 @@ class Pombo():
             self.pode_lancar = True
 
         if self.pode_lancar and self.pos.x == jogador.pos.x:
-            pedra = Projetil(pos, Vetor(jogador.pos.x, jogador.pos.y), True)
+            pedra = Projetil(pos, Vetor(jogador.pos.x, jogador.pos.y), CINZA, True)
             self.pedras.append(pedra)
             self.pode_lancar = False
 
@@ -110,3 +110,5 @@ class Pombo():
                 self.vel_x = random.choice([-1, 0, 1])
 
             self.tempo_mudar_direcao = random.randint(30, 60)  # Quadros (Frames)
+
+        if self.pos.x < 0: self.pos.x = 0
