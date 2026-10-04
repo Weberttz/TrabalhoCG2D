@@ -6,7 +6,10 @@ class GerenciadorFases:
         self.fase_atual = 0
         self.max_fases = len(fases)
         self.larguras = [len(Inicializador.carregar_mapa(fase)[0]) * TAMANHO_QUADRADO 
-                        for fase in self.fases]           
+                        for fase in self.fases] 
+
+    def definir_dificuldade(self, nivel_dificuldade):
+        self.dificuldade = nivel_dificuldade
 
     def caminho_fase_atual(self):
         return self.fases[self.fase_atual]

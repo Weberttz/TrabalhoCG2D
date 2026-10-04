@@ -45,9 +45,7 @@ class Jogo:
         self.estado_jogo = "menu"
         iniciar_menu()
 
-        self.carregar_sprites()
-        self.carregar_fase(self.gerenciadorFases.caminho_fase_atual())
-
+        
     # Inicialização
     def carregar_sprites(self):
         self.anim_zumbi_idle = Inicializador.gerar_lista_animacoes("zumbi", "idle", 8)
@@ -78,7 +76,7 @@ class Jogo:
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
-        self.zumbis, self.cachorros, self.pombos = Inicializador.criar_inimigos(mapa, self.plataformas, self.blocks, self.nivel_dificuldade)
+        self.zumbis, self.cachorros, self.pombos = Inicializador.criar_inimigos(mapa, self.plataformas, self.blocks, self.gerenciadorFases.dificuldade)
         self.portais = [p for p in self.plataformas if p.tipo == "teleport"]
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
@@ -163,10 +161,11 @@ class Jogo:
                     acao = acao_menu(evento, pygame.mouse.get_pos())
                     if acao == "jogar":
                         self.estado_jogo = "jogando"
+                        self.gerenciadorFases.definir_dificuldade(get_dificuldade())
+                        self.carregar_sprites()
+                        self.carregar_fase(self.gerenciadorFases.caminho_fase_atual())
                     elif acao == "sair":
                         self.rodando = False
-                    elif acao in ["facil", "medio", "dificil"]:
-                        self.nivel_dificuldade = acao
 
             if self.estado_jogo == "jogando":
                 if evento.type == pygame.KEYDOWN:
