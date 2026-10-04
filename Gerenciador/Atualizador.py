@@ -77,7 +77,7 @@ def atualizar_visiveis(jogo):
     ]
     jogo.coletaveis_visiveis = [
         c for c in jogo.coletaveis
-        if -dx - c.tamanho <= c.pos.x <= -dx + LARGURA
+        if -dx - c.largura <= c.pos.x <= -dx + LARGURA
     ]
     jogo.cachorros_visiveis = [
         c for c in jogo.cachorros

@@ -2,7 +2,7 @@ import Classes.vetor as v
 from Classes.retangulo import Retangulo as r
 import Biblioteca.algoritmos as bibgraf
 from Biblioteca import transformacoes
-from settings import WHITE, BLACK, LARGURA, ALTURA, AZUL_NOTURNO
+from settings import WHITE, BLACK, LARGURA, ALTURA, AZUL_NOTURNO, AMARELO_ESCURO, VERMELHO
 
 uvs = [
     (0, 1),  # inferior-esquerdo
@@ -24,10 +24,16 @@ def desenhar_jogador(jogo):
 def desenhar_coletaveis(jogo):
     for coletavel in jogo.coletaveis_visiveis:
         vertices = jogo.camera.aplicar_vertices(coletavel.retangulo.vertices)
-        if coletavel.tipo != "tapioca" and coletavel.tipo != "moeda":
+
+        if coletavel.forma == "retangular":
             bibgraf.scanline_fill(jogo.tela, vertices, coletavel.cor)
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
-        else:
+
+        if coletavel.tipo == "municao":
+            cores = [AMARELO_ESCURO, AMARELO_ESCURO, VERMELHO, VERMELHO]
+            bibgraf.scanline_fill_gradiente(jogo.tela, vertices, cores)
+
+        if coletavel.forma == "circular":
             centro_na_tela = jogo.camera.aplicar_posicao(coletavel.centro)
             bibgraf.desenhar_circulo(jogo.tela, centro_na_tela, coletavel.raio+1, BLACK, True)
             bibgraf.desenhar_circulo(jogo.tela, centro_na_tela, coletavel.raio-1, coletavel.cor, True)

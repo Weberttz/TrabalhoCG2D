@@ -63,15 +63,17 @@ def criar_level(layout):
                         Plataforma(px, py, T, T, AZUL_NOTURNO, BLACK, "block"))
 
                 case 6:  # tapioca
-                    coletaveis.append(Coletavel(Vetor(px, py), 10, WHITE, "tapioca"))
+                    raio = 10
+                    coletaveis.append(Coletavel(Vetor(px, py), raio, raio, WHITE, "tapioca", "circular"))
 
                 case 7:  # moeda
+                    raio = 8
                     coletaveis.append(
-                        Coletavel(Vetor(px, py + T // 2), 8, AMARELO, "moeda"))
+                        Coletavel(Vetor(px, py + T // 2), raio, raio, AMARELO, "moeda", "circular"))
 
                 case 8:  # munição
                     coletaveis.append(
-                        Coletavel(Vetor(px + T // 2, py), 10, VERMELHO, "municao"))
+                        Coletavel(Vetor(px + T // 2, py), 14, 20, VERMELHO, "municao"))
 
                 case _:  # 0 (vazio), 9-14 (inimigos/missão) e qualquer outro
                     pass
