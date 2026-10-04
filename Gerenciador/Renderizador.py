@@ -10,7 +10,7 @@ uvs = [
     (1, 1),  # inferior-direito
 ]
 
-uvs_remedio = [
+uvs_coletaveis = [
     (0, 0),  # inferior-esquerdo
     (1, 0),  # superior-esquerdo
     (1, 1),  # superior-direito
@@ -32,7 +32,7 @@ def desenhar_coletaveis(jogo):
         vertices = jogo.camera.aplicar_vertices(coletavel.retangulo.vertices)
 
         if coletavel.imagem != None:
-            bibgraf.scanline_texture(jogo.tela, vertices, uvs, coletavel.imagem)
+            bibgraf.scanline_texture(jogo.tela, vertices, uvs_coletaveis, coletavel.imagem)
             continue
 
         if coletavel.tipo == "municao":
