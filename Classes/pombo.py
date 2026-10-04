@@ -20,7 +20,7 @@ class Pombo():
         self.velocidade = 10
         self.aceleracao = Vetor(0, 10)
 
-        self.intervalo_lancamento_pedra = 4
+        self.intervalo_lancamento_pedra = 2
         self.pode_lancar = True
         self.tempo_mudar_direcao = 0
         self.vivo = True
@@ -50,6 +50,7 @@ class Pombo():
 
     def atualizar(self, projeteis):
         self.atualizar_vertices()
+        self.lidar_com_colisao()
         self.movimentar()
         self.checar_atingido(projeteis)
         self.morrer()
@@ -76,25 +77,38 @@ class Pombo():
 
     def atirar(self):
         jogador = self.inimigo
-        pos = Vetor(self.pos.x, self.pos.y)
+        tolerancia = TAMANHO_QUADRADO // 2
+        delta_x = abs(self.pos.x -  jogador.pos.x)
 
         tempo = pygame.time.get_ticks()
         if tempo - self.tempo >= self.intervalo_lancamento_pedra * 1000: 
             self.tempo = tempo
             self.pode_lancar = True
 
-        if self.pode_lancar and self.pos.x == jogador.pos.x:
-            pedra = Projetil(pos, Vetor(jogador.pos.x, jogador.pos.y), CINZA, True)
+        if self.pode_lancar and delta_x < tolerancia:
+            pedra = Projetil(self.pos, jogador.pos, CINZA, True)
             self.pedras.append(pedra)
             self.pode_lancar = False
 
-    def movimentar(self):
+    def lidar_com_colisao(self):
         self.pos.x += self.vel_x
         self.retangulo.x = self.pos.x
+        objetos = [p for p in self.plataformas if not p.tipo == "teleport"]
+                
+        # Colisão com eixo X
+        for objeto in objetos:
+            if self.retangulo.colidiu_com(objeto.retangulo):
+                if self.vel_x > 0:  # Movendo para a direita
+                    self.retangulo.right = objeto.retangulo.left
+                elif self.vel_x < 0:  # Movendo para a esquerda
+                    self.retangulo.left = objeto.retangulo.right
+                self.pos.x = self.retangulo.x # Sincroniza a posição com o eixo x do obstáculo
 
-        self.inimigo = self.inimigos[0]
+        if self.pos.x < 0: self.pos.x = 0
+
+    def movimentar(self):
         # Move o pombo baseado na direção atual
-        # self.retangulo.x += self.vel_x * self.velocidade
+        self.inimigo = self.inimigos[0]
 
         # Diminui o contador e muda de direção aleatoriamente ao zerar
         self.tempo_mudar_direcao -= 1
@@ -110,5 +124,4 @@ class Pombo():
                 self.vel_x = random.choice([-1, 0, 1])
 
             self.tempo_mudar_direcao = random.randint(30, 60)  # Quadros (Frames)
-
-        if self.pos.x < 0: self.pos.x = 0
+        
