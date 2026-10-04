@@ -172,10 +172,11 @@ class Jogo:
                 
     # Atualização
     def atualizar(self, dt):
-        Atualizador.atualizar_jogador(self)
-        self.camera.atualizar()
-        Atualizador.atualizar_animacao(self, dt)
-        Atualizador.atualizar_entidades(self, dt)
+        if self.estado_jogo == "jogando":
+            Atualizador.atualizar_jogador(self)
+            self.camera.atualizar()
+            Atualizador.atualizar_animacao(self, dt)
+            Atualizador.atualizar_entidades(self, dt)
 
     # Renderização
     def desenhar(self):

@@ -1,5 +1,4 @@
-import random, pygame
-from settings import TAMANHO_QUADRADO, Vetor, Retangulo
+from settings import TAMANHO_QUADRADO, Vetor, Retangulo, pygame, random
 from Classes.projetil import Projetil
 
 class Pombo():
@@ -26,7 +25,7 @@ class Pombo():
         self.tempo_mudar_direcao = 0
         self.vivo = True
         self.dano = self.definir_dano(nivel_dificuldade)
-        self.campo_de_visao = 40 * TAMANHO_QUADRADO
+        self.campo_de_visao = 20 * TAMANHO_QUADRADO
 
     def definir_dano(self,nivel_dificuldade):
         '''Define o dano do inimigo pelo nível de dificuldade escolhido pelo jogador.'''
@@ -67,10 +66,13 @@ class Pombo():
         jogador = self.inimigo
         for pedra in self.pedras:
             if pedra.retangulo.colidiu_com(jogador.retangulo):
-                pedra.ativa = False
+                pedra.ativo = False
                 jogador.vida -= self.dano
                 jogador.invulneravel = True
                 jogador.momento_ultimo_dano = pygame.time.get_ticks() 
+
+        # assim que atingir o jogador, tiramos ela do array
+        self.pedras[:] = [p for p in self.pedras if p.ativo]
 
     def atirar(self):
         jogador = self.inimigo
@@ -92,7 +94,7 @@ class Pombo():
 
         self.inimigo = self.inimigos[0]
         # Move o pombo baseado na direção atual
-        self.retangulo.x += self.vel_x * self.velocidade
+        # self.retangulo.x += self.vel_x * self.velocidade
 
         # Diminui o contador e muda de direção aleatoriamente ao zerar
         self.tempo_mudar_direcao -= 1
@@ -101,7 +103,7 @@ class Pombo():
 
             if esta_no_campo_de_visao:
                 if self.inimigo.pos.x != self.pos.x:
-                    self.vel_x = ((self.inimigo.pos.x - self.pos.x) / abs(self.inimigo.pos.x - self.pos.x))
+                    self.vel_x = 2 * ((self.inimigo.pos.x - self.pos.x) / abs(self.inimigo.pos.x - self.pos.x))
                 else:
                     self.vel_x = 0
             else: 
