@@ -2,13 +2,19 @@ import Classes.vetor as v
 from Classes.retangulo import Retangulo as r
 import Biblioteca.algoritmos as bibgraf
 from Biblioteca import transformacoes
-from settings import WHITE, BLACK, LARGURA, ALTURA, AZUL_NOTURNO, AMARELO_ESCURO, VERMELHO
-
+from settings import *
 uvs = [
     (0, 1),  # inferior-esquerdo
     (0, 0),  # superior-esquerdo
     (1, 0),  # superior-direito
     (1, 1),  # inferior-direito
+]
+
+uvs_remedio = [
+    (0, 0),  # inferior-esquerdo
+    (1, 0),  # superior-esquerdo
+    (1, 1),  # superior-direito
+    (0, 1) # inferior-direito
 ]
 
 def desenhar_jogador(jogo):
@@ -25,13 +31,20 @@ def desenhar_coletaveis(jogo):
     for coletavel in jogo.coletaveis_visiveis:
         vertices = jogo.camera.aplicar_vertices(coletavel.retangulo.vertices)
 
+        if coletavel.imagem != None:
+            bibgraf.scanline_texture(jogo.tela, vertices, uvs, coletavel.imagem)
+            continue
+
+        if coletavel.tipo == "municao":
+            cores = [BLACK, BLACK, VERMELHO, VERMELHO]
+            bibgraf.scanline_fill_gradiente(jogo.tela, vertices, cores)
+            bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
+            continue
+
         if coletavel.forma == "retangular":
             bibgraf.scanline_fill(jogo.tela, vertices, coletavel.cor)
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
-
-        if coletavel.tipo == "municao":
-            cores = [AMARELO_ESCURO, AMARELO_ESCURO, VERMELHO, VERMELHO]
-            bibgraf.scanline_fill_gradiente(jogo.tela, vertices, cores)
+            continue
 
         if coletavel.forma == "circular":
             centro_na_tela = jogo.camera.aplicar_posicao(coletavel.centro)
