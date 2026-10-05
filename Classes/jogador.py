@@ -7,16 +7,19 @@ class Jogador(Humanoide):
     def __init__(self, pos, plataformas, inimigos, coletaveis, equipamentos, cor):
         super().__init__(plataformas, inimigos, equipamentos, pos, cor)
         self.tempo = pygame.time.get_ticks()
+        self.pontuacao = 0
+        self.coletaveis_missao = 0
         self.olhando = 1
         self.coletaveis = coletaveis
         self.quantidade_coletada = 0
         self.invulneravel = False
         self.tempo_invulnerabilidade = 1.0  # 1 seg
         self.momento_ultimo_dano = 0
-        self.tempo_teleport = 4.0
+        self.tempo_teleport = 1.0
         self.momento_ultimo_teleport = 100
         self.teleport_colidiu = None
         self.momento_entrada_teleport = None 
+        self.quantidade_inimigos_anterior = len(inimigos)
 
     def resetar(self, pos_inicial):
         self.pos = pos_inicial.copy()
@@ -38,6 +41,7 @@ class Jogador(Humanoide):
         self.atualizar_vertices_equipamento()
         self.atirar()
         self.atualizar_invulnerabilidade()
+        self.contabilizar_pontuacao()
 
     def get_direcao_tiro(self):
         '''Determina a direção do tiro.'''
@@ -160,9 +164,24 @@ class Jogador(Humanoide):
                     self.vida+= 30 
                 if coletavel.tipo == "municao":
                     self.equipamento.municao+=1
-                        
+
+                if coletavel.tipo == "especial":
+                    self.pontuacao += 100
+                    self.coletaveis_missao+=1
+
                 self.quantidade_coletada += 1
                 coletavel.ativo = False   
+
+        if self.vida < 100: self.vida = 100
+
+    def contabilizar_pontuacao(self):
+        qnt_inimigos = len(self.inimigos)
+
+        diferenca = self.quantidade_inimigos_anterior - qnt_inimigos
+
+        if qnt_inimigos < self.quantidade_inimigos_anterior:
+            self.quantidade_inimigos_anterior = qnt_inimigos
+            self.pontuacao+= diferenca * 50
     
     def colidir_com_inimigo(self):
         '''Trata colisão com inimigos''' 
