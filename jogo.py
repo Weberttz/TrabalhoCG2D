@@ -68,6 +68,14 @@ class Jogo:
             
         self.imagens_cachorro = imagens
 
+        self.anim_pombo_esquerda = Inicializador.gerar_lista_animacoes("pombo", "fly_left", 4)
+        self.anim_pombo_direita = Inicializador.gerar_lista_animacoes("pombo", "fly_right", 4)
+        imagens = {}
+        for lista in (self.anim_pombo_esquerda, self.anim_pombo_direita):
+                    imagens |= Inicializador.carregar_animacoes(lista)
+
+        self.imagens_pombos = imagens
+
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
@@ -100,6 +108,7 @@ class Jogo:
             c.inimigos.append(self.jogador)
 
         for p in self.pombos:
+            p.image = self.anim_pombo_esquerda[0]
             p.inimigos.append(self.jogador)
 
         self.mundo_surface = self.renderizar_mundo()

@@ -117,6 +117,8 @@ def atualizar_pombos(jogo):
     projeteis = jogo.jogador.equipamento.projeteis
     for pombo in jogo.pombos_visiveis:
         pombo.atualizar(projeteis)
+        if jogo.avancar_frame:
+            pombo.animar(jogo.anim_pombo_esquerda, jogo.anim_pombo_direita)
 
 def atualizar_zumbis(jogo):
     projeteis = jogo.jogador.equipamento.projeteis

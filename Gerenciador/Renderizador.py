@@ -80,7 +80,7 @@ def desenhar_projeteis(jogo):
 def desenhar_pombos(jogo):
     for pombo in jogo.pombos_visiveis:
         vertices = jogo.camera.aplicar_vertices(pombo.vertices)
-        imagem = None # jogo.imagens_pombo.get(pombo.image)
+        imagem = jogo.imagens_pombos.get(pombo.image)
         if imagem is not None:
             bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem)
         else:
