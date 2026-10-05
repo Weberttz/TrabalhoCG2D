@@ -141,7 +141,7 @@ class Retangulo():
         xs = [p[0] for p in pontos]
         ys = [p[1] for p in pontos]
         
-        return min(xs), min(ys), max(xs), max(ys)
+        return int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))
 
     @staticmethod
     def colisao_aabb(a, b):
@@ -155,7 +155,15 @@ class Retangulo():
             ay2 > by1
         )
 
-    def colidiu_com(self, outro):
+    """def colidiu_com(self, outro):
         a = self.calcular_aabb(self.vertices)
         b = self.calcular_aabb(outro.vertices)
-        return self.colisao_aabb(a, b)
+        return self.colisao_aabb(a, b)"""
+
+    def colidiu_com(self, outro):
+        return (
+            self.left < outro.right
+            and self.right > outro.left
+            and self.top < outro.bottom
+            and self.bottom > outro.top
+        )

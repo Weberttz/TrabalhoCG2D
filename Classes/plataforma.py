@@ -1,4 +1,4 @@
-from settings import Retangulo, BLACK
+from settings import Retangulo, BLACK, random, math
 
 class Plataforma():
     def __init__(self, x0, y0, largura, altura, cor, cor_borda, tipo="normal"):
@@ -15,8 +15,7 @@ class Plataforma():
         self.vertices = [(x0, y0), (x0, self.y1), (self.x1, self.y1), (self.x1, y0)] 
 
         if self.tipo == "teleport":
-            raio_portal = 28
-            self.retangulo = Retangulo(x0, y0 - raio_portal - 1, largura, altura)
-
-# mudar a assinatura para Retangulo(left, top, largura, altura)
-    
+            rx, ry = largura, altura // 2
+            self.retangulo = Retangulo(x0, y0 - ry, largura, altura)
+            
+            self.tempo_portal = 0.0

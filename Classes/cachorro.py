@@ -62,4 +62,4 @@ class Cachorro(Humanoide):
             if self.bateu_cabeca: 
                 self.vel_x = -self.vel_x
                 self.bateu_cabeca = False
-                self.tempo_mudar_direcao = 120 # dobro do tempo max normalmente
+                self.tempo_mudar_direcao = 60 # tempo max normalmente

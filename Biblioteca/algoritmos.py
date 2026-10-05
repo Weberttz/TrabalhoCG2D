@@ -26,6 +26,8 @@ def draw_polygonon(superficie, vertices, color, clip_atual = None):
     superficie.unlock()
   
 def linha_bresenham(superficie, x0, y0, x1, y1, cor, clip_atual = None):
+    x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
+
     dx = abs(x1 - x0)
     dy = abs(y1 - y0)
     sx = 1 if x0 < x1 else -1
@@ -329,7 +331,6 @@ def desenhar_linha_recortada(superficie, x0, y0, x1, y1, janela, cor):
             cor
         )
 
-
 def retangulo_para_poligono(
     x,
     y,
@@ -344,75 +345,14 @@ def retangulo_para_poligono(
         (x, y + altura)
     ]
 
-
-
-def interpola_cor(c1, c2, t):
-    r = int(c1[0] + (c2[0] - c1[0]) * t)
-    g = int(c1[1] + (c2[1] - c1[1]) * t)
-    b = int(c1[2] + (c2[2] - c1[2]) * t)
-
-    r = max(0, min(r, 255))
-    g = max(0, min(g, 255))
-    b = max(0, min(b, 255))
-
-    return (r, g, b)
-
-
-def scanline_fill_gradiente(superficie, pontos, cores):
-    ys = [p[1] for p in pontos]
-    y_min = int(min(ys))
-    y_max = int(max(ys))
-    n = len(pontos)
-
-    for y in range(y_min, y_max):
-        intersecoes = []
-
-        for i in range(n):
-            x0, y0 = pontos[i]
-            x1, y1 = pontos[(i + 1) % n]
-            c0 = cores[i]
-            c1 = cores[(i + 1) % n]
-
-            if y0 == y1:
-                continue
-
-            if y0 > y1:
-                x0, y0, x1, y1 = x1, y1, x0, y0
-                c0, c1 = c1, c0
-
-            if y < y0 or y >= y1:
-                continue
-
-            t = (y - y0) / (y1 - y0)
-            x = x0 + t * (x1 - x0)
-            cor_y = interpola_cor(c0, c1, t)
-            intersecoes.append((x, cor_y))
-
-        intersecoes.sort(key=lambda item: item[0])
-
-        for i in range(0, len(intersecoes), 2):
-            if i + 1 >= len(intersecoes):
-                continue
-
-            x_ini, cor_ini = intersecoes[i]
-            x_fim, cor_fim = intersecoes[i + 1]
-
-            if x_fim == x_ini:
-                continue
-
-            for x in range(int(x_ini), int(x_fim) + 1):
-                t = (x - x_ini) / (x_fim - x_ini)
-                cor = interpola_cor(cor_ini, cor_fim, t)
-                set_pixel(superficie, x, y, cor)
-
-
 def scanline_texture(superficie, pontos, uvs, textura):
-    n = len(pontos)
-    ys = [p[1] for p in pontos]
-    y_min = int(min(ys))
-    y_max = int(max(ys))
     tex_w = textura.get_width()
     tex_h = textura.get_height()
+
+    n = len(pontos)
+    ys = [p[1] for p in pontos]
+    y_min = int(min(ys))
+    y_max = int(max(ys))
 
     for y in range(y_min, y_max):
         intersecoes = []
@@ -459,6 +399,86 @@ def scanline_texture(superficie, pontos, uvs, textura):
                 tx = int(u * (tex_w - 1))
                 ty = int(v * (tex_h - 1))
 
-                if 0 <= tx < tex_w and 0 <= ty < tex_h:
+                if 0 <= tx < tex_w and 0 <= ty < tex_h: 
+                    # ao invés de só pintar, temos que retirar os quadrados transparentes
                     cor = textura.get_at((tx, ty))
+                    a = cor.a
+
+                    if a == 0:
+                        continue
+
+                    if not (0 <= x < superficie.get_width()
+                            and 0 <= y < superficie.get_height()):
+                        continue
+
+                    if a < 255:
+                        fundo = superficie.get_at((x, y))
+                        fator = a / 255
+                        cor = (
+                            int(cor.r * fator + fundo.r * (1 - fator)),
+                            int(cor.g * fator + fundo.g * (1 - fator)),
+                            int(cor.b * fator + fundo.b * (1 - fator)),
+                        )
+                    else:
+                        cor = (cor.r, cor.g, cor.b)
+
+                    set_pixel(superficie, x, y, cor)
+
+def interpola_cor(c1, c2, t):
+    r = int(c1[0] + (c2[0]-c1[0])*t)
+    g = int(c1[1] + (c2[1]-c1[1])*t)
+    b = int(c1[2] + (c2[2]-c1[2])*t)
+
+    r = max(0, min(r, 255))
+    g = max(0, min(g, 255))
+    b = max(0, min(b, 255))
+    
+    return (r, g, b)
+
+def scanline_fill_gradiente(superficie, pontos, cores):
+    ys = [p[1] for p in pontos]
+    y_min = int(min(ys))
+    y_max = int(max(ys))
+
+    n = len(pontos)
+
+    for y in range(y_min, y_max):
+        intersecoes = []
+
+        for i in range(n):
+            x0, y0 = pontos[i]
+            x1, y1 = pontos[(i + 1) % n]
+
+            c0 = cores[i]
+            c1 = cores[(i + 1) % n]
+
+            if y0 == y1:
+                continue
+
+            if y0 > y1:
+                x0, y0, x1, y1 = x1, y1, x0, y0
+                c0, c1 = c1, c0
+
+            if y < y0 or y >= y1:
+                continue
+
+            t = (y - y0) / (y1 - y0)
+            x = x0 + t * (x1 - x0)
+            cor_y = interpola_cor(c0, c1, t)
+
+            intersecoes.append((x, cor_y))
+
+        intersecoes.sort(key=lambda i: i[0])
+
+        for i in range(0, len(intersecoes), 2):
+            if i + 1 < len(intersecoes):
+                x_ini, cor_ini = intersecoes[i]
+                x_fim, cor_fim = intersecoes[i + 1]
+
+                if x_fim == x_ini:
+                    continue
+
+                for x in range(int(x_ini), int(x_fim) + 1):
+                    t = (x - x_ini) / (x_fim - x_ini)
+                    cor = interpola_cor(cor_ini, cor_fim, t)
                     set_pixel(superficie, x, y, cor)
