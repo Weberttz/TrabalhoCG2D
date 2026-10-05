@@ -89,6 +89,11 @@ def desenhar_projeteis(jogo):
         for pedra in pombo.pedras:
             pedra.desenhar(jogo.tela, scroll, jogo.camera)
 
+    if jogo.chefe != None:
+        for livro in jogo.chefe.livros:
+            livro.desenhar(jogo.tela, scroll, jogo.camera)
+
+
 def desenhar_pombos(jogo):
     for pombo in jogo.pombos_visiveis:
         vertices = jogo.camera.aplicar_vertices(pombo.vertices)

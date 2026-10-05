@@ -53,7 +53,7 @@ class Chefe(Humanoide):
             if projetil.retangulo.colidiu_com(self.retangulo):
                 self.vida -= projetil.dano
                 projetil.ativo = False
-                print(f'Vida chefe: {self.vida}')
+                #print(f'Vida chefe: {self.vida}')
                 if self.vida <= 0: self.vida = 0
 
     def atualizar(self,projeteis):
@@ -64,6 +64,7 @@ class Chefe(Humanoide):
         self.checar_atingido(projeteis)
         self.morrer()
         self.atirar()
+        self.atingiu_jogador()
     
     def atualizar_vertices(self):
             self.vertices = [(self.pos.x, self.pos.y), 
@@ -78,7 +79,7 @@ class Chefe(Humanoide):
                 livro.ativo = False
                 self.jogador.perder_vida(self.dano)
      
-            # assim que atingir o jogador, tiramos ela do array
+            # assim que atingir o jogador, tiramos ele do array
             self.livros[:] = [p for p in self.livros if p.ativo]
         
     def movimentar(self):
@@ -99,14 +100,15 @@ class Chefe(Humanoide):
             self.tempo_mudar_direcao = random.randint(30, 60)  # Quadros (Frames)
     
     def atirar(self):
-        tolerancia = 15
+        tolerancia = 12
         delta_x = abs(self.pos.x -  self.jogador.pos.x)
 
         tempo = pygame.time.get_ticks()
         if tempo - self.momento_ultimo_lancamento >= self.intervalo_lancamento_livro * 1000: 
             self.momento_ultimo_lancamento = tempo
             self.pode_lancar = True
-    
+
+        # cria o projetil e adiciona na lista - no Atualizador é que se é escolhida a trajetoria diferente 
         if self.pode_lancar and delta_x <= tolerancia:
             livro = Projetil(self.pos, self.jogador.pos, CINZA, True)
             self.livros.append(livro)

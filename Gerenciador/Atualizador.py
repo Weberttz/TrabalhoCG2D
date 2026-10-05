@@ -113,6 +113,12 @@ def atualizar_projeteis(jogo, dt):
         for pedra in pedras:
             pedra.atualizar(dt, colisores)
 
+    if jogo.chefe != None:
+        livros = jogo.chefe.livros
+        livros[:] = [l for l in livros if l.ativo]
+        for livro in livros:
+            livro.atualizar(dt,colisores, True)
+
 def atualizar_pombos(jogo):
     projeteis = jogo.jogador.equipamento.projeteis
     for pombo in jogo.pombos_visiveis:
