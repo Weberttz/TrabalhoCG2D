@@ -9,7 +9,7 @@ import csv
 COR_ASFALTO, BORDA_ASFALTO = (74, 74, 74),   (44, 44, 48)
 COR_CAIXA,   BORDA_CAIXA   = (178, 122, 66), (104, 66, 32)
 COR_METAL,   BORDA_METAL   = (70, 130, 170), (36, 74, 104)
-ROXO = (98, 0, 234)
+ROXO = (98, 0, 102)
 
 # tile -> (cor, borda)
 ESTILO_PLATAFORMA = {
@@ -46,6 +46,7 @@ def criar_level(layout):
     imagem_tapioca = pygame.image.load("Sprites/tapioca.png").convert_alpha()
     imagem_municao = pygame.image.load("Sprites/municao.png").convert_alpha()
     imagem_fusivel = pygame.image.load("Sprites/fusivel.png").convert_alpha()
+    imagem_moeda = pygame.image.load("Sprites/moeda.png").convert_alpha()
         
     plataformas, blocks, coletaveis = [], [], []
     T = TAMANHO_QUADRADO
@@ -72,19 +73,18 @@ def criar_level(layout):
                     coletaveis.append(Coletavel(Vetor(px, py + T // 2), raio, raio, WHITE, "tapioca", "circular", imagem_tapioca))
 
                 case 7:  # moeda
-                    raio = 8
                     coletaveis.append(
-                        Coletavel(Vetor(px, py + T // 2), raio, raio, AMARELO, "moeda", "circular"))
+                        Coletavel(Vetor(px, py ), T, T, AMARELO, "moeda", "circular", imagem_moeda))
 
                 case 8:  # munição
                     coletaveis.append(
                         Coletavel(Vetor(px, py), T, T, VERMELHO, "municao", imagem=imagem_municao))
                     
-                case 9: # item de missão 
-                    coletaveis.append(Coletavel(Vetor(px, py), T, T, VERMELHO, "remedio", imagem=imagem_seringa))
+                case 9: # seringa
+                    coletaveis.append(Coletavel(Vetor(px, py), T, T, VERMELHO, "especial", imagem=imagem_seringa))
 
-                case 10: 
-                    coletaveis.append(Coletavel(Vetor(px, py), T, T, VERMELHO, "remedio", imagem=imagem_fusivel))
+                case 10: # fusível
+                    coletaveis.append(Coletavel(Vetor(px, py), T, T, VERMELHO, "especial", imagem=imagem_fusivel))
 
                 case _:  # 0 (vazio), 11-13 (inimigos/missão) e qualquer outro
                     pass

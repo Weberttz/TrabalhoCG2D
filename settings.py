@@ -1,4 +1,4 @@
-import pygame, random
+import pygame, random, math
 from Classes.vetor import Vetor
 from Classes.retangulo import Retangulo
 
