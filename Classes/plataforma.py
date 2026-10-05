@@ -15,8 +15,8 @@ class Plataforma():
         self.vertices = [(x0, y0), (x0, self.y1), (self.x1, self.y1), (self.x1, y0)] 
 
         if self.tipo == "teleport":
-            raio_portal = 28
-            self.retangulo = Retangulo(x0, y0 - raio_portal - 1, largura, altura)
+            rx, ry = largura, altura // 2
+            self.retangulo = Retangulo(x0, y0 - ry, largura, altura)
 
 # mudar a assinatura para Retangulo(left, top, largura, altura)
     

@@ -26,7 +26,7 @@ class Jogo:
        
         self.rodando = True
         self.debug = False
-        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
+        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase3.csv",
              "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
 
         iniciar_cenario()
@@ -56,10 +56,7 @@ class Jogo:
         for lista in (self.anim_zumbi_idle, self.anim_zumbi_esquerda, self.anim_zumbi_direita):
             imagens |= Inicializador.carregar_animacoes(lista)
 
-        # redimensiona uma vez só, na carga -> matrizes de escala
-        self.imagens_zumbi = {nome: pygame.transform.scale(img, (TAMANHO_QUADRADO, TAMANHO_QUADRADO))
-                              for nome, img in imagens.items()}
-
+        self.imagens_zumbi = imagens
         self.anim_cachorro_idle = Inicializador.gerar_lista_animacoes("dog", "idle", 5)
         self.anim_cachorro_esquerda = Inicializador.gerar_lista_animacoes("dog", "walk_left", 8)
         self.anim_cachorro_direita = Inicializador.gerar_lista_animacoes("dog", "walk_right", 8)
@@ -67,11 +64,8 @@ class Jogo:
         imagens = {}
         for lista in (self.anim_cachorro_idle, self.anim_cachorro_esquerda, self.anim_cachorro_direita):
             imagens |= Inicializador.carregar_animacoes(lista)
-
-        # redimensiona uma vez só, na carga -> matrizes de escala
-        self.imagens_cachorro = {nome: pygame.transform.scale(img, (TAMANHO_QUADRADO, TAMANHO_QUADRADO))
-                                      for nome, img in imagens.items()}
-        
+            
+        self.imagens_cachorro = imagens
 
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
@@ -114,15 +108,21 @@ class Jogo:
     def renderizar_mundo(self):
         """Desenha o mapa estático uma única vez numa superficie gigante."""
         surface = pygame.Surface((self.largura_mapa, self.altura_mapa), pygame.SRCALPHA)
+
+        # raio x e raio y da elipse preta
+        rx, ry = TAMANHO_QUADRADO // 4, TAMANHO_QUADRADO - 4
+        # raio x e raio y elipse roxa
+        rx2, ry2 = rx - 2, ry - 2
+
         for plataforma in self.plataformas:
             if plataforma.tipo == "normal":
                 draw_polygonon(surface, plataforma.vertices, plataforma.cor_borda)
                 scanline_fill(surface, plataforma.vertices, plataforma.cor)
             elif plataforma.tipo == "teleport":
                 desenhar_elipse(surface, plataforma.x0 + plataforma.largura // 2, plataforma.y1 - plataforma.altura,
-                                8, 28, BLACK, preenchida=True)
+                                rx, ry, BLACK, preenchida=True)
                 desenhar_elipse(surface, plataforma.x0 + plataforma.largura // 2, plataforma.y1 - plataforma.altura,
-                                6, 26, plataforma.cor, preenchida=True)
+                                rx2, ry2, plataforma.cor, preenchida=True)
                 
         return surface
     
