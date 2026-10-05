@@ -629,7 +629,7 @@ def iniciar_cenario():
 
     superficie_lua = desenhar_lua(50)
     superficie_arvore = desenhar_arvore()
-    superficie_nupeinsc = desenhar_NC2A()
+    superficie_nc2a = desenhar_NC2A()
     superficie_arbusto = desenhar_arbusto()
     superficie_nuvem = desenhar_nuvem()
     superficie_predio_r = desenhar_predio_r()
@@ -645,21 +645,20 @@ def iniciar_cenario():
     superficie_blocoG = desenhar_blocoG()
 
     cenarios_fases = {
-        #largura das fases: [5632, 6464, 6304]
+        #largura das fases: [5632, 6464, 6304, 6304, 5984]
         #largura nc2a: 360
         #largura reitoria 500
         #largura prediog1 250
         #largura prediog2 300
         #largura predio g3 200
         #largura arbusto 120
+        #largura nupeinsc 420
         0 : {
             "predios" : [
-                # (100, superficie_ru),
-                # (100, superficie_nupeinsc),
-                (300, superficie_carrinho),
-                # (250, superficie_blocoG),
-                # (1100, superficie_predio_generico1),
-                (1700, superficie_carrinho),
+                (100, superficie_nc2a),
+                (550, superficie_nupeinsc),
+                (1100, superficie_predio_generico1),
+                #biblioteca aqui
                 (2300, superficie_predio_generico3),
             ],
             "vegetacao" : [
@@ -674,6 +673,8 @@ def iniciar_cenario():
 
         1 : {
             "predios" : [
+                #bloco g
+                #carrinho_billy
                 (500, superficie_predio_r),
                 (1100, superficie_predio_generico1),
                 (1700, superficie_predio_generico2),
@@ -692,9 +693,17 @@ def iniciar_cenario():
 
         # 2 : {
         #     "predios" : [
-       #         ()
+       #         #outro bloco
+                #ru
+                #predios
+                #reitoria
         #     ]
         # }
+
+        #3: {
+        #   hospital universitario
+        #   predios
+        #}
     }
 
 def carregar_estruturas_fase(indice_fase):
