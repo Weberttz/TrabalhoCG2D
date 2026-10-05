@@ -95,6 +95,8 @@ def atualizar_visiveis(jogo):
 def atualizar_coletaveis(jogo):
     """Remove os coletáveis que já foram pegos"""
     jogo.coletaveis[:] = [c for c in jogo.coletaveis if c.ativo]
+    for c in jogo.coletaveis:
+        c.atualizar()
 
 def atualizar_projeteis(jogo, dt):
     """Atualiza o estado do projétil e remove os que estão inativos da lista"""
