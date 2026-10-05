@@ -18,12 +18,10 @@ def draw_line(superficie, pontos, cor):
 
 def draw_polygonon(superficie, vertices, color, clip_atual = None):
     n = len(vertices)
-    superficie.lock()
     for i in range(n):
         x0, y0 = vertices[i]
         x1, y1 = vertices[(i+1) % n]
         linha_bresenham(superficie, x0, y0, x1, y1, color, clip_atual)
-    superficie.unlock()
   
 def linha_bresenham(superficie, x0, y0, x1, y1, cor, clip_atual = None):
     x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
