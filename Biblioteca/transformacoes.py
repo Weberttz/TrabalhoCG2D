@@ -41,6 +41,16 @@ def escala (x,y):
         [0,y,0],
         [0,0,1]
     ]
+
+def rotacao_y(angulo):
+    c = math.cos(angulo)
+    s = math.sin(angulo)
+    return [
+        [c,  0, s],
+        [0, 1, 0],
+        [-s, 0, c]
+    ]
+
 # rotacao em torno do eixo z
 def rotacao(angulo):
     c = math.cos(angulo)
