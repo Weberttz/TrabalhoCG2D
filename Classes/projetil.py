@@ -37,6 +37,8 @@ class Projetil():
                 self.ativo = False
 
     def desenhar(self, superficie, scroll, camera):
+        '''Desenha projetil e desativa ele se percorrer a distância máxima sem colidir com nada.'''
+        # tolerancia = distancia maxima que o projetil vai percorrer se não colidir com nada antes 
         tolerancia = 12 * TAMANHO_QUADRADO
         novo_vetor = self.pos_incial - self.pos
         distancia = novo_vetor.calcular_norma()

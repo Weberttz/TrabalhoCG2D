@@ -34,8 +34,9 @@ class GerenciadorFases:
         self.game_over(jogo)
 
     def win(self,jogo):
-        if jogo.chefe.vida == 0:
-            jogo.estado_jogo = "Win"
+        if jogo.chefe != None: 
+            if jogo.chefe.vida == 0 or jogo.jogador.pos.y > jogo.altura_mapa:
+                jogo.estado_jogo = "Win"
 
     def game_over(self,jogo):
         if jogo.jogador.vida == 0:

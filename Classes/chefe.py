@@ -9,7 +9,7 @@ from Classes.projetil import Projetil
 class Chefe(Humanoide):
     def __init__(self, plataformas, pos, cor, nivel_dificuldade):
         super().__init__(plataformas, [],[] , pos, cor)
-        self.tempo = pygame.time.get_ticks()
+        self.momento_ultimo_lancamento = pygame.time.get_ticks()
         self.plataformas = plataformas
         self.pos = pos
         self.cor = cor
@@ -33,8 +33,6 @@ class Chefe(Humanoide):
         self.vivo = True
         self.dano = self.definir_dano(nivel_dificuldade)
         self.campo_de_visao = 30 * TAMANHO_QUADRADO
-            
-        self.momento_ultimo_dano = 0
         
     def definir_dano(self,nivel_dificuldade):
         '''Define o dano do inimigo pelo nível de dificuldade escolhido pelo jogador.'''
@@ -101,12 +99,12 @@ class Chefe(Humanoide):
             self.tempo_mudar_direcao = random.randint(30, 60)  # Quadros (Frames)
     
     def atirar(self):
-        tolerancia = 10
+        tolerancia = 15
         delta_x = abs(self.pos.x -  self.jogador.pos.x)
 
         tempo = pygame.time.get_ticks()
-        if tempo - self.tempo >= self.intervalo_lancamento_livro * 1000: 
-            self.tempo = tempo
+        if tempo - self.momento_ultimo_lancamento >= self.intervalo_lancamento_livro * 1000: 
+            self.momento_ultimo_lancamento = tempo
             self.pode_lancar = True
     
         if self.pode_lancar and delta_x <= tolerancia:

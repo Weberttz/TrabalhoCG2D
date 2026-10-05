@@ -31,8 +31,7 @@ def atualizar_entidades(jogo, dt):
 def verificar_morte_jogador(jogo):
     j = jogo.jogador
     if j.vida <= 0 or j.pos.y > jogo.altura_mapa:
-        j.resetar(POS_INICIO)
-        j.vida = 100
+        j.vida = 0
 
 def verificar_passou_de_fase(jogo):
     j = jogo.jogador
