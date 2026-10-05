@@ -645,65 +645,87 @@ def iniciar_cenario():
     superficie_blocoG = desenhar_blocoG()
 
     cenarios_fases = {
-        #largura das fases: [5632, 6464, 6304, 6304, 5984]
+        #largura das fases: [5632, 6464, 6304]
+        
         #largura nc2a: 360
         #largura reitoria 500
         #largura prediog1 250
         #largura prediog2 300
-        #largura predio g3 200
+        #largura prediog3 200
         #largura arbusto 120
         #largura nupeinsc 420
+        #largura arvore 150
         0 : {
             "predios" : [
-                (100, superficie_nc2a),
-                (550, superficie_nupeinsc),
-                (1100, superficie_predio_generico1),
+                (450, superficie_nc2a),
+                (1000, superficie_predio_generico1),
+                (1600, superficie_nupeinsc),
                 #biblioteca aqui
-                (2300, superficie_predio_generico3),
+                (2200, superficie_predio_generico3),
+                (3250, superficie_predio_generico2),
+                (3950, superficie_predio_generico1),
+                (4650, superficie_predio_generico3),
             ],
             "vegetacao" : [
-                (100, superficie_arvore),
-                (200, superficie_arbusto),
-                (900, superficie_arbusto),
-                (1400, superficie_arvore_maior),
-                (1500, superficie_arbusto_maior),
-                (2500, superficie_arvore_maior),
+                (200, superficie_arvore),
+                (800, superficie_arbusto),
+                (1450, superficie_arvore),
+                (2100, superficie_arbusto),
+                (2950, superficie_arvore),
+                (3700, superficie_arbusto),
+                (4350, superficie_arvore),
+                (4950, superficie_arbusto),
             ]
         },
 
         1 : {
             "predios" : [
-                #bloco g
-                #carrinho_billy
-                (500, superficie_predio_r),
-                (1100, superficie_predio_generico1),
-                (1700, superficie_predio_generico2),
-                (2300, superficie_predio_generico3),
+                (400, superficie_blocoG),
+                (1050, superficie_predio_generico2),
+                (2750, superficie_carrinho),
+                (3250, superficie_predio_generico1),
+                (3850, superficie_predio_generico3),
+                (4350, superficie_predio_generico2),
+                (5000, superficie_predio_generico1),
             ],
 
             "vegetacao" : [
-                (100, superficie_arvore_maior),
                 (200, superficie_arbusto),
-                (900, superficie_arbusto),
-                (1400, superficie_arvore_maior),
-                (1500, superficie_arbusto_maior),
-                (2500, superficie_arvore_maior),
+                (800, superficie_arvore),
+                (2500, superficie_arvore),
+                (3050, superficie_arbusto),
+                (3600, superficie_arvore),
+                (4150, superficie_arbusto),
+                (4750, superficie_arvore),
+                (5350, superficie_arbusto),
+
+            ]
+        },
+
+        2 : {
+            "predios" : [
+               (400, superficie_predio_generico1),
+               (100, superficie_predio_generico2),
+               (1650, superficie_ru),
+               (2950, superficie_predio_generico3),
+               (3500, superficie_predio_generico1),
+               (4100, superficie_predio_r),
+               (5200, superficie_predio_generico2),
+            ],
+    
+            "vegetacao": [
+                (200, superficie_arvore),
+                (800, superficie_arbusto),
+                (1400, superficie_arvore),
+                (2450, superficie_arbusto),
+                (2700, superficie_arvore),
+                (3250, superficie_arbusto),
+                (3850, superficie_arvore),
+                (4700, superficie_arbusto),
+                (4950, superficie_arvore),
             ]
         }
 
-        # 2 : {
-        #     "predios" : [
-       #         #outro bloco
-                #ru
-                #predios
-                #reitoria
-        #     ]
-        # }
-
-        #3: {
-        #   hospital universitario
-        #   predios
-        #}
     }
 
 def carregar_estruturas_fase(indice_fase):
@@ -720,7 +742,7 @@ def desenhar_cenario(superficie, x_camera, y_chao=690, largura_tela=1262):
 
     if superficie_lua:
         superficie.blit(superficie_lua, (200, 50))
-    
+        
     if superficie_nuvem:
         superficie.blit(superficie_nuvem, ((350, 40)))
         superficie.blit(superficie_nuvem, ((650, 50)))

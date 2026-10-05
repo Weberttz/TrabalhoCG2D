@@ -28,7 +28,7 @@ class Jogo:
         self.debug = False
         self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
              "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
-
+        
         iniciar_cenario()
         
         self.run_finalizada = False
