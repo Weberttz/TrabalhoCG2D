@@ -76,6 +76,24 @@ class Jogo:
 
         self.imagens_pombos = imagens
 
+        self.anim_jogador_idle_left = Inicializador.gerar_lista_animacoes("soldado", "idle_left", 4)
+        self.anim_jogador_idle_right = Inicializador.gerar_lista_animacoes("soldado", "idle_right", 4)
+        self.anim_jogador_walk_left = Inicializador.gerar_lista_animacoes("soldado", "walk_left", 4)
+        self.anim_jogador_walk_right = Inicializador.gerar_lista_animacoes("soldado", "walk_right", 4)
+        self.anim_jogador_jump_right = Inicializador.gerar_lista_animacoes("soldado", "jump_right", 3)
+        self.anim_jogador_jump_left = Inicializador.gerar_lista_animacoes("soldado", "jump_left", 3)
+        self.anim_jogador_to_look_up = Inicializador.gerar_lista_animacoes("soldado", "to_look_up", 4)
+
+        imagens = {}
+        for lista in (self.anim_jogador_idle_left, self.anim_jogador_idle_right, 
+                      self.anim_jogador_walk_left, self.anim_jogador_walk_right,
+                      self.anim_jogador_jump_right, self.anim_jogador_jump_left,
+                      self.anim_jogador_to_look_up):
+                    imagens |= Inicializador.carregar_animacoes(lista)
+                
+        self.imagens_jogador = imagens
+
+
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
@@ -89,9 +107,11 @@ class Jogo:
         inimigos = self.zumbis + self.cachorros + self.pombos
 
         if self.gerenciadorFases.fase_atual == 0 and self.voltando == False:
-            arma = Arma(60, POS_INICIO.copy(), "yellow")
+            arma = Arma(60, POS_INICIO.copy(), AMARELO)
             self.jogador = Jogador(POS_INICIO.copy(), self.plataformas, inimigos, 
-                                self.coletaveis, [arma], "red")
+                                self.coletaveis, [arma], VERMELHO)
+            self.jogador.tamanho = TAMANHO_JOGADOR
+            self.jogador.image = self.anim_jogador_idle_right[0]
         else:
             self.jogador.plataformas = self.plataformas
             self.jogador.coletaveis = self.coletaveis
@@ -100,6 +120,7 @@ class Jogo:
         self.camera = Camera(self.jogador, self.largura_mapa, self.altura_mapa)
 
         for z in self.zumbis:
+            z.tamanho = TAMANHO_QUADRADO - 10
             z.image = self.anim_zumbi_idle[0]
             z.inimigos.append(self.jogador)
 
@@ -118,12 +139,6 @@ class Jogo:
     def renderizar_mundo(self):
         """Desenha o mapa estático uma única vez numa superficie gigante."""
         surface = pygame.Surface((self.largura_mapa, self.altura_mapa), pygame.SRCALPHA)
-
-        # raio x e raio y da elipse preta
-        rx, ry = TAMANHO_QUADRADO // 4, TAMANHO_QUADRADO - 4
-        # raio x e raio y elipse roxa
-        rx2, ry2 = rx - 2, ry - 2
-
         for plataforma in self.plataformas:
             if plataforma.tipo == "normal":
                 draw_polygonon(surface, plataforma.vertices, plataforma.cor_borda)
@@ -141,8 +156,8 @@ class Jogo:
 
     # Loop principal
     def rodar(self):
-        self.tocar_musica()
-        faulthandler.dump_traceback_later(5, repeat=True)
+        # self.tocar_musica()
+        faulthandler.enable()
         while self.rodando:
             dt = self.clock.tick(60) / 1000 # único tick por frame
             self.tratar_eventos()
