@@ -1,11 +1,11 @@
 import pygame 
 import Biblioteca.transformacoes as transformacoes
 from Classes.humanoide import Humanoide
-from settings import Vetor, Retangulo
+from settings import Vetor, Retangulo, TAMANHO_JOGADOR
 
 class Jogador(Humanoide):
     def __init__(self, pos, plataformas, inimigos, coletaveis, equipamentos, cor):
-        super().__init__(plataformas, inimigos, equipamentos, pos, cor)
+        super().__init__(plataformas, inimigos, equipamentos, pos, cor, TAMANHO_JOGADOR)
         self.tempo = pygame.time.get_ticks()
         self.pontuacao = 0
         self.coletaveis_missao = 0

@@ -120,7 +120,6 @@ class Jogo:
         self.camera = Camera(self.jogador, self.largura_mapa, self.altura_mapa)
 
         for z in self.zumbis:
-            z.tamanho = TAMANHO_QUADRADO - 10
             z.image = self.anim_zumbi_idle[0]
             z.inimigos.append(self.jogador)
 

@@ -1,9 +1,9 @@
-from settings import TAMANHO_QUADRADO, random
+from settings import TAMANHO_QUADRADO, TAMANHO_ZUMBI, random
 from Classes.humanoide import Humanoide
 
 class Zumbi(Humanoide):
     def __init__(self, plataformas, pos, equipamentos, cor, nivel_dificuldade):
-        super().__init__(plataformas, [], equipamentos, pos, cor)
+        super().__init__(plataformas, [], equipamentos, pos, cor, TAMANHO_ZUMBI)
         self.vertices = []
         self.tempo_mudar_direcao = 0
         self.vivo = True
