@@ -172,7 +172,7 @@ class Jogador(Humanoide):
                 self.quantidade_coletada += 1
                 coletavel.ativo = False   
 
-        if self.vida < 100: self.vida = 100
+        if self.vida > 100: self.vida = 100
 
     def contabilizar_pontuacao(self):
         qnt_inimigos = len(self.inimigos)
