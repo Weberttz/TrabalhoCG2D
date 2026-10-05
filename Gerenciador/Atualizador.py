@@ -26,6 +26,7 @@ def atualizar_entidades(jogo, dt):
     atualizar_zumbis(jogo)
     atualizar_cachorros(jogo)
     atualizar_pombos(jogo)
+    atualizar_chefe(jogo)
 
 def verificar_morte_jogador(jogo):
     j = jogo.jogador
@@ -132,3 +133,8 @@ def atualizar_cachorros(jogo):
         cachorro.atualizar()
         if jogo.avancar_frame:
             cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_esquerda, jogo.anim_cachorro_direita)
+
+def atualizar_chefe(jogo):
+    if jogo.chefe != None:
+        jogo.chefe.atualizar(jogo.jogador.equipamento.projeteis)
+

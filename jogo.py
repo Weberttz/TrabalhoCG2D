@@ -40,8 +40,6 @@ class Jogo:
         self.coletaveis_visiveis = []
         self.cachorros_visiseis = []
 
-        # tudo é criado com o default pq a pre renderização é antes da escolha da dificuldade
-        self.nivel_dificuldade = get_dificuldade()
         self.estado_jogo = "menu"
         iniciar_menu()
 
@@ -78,7 +76,7 @@ class Jogo:
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
-        self.zumbis, self.cachorros, self.pombos = Inicializador.criar_inimigos(mapa, self.plataformas, self.blocks, self.gerenciadorFases.dificuldade)
+        self.zumbis, self.cachorros, self.pombos, self.chefe = Inicializador.criar_inimigos(mapa, self.plataformas, self.blocks, self.gerenciadorFases.dificuldade)
         self.portais = [p for p in self.plataformas if p.tipo == "teleport"]
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
@@ -86,6 +84,8 @@ class Jogo:
         carregar_estruturas_fase(self.gerenciadorFases.fase_atual)
 
         inimigos = self.zumbis + self.cachorros + self.pombos
+        if self.chefe != None:
+            inimigos += [self.chefe] 
 
         if self.gerenciadorFases.fase_atual == 0 and self.voltando == False:
             arma = Arma(60, POS_INICIO.copy(), "yellow")
@@ -94,7 +94,7 @@ class Jogo:
         else:
             self.jogador.plataformas = self.plataformas
             self.jogador.coletaveis = self.coletaveis
-            self.jogador.inimigos = self.zumbis + self.cachorros + self.pombos
+            self.jogador.inimigos = inimigos
 
         self.camera = Camera(self.jogador, self.largura_mapa, self.altura_mapa)
 
@@ -109,6 +109,9 @@ class Jogo:
         for p in self.pombos:
             p.image = self.anim_pombo_esquerda[0]
             p.inimigos.append(self.jogador)
+
+        if self.chefe != None:
+            self.chefe.jogador = self.jogador
 
         self.mundo_surface = self.renderizar_mundo()
         self.viewport_surface = self.criar_surface_viewport()
@@ -141,7 +144,7 @@ class Jogo:
     # Loop principal
     def rodar(self):
         self.tocar_musica()
-        faulthandler.dump_traceback_later(5, repeat=True)
+        #faulthandler.dump_traceback_later(5, repeat=True)
         while self.rodando:
             dt = self.clock.tick(60) / 1000 # único tick por frame
             self.tratar_eventos()
@@ -175,6 +178,11 @@ class Jogo:
                 if evento.type == pygame.KEYDOWN:
                     if evento.key == pygame.K_h:
                         self.debug = not self.debug
+
+            # conclusão provisória 
+            if self.estado_jogo in ["Game over", "Win"]:
+                print(f'Estado do jogo: {self.estado_jogo}')
+                self.rodando = False
                 
     # Atualização
     def atualizar(self, dt):
@@ -183,6 +191,7 @@ class Jogo:
             self.camera.atualizar()
             Atualizador.atualizar_animacao(self, dt)
             Atualizador.atualizar_entidades(self, dt)
+            self.gerenciadorFases.verificar_conclusao(self)
 
     # Renderização
     def desenhar(self):
@@ -203,6 +212,7 @@ class Jogo:
             Renderizador.desenhar_zumbis(self)
             Renderizador.desenhar_cachorros(self)
             Renderizador.desenhar_pombos(self)
+            Renderizador.desenhar_chefe(self)
             Renderizador.desenhar_jogador(self)
             Renderizador.desenhar_hud(self)
             if self.debug:

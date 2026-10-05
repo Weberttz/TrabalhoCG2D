@@ -26,7 +26,7 @@ superficie_elipse = None
 superficie_nuvem = None
 
 estado_menu = "INICIO"
-dificuldade = "medio"
+dificuldade = "facil"
 dificuldade_selecionada = 0
 #0, 1, 2, 3
 

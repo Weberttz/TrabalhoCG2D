@@ -25,6 +25,22 @@ class GerenciadorFases:
         if self.fase_atual > 0 :
             self.fase_atual -= 1
 
+    # conclusão provisória
+    def verificar_conclusao(self, jogo):
+        '''Verifica se:
+        \n - o jogador morreu (game_over);
+        \n - o chefe morreu (win) '''
+        self.win(jogo)
+        self.game_over(jogo)
+
+    def win(self,jogo):
+        if jogo.chefe.vida == 0:
+            jogo.estado_jogo = "Win"
+
+    def game_over(self,jogo):
+        if jogo.jogador.vida == 0:
+            jogo.estado_jogo = "Game over"
+
     def terminou(self):
         return self.fase_atual >= len(self.fases)
 

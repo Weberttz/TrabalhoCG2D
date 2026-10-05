@@ -52,6 +52,18 @@ def desenhar_jogador(jogo):
         aabb = r.calcular_aabb(vertices_rect)
         bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
+def desenhar_chefe(jogo):
+    if jogo.chefe == None: return
+    vertices = jogo.camera.aplicar_vertices(jogo.chefe.vertices)
+    bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
+    bibgraf.scanline_fill(jogo.tela, vertices, jogo.chefe.cor)
+
+    if jogo.debug:
+        vertices_rect = jogo.camera.aplicar_vertices(jogo.chefe.retangulo.vertices)
+        aabb = r.calcular_aabb(vertices_rect)
+        bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+
+
 def desenhar_coletaveis(jogo):
     for coletavel in jogo.coletaveis_visiveis:
         vertices = jogo.camera.aplicar_vertices(coletavel.vertices)

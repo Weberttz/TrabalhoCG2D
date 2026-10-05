@@ -7,17 +7,19 @@ class Jogador(Humanoide):
     def __init__(self, pos, plataformas, inimigos, coletaveis, equipamentos, cor):
         super().__init__(plataformas, inimigos, equipamentos, pos, cor)
         self.tempo = pygame.time.get_ticks()
-        self.pontuacao = 0
-        self.coletaveis_missao = 0
         self.olhando = 1
+        self.pontuacao = 0
         self.coletaveis = coletaveis
         self.quantidade_coletada = 0
+        self.coletaveis_missao = 0
+
         self.invulneravel = False
         self.tempo_invulnerabilidade = 1.0  # 1 seg
         self.momento_ultimo_dano = 0
         self.forca_afastamento = 20
         self.atrito_afastamento = 0.85
         self.vel_afastamento = 0
+
         self.tempo_teleport = 2.0
         self.momento_ultimo_teleport = 100
         self.teleport_colidiu = None
@@ -30,7 +32,7 @@ class Jogador(Humanoide):
         self.vel_y = 0
         self.aceleracao = Vetor(0, 10) 
         self.no_chao = False
-        # self.vida = 100
+        self.vida = 100
         self.retangulo = Retangulo(self.pos.x, self.pos.y - self.tamanho,
                                 self.tamanho, self.tamanho)
         self.atualizar_vertices()
@@ -103,8 +105,6 @@ class Jogador(Humanoide):
 
         self.vel_x += self.vel_afastamento
         self.vel_afastamento *= self.atrito_afastamento
-
-        print(f" vel_x = {self.vel_x}")
 
     def lidar_com_colisoes(self):
         self.colidir_com_coletavel()
@@ -181,7 +181,7 @@ class Jogador(Humanoide):
                 self.quantidade_coletada += 1
                 coletavel.ativo = False   
 
-        if self.vida < 100: self.vida = 100
+        if self.vida > 100: self.vida = 100
 
     def contabilizar_pontuacao(self):
         qnt_inimigos = len(self.inimigos)
@@ -200,15 +200,12 @@ class Jogador(Humanoide):
         \n - Torna-se temporariamente invulnerável. ''' 
         for inimigo in self.inimigos:
             if self.retangulo.colidiu_com(inimigo.retangulo) and not self.invulneravel:
-                print(f'Dano inimigo: {inimigo.dano}')
-                self.vida -= inimigo.dano
+                self.perder_vida(inimigo.dano)
                 self.afastar_do_inimigo(inimigo)
-                self.invulneravel = True
-                self.momento_ultimo_dano = pygame.time.get_ticks() 
 
     def atualizar_invulnerabilidade(self):
         '''Verifica se já passou o tempo de invulnerabilidade:
-        \n - se sim, torna vulnerável outra vez
+        \n - se sim, torna vulnerável outra vez e para o o afastamento
         \n - se não, permanece invulnerável (não perde vida em colisões com inimigos)
         '''
         if self.invulneravel:
@@ -217,6 +214,7 @@ class Jogador(Humanoide):
                 self.vel_afastamento = 0
 
     def afastar_do_inimigo(self, inimigo):
+        '''Provoca a reação de afastamento quando colide com o inimigo se o jogador estiver vulnerável.'''
         # primeiro afasta e depois torna invulneravel
         # pq assim afasta so uma vez por segundo tbm
         # se colidir pela esquerda, empurra pra esquerda
@@ -225,3 +223,10 @@ class Jogador(Humanoide):
         else:
             direcao = 1
         self.vel_afastamento = direcao * self.forca_afastamento
+    
+    def perder_vida(self, dano):
+        if not self.invulneravel:
+            self.vida -= dano
+            self.invulneravel = True
+            self.momento_ultimo_dano = pygame.time.get_ticks() 
+        
