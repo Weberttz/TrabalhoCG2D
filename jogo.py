@@ -26,7 +26,7 @@ class Jogo:
        
         self.rodando = True
         self.debug = False
-        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase3.csv",
+        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
              "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
 
         iniciar_cenario()
@@ -119,11 +119,6 @@ class Jogo:
             if plataforma.tipo == "normal":
                 draw_polygonon(surface, plataforma.vertices, plataforma.cor_borda)
                 scanline_fill(surface, plataforma.vertices, plataforma.cor)
-            elif plataforma.tipo == "teleport":
-                desenhar_elipse(surface, plataforma.x0 + plataforma.largura // 2, plataforma.y1 - plataforma.altura,
-                                rx, ry, BLACK, preenchida=True)
-                desenhar_elipse(surface, plataforma.x0 + plataforma.largura // 2, plataforma.y1 - plataforma.altura,
-                                rx2, ry2, plataforma.cor, preenchida=True)
                 
         return surface
     
@@ -191,12 +186,13 @@ class Jogo:
             # self.tela.fill(AZUL_NOTURNO)
             self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
 
-            Renderizador.desenhar_jogador(self)
+            Renderizador.desenhar_portais(self)
             Renderizador.desenhar_coletaveis(self)
             Renderizador.desenhar_projeteis(self)
             Renderizador.desenhar_zumbis(self)
             Renderizador.desenhar_cachorros(self)
             Renderizador.desenhar_pombos(self)
+            Renderizador.desenhar_jogador(self)
             Renderizador.desenhar_hud(self)
             if self.debug:
                 Renderizador.desenhar_aabb_de_portal(self)

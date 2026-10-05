@@ -17,6 +17,31 @@ uvs_coletaveis = [
     (0, 1) # inferior-direito
 ]
 
+def desenhar_portal_estilizado(surface, plataforma, camera):
+    x_centro = plataforma.x0 + plataforma.largura // 2
+    y_centro = plataforma.y1 - plataforma.altura
+
+    rx_base = plataforma.largura // 2
+    ry_base = plataforma.altura // 2
+
+    # Atualiza o tempo interno do portal para mover os efeitos
+    plataforma.tempo_portal += 0.07
+
+    # Efeito de pulsação
+    pulsacao = math.sin(plataforma.tempo_portal * 2) * (rx_base * 0.08)
+    rx = rx_base + pulsacao
+    ry = ry_base + pulsacao
+
+    centro_tela = camera.aplicar_posicao((x_centro, y_centro))
+    cx_tela, cy_tela = int(centro_tela[0]), int(centro_tela[1])
+
+    bibgraf.desenhar_elipse(surface, cx_tela, cy_tela, int(rx * 0.8), int(ry * 0.8), plataforma.cor_borda, preenchida=True)
+    bibgraf.desenhar_elipse(surface, cx_tela, cy_tela, int(rx * 0.5), int(ry * 0.5), plataforma.cor, preenchida=True)
+
+def desenhar_portais(jogo):
+    for portal in jogo.portais_visiveis:
+        desenhar_portal_estilizado(jogo.tela, portal, jogo.camera)
+
 def desenhar_jogador(jogo):
     vertices = jogo.camera.aplicar_vertices(jogo.jogador.vertices)
     bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
@@ -29,27 +54,12 @@ def desenhar_jogador(jogo):
 
 def desenhar_coletaveis(jogo):
     for coletavel in jogo.coletaveis_visiveis:
-        vertices = jogo.camera.aplicar_vertices(coletavel.retangulo.vertices)
+        vertices = jogo.camera.aplicar_vertices(coletavel.vertices)
 
         if coletavel.imagem != None:
             bibgraf.scanline_texture(jogo.tela, vertices, uvs_coletaveis, coletavel.imagem)
-            continue
-
-        if coletavel.tipo == "municao":
-            cores = [BLACK, BLACK, VERMELHO, VERMELHO]
-            bibgraf.scanline_fill_gradiente(jogo.tela, vertices, cores)
-            bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
-            continue
-
-        if coletavel.forma == "retangular":
-            bibgraf.scanline_fill(jogo.tela, vertices, coletavel.cor)
-            bibgraf.draw_polygonon(jogo.tela, vertices, "red")
-            continue
 
         if coletavel.forma == "circular":
-            centro_na_tela = jogo.camera.aplicar_posicao(coletavel.centro)
-            bibgraf.desenhar_circulo(jogo.tela, centro_na_tela, coletavel.raio+1, BLACK, True)
-            bibgraf.desenhar_circulo(jogo.tela, centro_na_tela, coletavel.raio-1, coletavel.cor, True)
             if jogo.debug:
                 bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
@@ -177,11 +187,13 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
 def desenhar_hud(jogo):
     texto_vida = jogo.fonte.render(f"Vida: {jogo.jogador.vida}", 1, WHITE)
     texto_municao = jogo.fonte.render(f"Munição: {jogo.jogador.equipamento.municao}", 1, WHITE)
+    texto_pontuacao = jogo.fonte.render(f"Pontuação: {jogo.jogador.pontuacao}", 1, WHITE)
     texto_coletaveis = jogo.fonte.render(f"Coletáveis: {jogo.jogador.quantidade_coletada}", 1, WHITE)
 
     jogo.tela.blit(texto_vida, (30, 10))
     jogo.tela.blit(texto_municao, (30, 40))
     jogo.tela.blit(texto_coletaveis, (30, 70))
+    jogo.tela.blit(texto_pontuacao, (30, 100))
 
     janela_mundo = (0, 0, LARGURA, ALTURA + 10)
 
