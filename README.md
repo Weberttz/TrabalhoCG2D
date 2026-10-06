@@ -2,6 +2,88 @@
 
 Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por cenário típicos da Uece - Campus Itapery (divididos em três fases) e enfrenta um grande vilão ao final.
 
+## Funcionalidades
+* Set Pixel -> todo o jogo foi renderizado pixel por pixel
+* Primitivas de Rasterização 
+    * Linha -> modelagem dos prédios, botões do menu
+    * Círculo -> modelagem da Lua
+    * Elipse -> modelagem das nuvens
+* Preenchimento de Regiões 
+    * Flood Fill/Boundary Fill -> foi usado principalmente no menu, mas também em partes do cenário, como Lua, nuvens e carrinho do Billy
+    * Scanline -> usado no jogo em si (mapas, viewport, cenário)
+* Transformações Geométricas 
+    * Rotação -> Giro em coletável (moeda)
+    * Translação -> Teleport 
+    * Escala -> Viewport(minimapa)
+* Animação 2D -> Movimentação dos personagens
+* Janela e Viewport -> criaçao de minimapa 
+* Recorte de Cohen-Sutherland (Clipping) -> usado no minimapa para plataformas que estavam nas bordas da viewport
+* Mapeamento de Textura -> Sprites dos personagens e componentes do cenário
+* Input (Teclado e/ou Mouse) -> Usado no menu e para movimentar o jogador 
+
+
+
+## Inimigos
+```
+Zumbi - inimigo básico
+Doutor zumbi - inimigo básico que lança livros
+Cachorro fantasma - inimigo imortal
+Pombo tóxico - inimigo aéreo
+```
+
+# Cenário
+## Estruturas 
+```
+NC2A - prédio top - fusível vai está lá
+Reitoria
+Carrinho do Billy - melhor lugar para lanchar
+RU - muita comida - tapioca tem que existir
+Biblioteca central - documentos importantes
+Prédio da Medicina - existe uma cura??
+```
+## Background
+```
+Lua - simbolizar noite
+Árvores - uece é muito arborizada
+Nuvens - céu bem cheio - parallax?
+Estrelas - céu estrelado
+```
+
+# Lore
+```
+Em um mundo pós apocalíptico, é preciso visitar universidades para encontrar pesquisas úteis para mitgar pragas e curar pessoas, qualquer recurso é bem vindo. Você foi contratado para uma missão impossível, ir à uma universidade chamada Uece, coletar itens importantes e voltar com vida (a parte mais difícil, pois você não espera o que existe naquele local sombrio...). 
+```
+
+# Mecânicas 
+```
+Pulo (duplo?)
+Corrida
+Tiro
+Ataque corpo a corpo
+Lançar granadas ( temos que fazer isso kkk)
+```
+
+# Coletáveis
+```
+Tapioca ( cura vida )
+Munição ( aumenta estoque para tiro)
+Fusível ( missão principal )
+Remédio ( missão principal)
+Pacotes de comida ( missão principal )
+Protótipo tecnológico ( melhoria de arma )
+Moedas ( comprar alguma coisa )
+Refrigerante ( aumentar velocidade - pulo duplo? dash? )
+```
+
+# Dificuldades
+```
+Fácil - Dano de inimigo = 10
+Médio -  Dano de inimigo = 20
+Difícil - Dano de inimigo = 40
+```
+# Tutorial -> Como compilar e executar 
+
+# Link para video de execução do programa
 
 # Árvore do projeto
 
@@ -16,7 +98,7 @@ Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por c
 │   ├── tijolos-escuros.png
 │   └── uece-noite.png
 ├── Biblioteca
-│   ├── algoritmos.py  (algoritmos das aulas)
+│   ├── algoritmos.py  (algoritmos de renderização e rasterização)
 │   └── transformacoes.py (matrizes de transformações lineares)
 ├── Classes
 │   ├── arma.py  (arma do jogador)
@@ -80,71 +162,4 @@ Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por c
     ├── zumbi_walk_right_5.png
     ├── zumbi_walk_right_6.png
     └── zumbi_walk_right_7.png
-```
-
-# Ideias para aplicar
-## Transformações lineares
-```
-Teleport - Translação
-Giro nos coletáveis - Rotação
-Chefe gigante - Escala
-```
-
-## Inimigos
-```
-Zumbi - inimigo básico
-Doutor zumbi - inimigo básico que lança livros
-Cachorro fantasma - inimigo imortal
-Pombo tóxico - inimigo aéreo
-```
-
-# Cenário
-## Estruturas 
-```
-NC2A - prédio top - fusível vai está lá
-Reitoria
-Carrinho do Billy - melhor lugar para lanchar
-RU - muita comida - tapioca tem que existir
-Biblioteca central - documentos importantes
-Prédio da Medicina - existe uma cura??
-```
-## Background
-```
-Lua - simbolizar noite
-Árvores - uece é muito arborizada
-Nuvens - céu bem cheio - parallax?
-Estrelas - céu estrelado
-```
-
-# Lore
-```
-Em um mundo pós apocalíptico, é preciso visitar universidades para encontrar pesquisas úteis para mitgar pragas e curar pessoas, qualquer recurso é bem vindo. Você foi contratado para uma missão impossível, ir à uma universidade chamada Uece, coletar itens importantes e voltar com vida (a parte mais difícil, pois você não espera o que existe naquele local sombrio...). 
-```
-
-# Mecânicas 
-```
-Pulo (duplo?)
-Corrida
-Tiro
-Ataque corpo a corpo
-Lançar granadas ( temos que fazer isso kkk)
-```
-
-# Coletáveis
-```
-Tapioca ( cura vida )
-Munição ( aumenta estoque para tiro)
-Fusível ( missão principal )
-Remédio ( missão principal)
-Pacotes de comida ( missão principal )
-Protótipo tecnológico ( melhoria de arma )
-Moedas ( comprar alguma coisa )
-Refrigerante ( aumentar velocidade - pulo duplo? dash? )
-```
-
-# Dificuldades
-```
-Fácil - Dano de inimigo = 10
-Médio -  Dano de inimigo = 20
-Difícil - Dano de inimigo = 40
 ```
