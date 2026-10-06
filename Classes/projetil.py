@@ -52,7 +52,7 @@ class Projetil():
             direcao_x = 1
         else: 
             direcao_x = -1
-        self.direcao = Vetor(direcao_x, 0)
+        self.direcao = Vetor(direcao_x, -0.5)
         if self.direcao.calcular_norma() != 0:
             self.direcao = self.direcao.normalizar()
 
@@ -80,7 +80,7 @@ class Projetil():
     def desenhar(self, superficie, scroll, camera):
         '''Desenha projetil e desativa ele se percorrer a distância máxima sem colidir com nada.'''
         # tolerancia = distancia maxima que o projetil vai percorrer se não colidir com nada antes 
-        tolerancia = 15 * TAMANHO_QUADRADO
+        tolerancia = 12 * TAMANHO_QUADRADO
         novo_vetor = self.pos_incial - self.pos
         distancia = novo_vetor.calcular_norma()
 
