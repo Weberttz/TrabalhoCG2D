@@ -59,8 +59,11 @@ class Jogador(Humanoide):
         y = 0
         if keys[pygame.K_UP] and x == 0:  y -= 1    # cima
 
-        if x == 0 and y == 0:
-            x = self.olhando              # parado: atira para onde olha
+        if x == 0 and y == 0:       # parado: atira para onde olha
+            if self.olhando == 0:
+                y = -1
+            else:
+                x = self.olhando             
 
         direcao = Vetor(x, y)
         return direcao.normalizar()
