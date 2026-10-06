@@ -3,11 +3,19 @@ from Classes.retangulo import Retangulo as r
 import Biblioteca.algoritmos as bibgraf
 from Biblioteca import transformacoes
 from settings import *
+
 uvs = [
     (0, 1),  # inferior-esquerdo
     (0, 0),  # superior-esquerdo
     (1, 0),  # superior-direito
     (1, 1),  # inferior-direito
+]
+
+uvs_jogador = [
+    (0, 1.0),   # inferior-esquerdo (mantém na base)
+    (0, 0.222), # superior-esquerdo (traz o topo para baixo)
+    (1, 0), # superior-direito
+    (1, 1.0),   # inferior-direito (mantém na base)
 ]
 
 uvs_coletaveis = [
@@ -47,7 +55,7 @@ def desenhar_jogador(jogo):
     vertices = jogo.camera.aplicar_vertices(jogo.jogador.vertices)
     imagem = jogo.imagens_jogador.get(jogador.image)
     if imagem != None:
-        bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem)
+        bibgraf.scanline_texture(jogo.tela, vertices, uvs_jogador, imagem)
     else:
         bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
         bibgraf.scanline_fill(jogo.tela, vertices, jogo.jogador.cor)
@@ -63,8 +71,6 @@ def desenhar_coletaveis(jogo):
 
         if coletavel.imagem != None:
             bibgraf.scanline_texture(jogo.tela, vertices, uvs_coletaveis, coletavel.imagem)
-
-        if coletavel.forma == "circular":
             if jogo.debug:
                 bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
@@ -205,6 +211,28 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         zumbi_view[1][1], zumbi_view[2][1] = y1, y1
 
         bibgraf.scanline_fill(jogo.tela, zumbi_view, VERDE)
+
+    for cachorro in jogo.cachorros_visiveis:
+        cachorro_view =[transformacoes.produto_matriz(matriz_viewport,
+                                    [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
+                                    for vertice in cachorro.vertices]
+        x0 = cachorro_view[0][0]
+        y0 = cachorro_view[0][1]
+        x1 = cachorro_view[2][0]
+        y1 = cachorro_view[1][1]
+        
+        if (x1 > Vxmax or x0 < Vxmin 
+            or y0 < Vymin or y1 > Vymax):
+            _, rx0, ry0, rx1, ry1 = bibgraf.cohen_sutherland( x0, y0, x1, y1, Vxmin, Vymin, Vxmax, Vymax)
+            x0, y0, x1, y1 = rx0, ry0, rx1, ry1
+
+        cachorro_view[0][0], cachorro_view[1][0] = x0, x0
+        cachorro_view[0][1], cachorro_view[3][1] = y0, y0
+        cachorro_view[2][0], cachorro_view[3][0] = x1, x1
+        cachorro_view[1][1], cachorro_view[2][1] = y1, y1
+
+        bibgraf.scanline_fill(jogo.tela, cachorro_view, cachorro.cor)
+
 
     bibgraf.draw_polygonon(jogo.tela, borda, WHITE)
 
