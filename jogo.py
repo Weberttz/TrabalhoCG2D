@@ -10,7 +10,7 @@ from Biblioteca.algoritmos import *
 from Classes.jogador import Jogador
 from Classes.camera import Camera
 from Classes.arma import Arma
-from Classes.cenario import desenhar_cenario, iniciar_cenario, carregar_estruturas_fase
+from Classes.cenario import desenhar_cenario, iniciar_cenario
 
 from menu import iniciar_menu, desenhar_menu, acao_menu, get_dificuldade
 
@@ -26,7 +26,7 @@ class Jogo:
        
         self.rodando = True
         self.debug = False
-        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
+        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase3.csv",
              "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
                 
         iniciar_cenario()

@@ -33,6 +33,7 @@ class Jogador(Humanoide):
         self.aceleracao = Vetor(0, 10) 
         self.no_chao = False
         self.vida = 100
+        # bottomleft
         self.retangulo = Retangulo(self.pos.x, self.pos.y - self.tamanho,
                                 self.tamanho, self.tamanho)
         self.atualizar_vertices()
@@ -174,6 +175,7 @@ class Jogador(Humanoide):
             if self.retangulo.colidiu_com(coletavel.retangulo) and coletavel.ativo:
                 if coletavel.tipo == "tapioca":
                     self.vida+= 30 
+                
                 if coletavel.tipo == "municao":
                     self.equipamento.municao+=1
 

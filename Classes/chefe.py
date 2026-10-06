@@ -8,12 +8,12 @@ from Classes.projetil import Projetil
 
 class Chefe(Humanoide):
     def __init__(self, plataformas, pos, cor, nivel_dificuldade):
-        super().__init__(plataformas, [],[] , pos, cor)
+        self.tamanho = TAMANHO_QUADRADO * 2
+        super().__init__(plataformas, [],[] , pos, cor,self.tamanho)
         self.momento_ultimo_lancamento = pygame.time.get_ticks()
         self.plataformas = plataformas
         self.pos = pos
         self.cor = cor
-        self.tamanho = TAMANHO_QUADRADO * 2
         
         self.livros = []
         self.jogador = None
@@ -21,13 +21,13 @@ class Chefe(Humanoide):
         self.atualizar_vertices()
 
         # podia exibir a vida do chefe tbm na tela final   
-        self.vida = 60
+        self.vida = 90
         self.vel_x = 0
         self.vel_y = 0
         self.velocidade = 2
         self.aceleracao = Vetor(0, 10)
             
-        self.intervalo_lancamento_livro = 4
+        self.intervalo_lancamento_livro = 3
         self.pode_lancar = True
         self.tempo_mudar_direcao = 0
         self.vivo = True
@@ -100,17 +100,29 @@ class Chefe(Humanoide):
             self.tempo_mudar_direcao = random.randint(30, 60)  # Quadros (Frames)
     
     def atirar(self):
-        tolerancia = 12
-        delta_x = abs(self.pos.x -  self.jogador.pos.x)
+        tolerancia = 12 * TAMANHO_QUADRADO
+        delta_x = abs(self.pos.x - self.jogador.pos.x)
 
         tempo = pygame.time.get_ticks()
         if tempo - self.momento_ultimo_lancamento >= self.intervalo_lancamento_livro * 1000: 
             self.momento_ultimo_lancamento = tempo
             self.pode_lancar = True
 
-        # cria o projetil e adiciona na lista - no Atualizador é que se é escolhida a trajetoria diferente 
+        # cria o projetil e adiciona na lista - no Atualizador 
         if self.pode_lancar and delta_x <= tolerancia:
-            livro = Projetil(self.pos, self.jogador.pos, CINZA, True)
-            self.livros.append(livro)
+            livro = None
+            # lançamento horizontal
+            if self.jogador.retangulo.bottom >= self.retangulo.top:
+                pos = Vetor(self.pos.x + self.tamanho, self.pos.y - 2*self.tamanho/3)
+                alvo = Vetor(self.jogador.pos.x, self.jogador.retangulo.top + self.jogador.tamanho/2)
+                livro = Projetil(pos, alvo, CINZA, True)
+            # lancamento vertical
+            else:
+                pos = Vetor(self.pos.x + self.tamanho/2, self.pos.y - self.tamanho)
+                livro = Projetil(pos, self.jogador.pos, CINZA, True)
+                
+            self.livros.append(livro) 
             self.pode_lancar = False
+
+    
    
