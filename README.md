@@ -84,6 +84,7 @@ Difícil - Dano de inimigo = 40
 # Tutorial -> Como compilar e executar 
 
 # Link para video de execução do programa
+ [clique aqui](link)
 
 # Árvore do projeto
 
