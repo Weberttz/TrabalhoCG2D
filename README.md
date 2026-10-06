@@ -1,7 +1,20 @@
+# Nome do jogo
+
+Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por cenário típicos da Uece - Campus Itapery (divididos em três fases) e enfrenta um grande vilão ao final.
+
+
 # Árvore do projeto
 
 ```
 .
+├── Assets
+│   ├── parede-pedra-1.png 
+|   ├── predio-quebrado.png
+│   ├── PressStart2P-Regular.ttf 
+│   ├── tapioca.png 
+│   ├── textura-tijolos.png
+│   ├── tijolos-escuros.png
+│   └── uece-noite.png
 ├── Biblioteca
 │   ├── algoritmos.py  (algoritmos das aulas)
 │   └── transformacoes.py (matrizes de transformações lineares)
