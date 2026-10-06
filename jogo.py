@@ -10,8 +10,7 @@ from Biblioteca.algoritmos import *
 from Classes.jogador import Jogador
 from Classes.camera import Camera
 from Classes.arma import Arma
-from Classes.cenario import desenhar_cenario, iniciar_cenario, carregar_estruturas_fase
-
+from Classes.cenario import desenhar_cenario, iniciar_cenario
 from menu import iniciar_menu, desenhar_menu, acao_menu
 
 class Jogo:
@@ -28,7 +27,7 @@ class Jogo:
         self.debug = False
         self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
              "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
-        
+                
         iniciar_cenario()
         
         self.run_finalizada = False
@@ -83,8 +82,6 @@ class Jogo:
         self.portais = [p for p in self.plataformas if p.tipo == "teleport"]
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
-
-        carregar_estruturas_fase(self.gerenciadorFases.fase_atual)
 
         inimigos = self.zumbis + self.cachorros + self.pombos
 
@@ -191,7 +188,7 @@ class Jogo:
         #comeca o jogo apenas se o estado foi alterado para "jogando" a partir do retorno de acao_menu
         elif self.estado_jogo == "jogando":
             x_camera = abs(self.camera.retangulo.x)
-            desenhar_cenario(self.tela, x_camera)
+            desenhar_cenario(self.tela, x_camera, self.gerenciadorFases.fase_atual)
             # self.tela.fill(AZUL_NOTURNO)
             self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
 

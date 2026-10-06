@@ -57,11 +57,12 @@ superficie_blocoG = None
 superficie_biblioteca = None
 
 cenarios_fases = {}
-predios_cenario_atual = []
-vegetacao_cenario_atual = []
 
 textura_tijolos = pygame.image.load("Assets/textura-tijolos.jpg")
 textura_tapioca = pygame.image.load("Assets/tapioca.png")
+textura_parede_pedra1 = pygame.image.load("Assets/parede-pedra-1.png")
+textura_predio_quebrado = pygame.image.load("Assets/predio-quebrado.png")
+textura_tijolos_escuros = pygame.image.load("Assets/tijolos-escuros.png")
 
 def desenhar_NC2A():
     largura, altura = 360, 300
@@ -106,25 +107,45 @@ def desenhar_predio_generico1():
     largura, altura = 250, 400
     superficie_predio_generico1 = pygame.Surface((largura, altura), pygame.SRCALPHA)
 
-    vertices_predio = retangulo_para_poligono(0, 0, largura, altura)
-    scanline_fill(superficie_predio_generico1, vertices_predio, CINZA)
+    uvs = [
+        (0,0),
+        (1,0),
+        (1,1),
+        (0,1)
+    ]
 
+    vertices_predio = retangulo_para_poligono(0, 0, largura, altura)
+    scanline_texture(superficie_predio_generico1, vertices_predio, uvs, textura_parede_pedra1)
     return superficie_predio_generico1
 
 def desenhar_predio_generico2():
     largura, altura = 300, 300
     superficie_predio_generico2 = pygame.Surface((largura, altura), pygame.SRCALPHA)
 
+    uvs = [
+        (0,0),
+        (1,0),
+        (1,1),
+        (0,1)
+    ]
+
     vertices_predio = retangulo_para_poligono(0, 0, largura, altura)
-    scanline_fill(superficie_predio_generico2, vertices_predio, BRANCO)
+    scanline_texture(superficie_predio_generico2, vertices_predio, uvs, textura_tijolos_escuros)
     return superficie_predio_generico2
 
 def desenhar_predio_generico3():
     largura, altura = 200, 350
     superficie_predio_generico3 = pygame.Surface((largura, altura), pygame.SRCALPHA)
 
+    uvs = [
+        (0,0),
+        (1,0),
+        (1,1),
+        (0,1)
+    ]
+
     vertices_predio = retangulo_para_poligono(0, 0, largura, altura)
-    scanline_fill(superficie_predio_generico3, vertices_predio, BEGE)
+    scanline_texture(superficie_predio_generico3, vertices_predio, uvs, textura_predio_quebrado)
     return superficie_predio_generico3
 
 def desenhar_ru():
@@ -645,112 +666,120 @@ def iniciar_cenario():
     superficie_blocoG = desenhar_blocoG()
 
     cenarios_fases = {
-        #largura das fases: [5632, 6464, 6304]
+        # largura fases: [7744, 8888, 8668]
+        # largura nc2a: 360
+        # largura reitoria: 500
+        # largura prediog1: 250
+        # largura prediog2: 300
+        # largura prediog3: 200
+        # largura arbusto: 120
+        # largura nupeinsc: 420
+        # largura arvore: 150
         
-        #largura nc2a: 360
-        #largura reitoria 500
-        #largura prediog1 250
-        #largura prediog2 300
-        #largura prediog3 200
-        #largura arbusto 120
-        #largura nupeinsc 420
-        #largura arvore 150
         0 : {
             "predios" : [
-                (450, superficie_nc2a),
-                (1000, superficie_predio_generico1),
-                (1600, superficie_nupeinsc),
-                #biblioteca aqui
-                (2200, superficie_predio_generico3),
-                (3250, superficie_predio_generico2),
-                (3950, superficie_predio_generico1),
-                (4650, superficie_predio_generico3),
+                (150, superficie_nc2a),               
+                (700, superficie_predio_generico1),    
+                (1250, superficie_nupeinsc),              
+                (1850, superficie_predio_generico3),
+                (2350, superficie_predio_generico2),
             ],
             "vegetacao" : [
-                (200, superficie_arvore),
-                (800, superficie_arbusto),
-                (1450, superficie_arvore),
-                (2100, superficie_arbusto),
-                (2950, superficie_arvore),
-                (3700, superficie_arbusto),
-                (4350, superficie_arvore),
-                (4950, superficie_arbusto),
+                (25, superficie_arvore),
+                (250, superficie_arbusto),
+                (580, superficie_arvore),
+                (950, superficie_arvore),
+                (1050, superficie_arbusto),
+                (1100, superficie_arvore),
+                (1650, superficie_arvore),
+                (1800, superficie_arbusto),
+                (2050, superficie_arvore),
+                (2250, superficie_arbusto),
+                (2600, superficie_arvore),
+                (2650, superficie_arbusto),
+                (2700, superficie_arvore),
+                (3150,superficie_arvore ),
+                (3200, superficie_arbusto),
+                (3350, superficie_arbusto),
+                (3650, superficie_arvore),
+                (3750,superficie_arbusto)
             ]
         },
 
         1 : {
             "predios" : [
-                (400, superficie_blocoG),
-                (1050, superficie_predio_generico2),
-                (2750, superficie_carrinho),
-                (3250, superficie_predio_generico1),
-                (3850, superficie_predio_generico3),
-                (4350, superficie_predio_generico2),
-                (5000, superficie_predio_generico1),
+                (150, superficie_blocoG),               
+                (1600, superficie_carrinho),             
+                (1850, superficie_predio_generico3),
+                (2350, superficie_predio_generico2),
             ],
 
             "vegetacao" : [
-                (200, superficie_arbusto),
-                (800, superficie_arvore),
-                (2500, superficie_arvore),
+                (50, superficie_arbusto),
+                (400, superficie_arbusto),
+                (750, superficie_arbusto),
+                (1100, superficie_arvore),
+                (1150, superficie_arbusto),
+                (1350, superficie_arvore),
+                (1550, superficie_arbusto),
+                (1780, superficie_arvore),
+                (1950, superficie_arbusto),
+                (2150, superficie_arvore),
+                (2350, superficie_arbusto),
+                (2700, superficie_arvore),
+                (2750, superficie_arbusto),
+                (2900, superficie_arvore),
                 (3050, superficie_arbusto),
-                (3600, superficie_arvore),
-                (4150, superficie_arbusto),
-                (4750, superficie_arvore),
-                (5350, superficie_arbusto),
-
             ]
         },
 
         2 : {
             "predios" : [
-               (400, superficie_predio_generico1),
-               (100, superficie_predio_generico2),
-               (1650, superficie_ru),
-               (2950, superficie_predio_generico3),
-               (3500, superficie_predio_generico1),
-               (4100, superficie_predio_r),
-               (5200, superficie_predio_generico2),
+               (150, superficie_predio_generico1),
+               (750, superficie_ru),                   
+               (1950, superficie_predio_r),               
+               (2850, superficie_predio_generico1)
             ],
     
             "vegetacao": [
-                (200, superficie_arvore),
-                (800, superficie_arbusto),
-                (1400, superficie_arvore),
-                (2450, superficie_arbusto),
+                (50, superficie_arvore),
+                (200, superficie_arbusto),
+                (350, superficie_arvore),
+                (550, superficie_arbusto),
+                (650, superficie_arvore),
+                (900, superficie_arbusto),
+                (1300, superficie_arbusto),
+                (1700, superficie_arbusto),
+                (1800, superficie_arvore),
+                (2100, superficie_arbusto),
+                (2400, superficie_arvore),
+                (2500, superficie_arbusto),
                 (2700, superficie_arvore),
-                (3250, superficie_arbusto),
-                (3850, superficie_arvore),
-                (4700, superficie_arbusto),
-                (4950, superficie_arvore),
+                (3150, superficie_arvore)
             ]
         }
-
     }
 
-def carregar_estruturas_fase(indice_fase):
-    global predios_cenario_atual, vegetacao_cenario_atual
-    informacao = cenarios_fases.get(indice_fase, {})
-    predios_cenario_atual = informacao.get("predios", [])
-    vegetacao_cenario_atual = informacao.get("vegetacao", []) 
-    
 
-
-def desenhar_cenario(superficie, x_camera, y_chao=690, largura_tela=1262):
+def desenhar_cenario(superficie, x_camera, fase_atual,  y_chao=690, largura_tela=1262):
 
     superficie.fill(COR_CEU)
+    if fase_atual not in cenarios_fases:
+        return
+
+    dados_fase = cenarios_fases[fase_atual]
 
     if superficie_lua:
-        superficie.blit(superficie_lua, (200, 50))
+        superficie.blit(superficie_lua, ((200, 50)))
         
     if superficie_nuvem:
-        superficie.blit(superficie_nuvem, ((350, 40)))
-        superficie.blit(superficie_nuvem, ((650, 50)))
+        superficie.blit(superficie_nuvem, ((350 - int(x_camera * 0.1), 40)))
+        superficie.blit(superficie_nuvem, ((650 - int(x_camera * 0.1), 50)))
 
     if superficie_rua:
         superficie.blit(superficie_rua, (0, 550))
 
-    for x_mundo, superficie_predio in predios_cenario_atual:
+    for x_mundo, superficie_predio in dados_fase["predios"]:
         x_tela = x_mundo - int(x_camera * 0.3)
         largura_predio = superficie_predio.get_width()
 
@@ -759,8 +788,8 @@ def desenhar_cenario(superficie, x_camera, y_chao=690, largura_tela=1262):
             superficie.blit(superficie_predio, (x_tela, posicao_y - 120))
 
 
-    for x_mundo, superficie_vegetacao in vegetacao_cenario_atual:
-        x_tela = x_mundo - int(x_camera * 0.6)
+    for x_mundo, superficie_vegetacao in dados_fase["vegetacao"]:
+        x_tela = x_mundo - int(x_camera * 0.3)
         largura = superficie_vegetacao.get_width()
 
         if -largura <= x_tela <= largura_tela:
