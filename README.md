@@ -16,78 +16,63 @@ Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por c
     * Translação -> Teleport 
     * Escala -> Viewport(minimapa)
 * Animação 2D -> Movimentação dos personagens
-* Janela e Viewport -> criaçao de minimapa 
+* Janela e Viewport -> criação de minimapa 
 * Recorte de Cohen-Sutherland (Clipping) -> usado no minimapa para plataformas que estavam nas bordas da viewport
 * Mapeamento de Textura -> Sprites dos personagens e componentes do cenário
 * Input (Teclado e/ou Mouse) -> Usado no menu e para movimentar o jogador 
 
-
-
-## Inimigos
-```
-Zumbi - inimigo básico
-Doutor zumbi - inimigo básico que lança livros
-Cachorro fantasma - inimigo imortal
-Pombo tóxico - inimigo aéreo
-```
-
-# Cenário
-## Estruturas 
-```
-NC2A - prédio top - fusível vai está lá
-Reitoria
-Carrinho do Billy - melhor lugar para lanchar
-RU - muita comida - tapioca tem que existir
-Biblioteca central - documentos importantes
-Prédio da Medicina - existe uma cura??
-```
-## Background
-```
-Lua - simbolizar noite
-Árvores - uece é muito arborizada
-Nuvens - céu bem cheio - parallax?
-Estrelas - céu estrelado
-```
-
-# Lore
+## Lore
 ```
 Em um mundo pós apocalíptico, é preciso visitar universidades para encontrar pesquisas úteis para mitgar pragas e curar pessoas, qualquer recurso é bem vindo. Você foi contratado para uma missão impossível, ir à uma universidade chamada Uece, coletar itens importantes e voltar com vida (a parte mais difícil, pois você não espera o que existe naquele local sombrio...). 
 ```
 
-# Mecânicas 
-```
-Pulo (duplo?)
-Corrida
-Tiro
-Ataque corpo a corpo
-Lançar granadas ( temos que fazer isso kkk)
-```
+### Inimigos
+* Zumbi - inimigo básico
+* Cientista zumbi - inimigo final que lança livros
+* Cachorro fantasma - inimigo imortal
+* Pombo tóxico - inimigo aéreo que lança pedras
 
-# Coletáveis
-```
-Tapioca ( cura vida )
-Munição ( aumenta estoque para tiro)
-Fusível ( missão principal )
-Remédio ( missão principal)
-Pacotes de comida ( missão principal )
-Protótipo tecnológico ( melhoria de arma )
-Moedas ( comprar alguma coisa )
-Refrigerante ( aumentar velocidade - pulo duplo? dash? )
-```
+### Coletáveis
+* Tapioca (aumenta vida)
+* Munição (aumenta estoque para tiro)
+* Fusível (missão principal)
+* Remédio (missão principal - cura)
+* Moedas (comprar alguma coisa)
+
+### Cenário
+#### Estruturas 
+* NC2A 
+* NUPEINSC
+* Blocos G e R e outros genéricos
+* Reitoria
+* Carrinho do Billy 
+* RU 
+* Biblioteca central 
+* Prédio da Medicina - existe uma cura??
+
+#### Background
+* Lua 
+* Árvores 
+* Nuvens 
+* Paredes
+
+# Mecânicas 
+* Pulo 
+* Corrida
+* Tiro
+* Ataque corpo a corpo
 
 # Dificuldades
-```
-Fácil - Dano de inimigo = 10
-Médio -  Dano de inimigo = 20
-Difícil - Dano de inimigo = 40
-```
+* Fácil - Dano de inimigo = 10
+* Médio -  Dano de inimigo = 20
+* Difícil - Dano de inimigo = 40
+
 # Tutorial -> Como compilar e executar 
 
 # Link para video de execução do programa
  [clique aqui](link)
 
 # Árvore do projeto
-
 ```
 .
 ├── Assets
