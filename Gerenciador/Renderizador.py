@@ -43,9 +43,14 @@ def desenhar_portais(jogo):
         desenhar_portal_estilizado(jogo.tela, portal, jogo.camera)
 
 def desenhar_jogador(jogo):
+    jogador = jogo.jogador
     vertices = jogo.camera.aplicar_vertices(jogo.jogador.vertices)
-    bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
-    bibgraf.scanline_fill(jogo.tela, vertices, jogo.jogador.cor)
+    imagem = jogo.imagens_jogador.get(jogador.image)
+    if imagem != None:
+        bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem)
+    else:
+        bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
+        bibgraf.scanline_fill(jogo.tela, vertices, jogo.jogador.cor)
 
     if jogo.debug:
         vertices_rect = jogo.camera.aplicar_vertices(jogo.jogador.retangulo.vertices)
@@ -197,15 +202,36 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         
         bibgraf.scanline_fill(jogo.tela, plataforma_view, plataforma.cor)
 
+    for zumbi in jogo.zumbis_visiveis:
+        zumbi_view =[transformacoes.produto_matriz(matriz_viewport,
+                            [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
+                            for vertice in zumbi.vertices]
+        x0 = zumbi_view[0][0]
+        y0 = zumbi_view[0][1]
+        x1 = zumbi_view[2][0]
+        y1 = zumbi_view[1][1]
+        
+        if (x1 > Vxmax or x0 < Vxmin 
+            or y0 < Vymin or y1 > Vymax):
+            _, rx0, ry0, rx1, ry1 = bibgraf.cohen_sutherland( x0, y0, x1, y1, Vxmin, Vymin, Vxmax, Vymax)
+            x0, y0, x1, y1 = rx0, ry0, rx1, ry1
+
+        zumbi_view[0][0], zumbi_view[1][0] = x0, x0
+        zumbi_view[0][1], zumbi_view[3][1] = y0, y0
+        zumbi_view[2][0], zumbi_view[3][0] = x1, x1
+        zumbi_view[1][1], zumbi_view[2][1] = y1, y1
+
+        bibgraf.scanline_fill(jogo.tela, zumbi_view, VERDE)
+
     bibgraf.draw_polygonon(jogo.tela, borda, WHITE)
 
     return
 
 def desenhar_hud(jogo):
-    texto_vida = jogo.fonte.render(f"Vida: {jogo.jogador.vida}", 1, WHITE)
-    texto_municao = jogo.fonte.render(f"Munição: {jogo.jogador.equipamento.municao}", 1, WHITE)
-    texto_pontuacao = jogo.fonte.render(f"Pontuação: {jogo.jogador.pontuacao}", 1, WHITE)
-    texto_coletaveis = jogo.fonte.render(f"Coletáveis: {jogo.jogador.quantidade_coletada}", 1, WHITE)
+    texto_vida = jogo.fonte.render(f"Vida: {jogo.jogador.vida}", 1, AMARELO)
+    texto_municao = jogo.fonte.render(f"Munição: {jogo.jogador.equipamento.municao}", 1, AMARELO)
+    texto_pontuacao = jogo.fonte.render(f"Pontuação: {jogo.jogador.pontuacao}", 1, AMARELO)
+    texto_coletaveis = jogo.fonte.render(f"Coletáveis: {jogo.jogador.quantidade_coletada}", 1, AMARELO)
 
     jogo.tela.blit(texto_vida, (30, 10))
     jogo.tela.blit(texto_municao, (30, 40))

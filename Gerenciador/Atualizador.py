@@ -7,6 +7,12 @@ from settings import (
 )
 
 def atualizar_jogador(jogo):
+    jogador = jogo.jogador
+    if jogo.avancar_frame:
+        jogador.animar(jogo.anim_jogador_idle_left, jogo.anim_jogador_idle_right,
+                       jogo.anim_jogador_walk_left, jogo.anim_jogador_walk_right,
+                       jogo.anim_jogador_jump_left, jogo.anim_jogador_jump_right,
+                       jogo.anim_jogador_to_look_up)
     verificar_morte_jogador(jogo)
     verificar_passou_de_fase(jogo)
     verificar_voltou_fase(jogo)

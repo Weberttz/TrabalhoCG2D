@@ -10,6 +10,8 @@ from Biblioteca.algoritmos import (
     retangulo_para_poligono,
     desenhar_elipse,
     bresenham_circulo,
+    scanline_fill_gradiente,
+    scanline_texture,
 )
 
 COR_CEU = (31, 34, 59)
@@ -25,12 +27,21 @@ COR_FOLHAS = (68, 99, 67)
 COR_ENTRADA = (43, 45, 54)
 COR_JANELA = (166, 161, 113)
 VERDE_ESCURO = (18, 87, 36)
+AZUL_RU = (3, 6, 69)
+COR_JANELA_RU = (18, 18, 18)
+COR_JANELA_RU2 = (46, 45, 45)
+PRETO = (26, 26, 26)
+COR_TELHADO_BLOCO = (69, 13, 8)
+COR_GRADES = (8, 48, 15)
+AZUL_CLARO = (25, 54, 105)
+VERMELHO = (112, 15, 15)
+CAMINHO_FONTE = "Assets/PressStart2P-Regular.ttf"
 
 superficie_nuvem = None
 superficie_lua = None
 superficie_arbusto = None
 superficie_arvore = None
-superficie_nc2a = None
+superficie_nupeinsc = None
 superficie_predio_r = None
 superficie_predio_generico1 = None
 superficie_predio_generico2 = None
@@ -39,10 +50,19 @@ superficie_arvore_maior = None
 superficie_arbusto_maior = None
 superficie_calcada = None
 superficie_rua = None
+superficie_ru = None
+superficie_nupeinsc = None
+superficie_carrinho = None
+superficie_blocoG = None
+superficie_biblioteca = None
 
 cenarios_fases = {}
-predios_cenario_atual = []
-vegetacao_cenario_atual = []
+
+textura_tijolos = pygame.image.load("Assets/textura-tijolos.jpg")
+textura_tapioca = pygame.image.load("Assets/tapioca.png")
+textura_parede_pedra1 = pygame.image.load("Assets/parede-pedra-1.png")
+textura_predio_quebrado = pygame.image.load("Assets/predio-quebrado.png")
+textura_tijolos_escuros = pygame.image.load("Assets/tijolos-escuros.png")
 
 def desenhar_NC2A():
     largura, altura = 360, 300
@@ -51,28 +71,28 @@ def desenhar_NC2A():
     vertices_parede = retangulo_para_poligono(0, 0, largura, altura)
     scanline_fill(superficie_nc2a, vertices_parede, BEGE)
 
-    vertices_retangulo_topo = retangulo_para_poligono(0, 0 - 15, largura, 15)
+    vertices_retangulo_topo = retangulo_para_poligono(0, - 15, largura, 15)
     scanline_fill(superficie_nc2a, vertices_retangulo_topo, AZUL_ESCURO)
 
-    vertices_retangulo_meio = retangulo_para_poligono(0, 0 + 135, largura, 15)
+    vertices_retangulo_meio = retangulo_para_poligono(0, 135, largura, 15)
     scanline_fill(superficie_nc2a, vertices_retangulo_meio, AZUL_ESCURO)
 
     colunas_x = [
-        0 + 20,
-        0 + 120,
-        0 + 220,
-        0 + 320,
+        20,
+        120,
+        220,
+        320,
     ]
 
     for cx in colunas_x:
-        vertices_coluna = retangulo_para_poligono(cx, 0 + 15, 20, 285)
+        vertices_coluna = retangulo_para_poligono(cx, 15, 20, 285)
         scanline_fill(superficie_nc2a, vertices_coluna, AZUL_ESCURO)
 
-    vertices_entrada = retangulo_para_poligono(0 + 145, 0 + 250, 70, 50)
+    vertices_entrada = retangulo_para_poligono(145, 250, 70, 50)
     scanline_fill(superficie_nc2a, vertices_entrada, COR_ENTRADA)
 
-    x_colunas = [0 + 40, 0 + 140, 0 + 240]
-    y_linhas = [0 + 45, 0 + 175]
+    x_colunas = [40, 140, 240]
+    y_linhas = [45, 175]
 
     for y_janela in y_linhas:
         for x_janela in x_colunas:
@@ -87,26 +107,278 @@ def desenhar_predio_generico1():
     largura, altura = 250, 400
     superficie_predio_generico1 = pygame.Surface((largura, altura), pygame.SRCALPHA)
 
-    vertices_predio = retangulo_para_poligono(0, 0, largura, altura)
-    scanline_fill(superficie_predio_generico1, vertices_predio, CINZA)
+    uvs = [
+        (0,0),
+        (1,0),
+        (1,1),
+        (0,1)
+    ]
 
+    vertices_predio = retangulo_para_poligono(0, 0, largura, altura)
+    scanline_texture(superficie_predio_generico1, vertices_predio, uvs, textura_parede_pedra1)
     return superficie_predio_generico1
 
 def desenhar_predio_generico2():
     largura, altura = 300, 300
     superficie_predio_generico2 = pygame.Surface((largura, altura), pygame.SRCALPHA)
 
+    uvs = [
+        (0,0),
+        (1,0),
+        (1,1),
+        (0,1)
+    ]
+
     vertices_predio = retangulo_para_poligono(0, 0, largura, altura)
-    scanline_fill(superficie_predio_generico2, vertices_predio, BRANCO)
+    scanline_texture(superficie_predio_generico2, vertices_predio, uvs, textura_tijolos_escuros)
     return superficie_predio_generico2
 
 def desenhar_predio_generico3():
     largura, altura = 200, 350
     superficie_predio_generico3 = pygame.Surface((largura, altura), pygame.SRCALPHA)
 
+    uvs = [
+        (0,0),
+        (1,0),
+        (1,1),
+        (0,1)
+    ]
+
     vertices_predio = retangulo_para_poligono(0, 0, largura, altura)
-    scanline_fill(superficie_predio_generico3, vertices_predio, BEGE)
+    scanline_texture(superficie_predio_generico3, vertices_predio, uvs, textura_predio_quebrado)
     return superficie_predio_generico3
+
+def desenhar_ru():
+    largura_parede, altura_parede = 650, 250
+    largura_topo, altura_topo = 700, 120
+    altura_total = altura_parede + altura_topo
+    largura_janela, altura_janela = 80, 110
+    largura_porta, altura_porta = 150, 200
+
+    largura_superficie_janela = 5 * largura_janela
+    altura_superficie_janela = 2 * altura_janela 
+
+    x_parede = (largura_topo - largura_parede) // 2
+
+    superficie_ru = pygame.Surface((largura_topo, altura_total), pygame.SRCALPHA)
+    superficie_janelas = pygame.Surface((largura_superficie_janela, altura_superficie_janela))
+
+    uvs = [
+        (0,0),
+        (1,0),
+        (1,1),
+        (0,1)
+    ]
+
+    vertices_ru = retangulo_para_poligono(x_parede, altura_topo, largura_parede, altura_parede)
+    scanline_texture(superficie_ru, vertices_ru, uvs, textura_tijolos)
+
+    cores_janelas = [
+        COR_JANELA_RU, COR_JANELA_RU, COR_JANELA_RU2, COR_JANELA_RU2
+    ]
+
+    for linha in range(2):
+        for coluna in range(5):
+            x = coluna * largura_janela
+            y = linha * altura_janela
+
+            vertices_janelas = retangulo_para_poligono(x, y, largura_janela, altura_janela)
+            scanline_fill_gradiente(superficie_janelas, vertices_janelas, cores_janelas)
+            draw_polygonon(superficie_janelas, vertices_janelas, BRANCO)
+
+    vertices_porta = retangulo_para_poligono(x_parede + 450, altura_topo + 50, largura_porta, altura_porta)
+    scanline_fill_gradiente(superficie_ru, vertices_porta, cores_janelas)
+    draw_polygonon(superficie_ru, vertices_porta, BRANCO)
+
+    x_janela = x_parede
+    y_janela = altura_topo
+    superficie_ru.blit(superficie_janelas, (x_janela, y_janela))
+    vertices_topo = retangulo_para_poligono(0, 1, largura_topo, altura_topo)
+    scanline_fill(superficie_ru, vertices_topo, AZUL_RU)
+
+    return superficie_ru
+
+def desenhar_nupeinsc():
+    largura, altura = 420, 300
+    superficie_nupeinsc = pygame.Surface((largura, altura), pygame.SRCALPHA)
+
+    vertices_parede = retangulo_para_poligono(0, 0, largura, altura)
+    scanline_fill(superficie_nupeinsc, vertices_parede, COR_JANELA)
+
+    vertices_retangulo_topo = retangulo_para_poligono(0, 0, largura, 20)
+    scanline_fill(superficie_nupeinsc, vertices_retangulo_topo, BRANCO)
+
+    vertices_retangulo_meio = retangulo_para_poligono(0, 85, largura, 10)
+    scanline_fill(superficie_nupeinsc, vertices_retangulo_meio, BRANCO)
+
+    vertices_retangulo_meio2 = retangulo_para_poligono(0, 170, largura, 10)
+    scanline_fill(superficie_nupeinsc, vertices_retangulo_meio2, BRANCO)
+
+    vertices_retangulo_meio2 = retangulo_para_poligono(0, 245, largura, 5)
+    scanline_fill(superficie_nupeinsc, vertices_retangulo_meio2, BRANCO)
+    
+    colunas_x = [
+        0,
+        81,
+        162,
+        243,
+        324,
+        405,
+    ]
+
+    for cx in colunas_x:
+        vertices_coluna = retangulo_para_poligono(cx, 15, 15, 285)
+        scanline_fill(superficie_nupeinsc, vertices_coluna, BRANCO)
+
+    vertices_entrada = retangulo_para_poligono(177, 250, 65, 60)
+    scanline_fill(superficie_nupeinsc, vertices_entrada, COR_JANELA_RU)
+
+    x_colunas = [15, 96, 177, 258, 339]
+    y_linhas = [15, 95, 180]
+
+
+    cores_janelas = [
+        COR_JANELA_RU, COR_JANELA_RU, COR_JANELA_RU2, COR_JANELA_RU2
+    ]
+
+    for y_janela in y_linhas:
+        for x_janela in x_colunas:
+            janela = retangulo_para_poligono(x_janela, y_janela, 65, 55)
+            scanline_fill_gradiente(superficie_nupeinsc, janela, cores_janelas)
+            x_centro = x_janela + 32
+            linha_bresenham(superficie_nupeinsc, x_centro, y_janela, x_centro, y_janela + 55, BRANCO)
+    return superficie_nupeinsc
+
+
+def desenhar_carrinho_billy():
+    largura_base, altura_base  = 150, 80
+    largura_teto, altura_teto = 160, 20
+    largura_pilar, altura_pilar = 8, 50
+    largura_total = largura_teto
+    raio_roda = 8
+    altura_total = altura_teto + altura_pilar + altura_base + raio_roda + 2
+
+    superficie_carrinho = pygame.Surface((largura_total, altura_total), pygame.SRCALPHA)
+
+    x_base = (largura_teto - largura_base) // 2
+    y_base = altura_teto + altura_pilar
+    vertices_base = retangulo_para_poligono(x_base, y_base, largura_base, altura_base)
+    scanline_fill(superficie_carrinho, vertices_base, AZUL_CLARO)
+    uvs = [
+        (0,0),
+        (1,0),
+        (1,1),
+        (0,1)
+    ]
+    
+    scanline_texture(superficie_carrinho, vertices_base, uvs, textura_tapioca)
+    fonte_titulo = pygame.font.Font(CAMINHO_FONTE, 10)
+    
+    texto_tapioca = fonte_titulo.render("tapioca billy", True, BRANCO)
+    superficie_carrinho.blit(texto_tapioca, (x_base + 10, y_base + 50))
+
+    vertices_teto = retangulo_para_poligono(0, 0, largura_teto, altura_teto)
+    scanline_fill(superficie_carrinho, vertices_teto, BRANCO)
+
+    vertices_pilar1 = retangulo_para_poligono(x_base + 15, altura_teto, largura_pilar, altura_pilar)
+    scanline_fill(superficie_carrinho, vertices_pilar1, BRANCO)
+    
+    vertices_pilar2 = retangulo_para_poligono(x_base + largura_base - 25, altura_teto, largura_pilar, altura_pilar)
+    scanline_fill(superficie_carrinho, vertices_pilar2, BRANCO)
+
+    yc = altura_base + y_base
+    xc1 = x_base + 30
+    xc2 = x_base + largura_base - 30
+
+    bresenham_circulo(superficie_carrinho, xc1, yc, raio_roda, PRETO)
+    flood_fill_iterativo(superficie_carrinho, xc1, yc, PRETO, PRETO)
+
+    bresenham_circulo(superficie_carrinho, xc2, yc, raio_roda, PRETO)
+    flood_fill_iterativo(superficie_carrinho, xc2, yc, PRETO, PRETO)
+
+    return superficie_carrinho
+
+def desenhar_blocoG():
+    largura_bloco, altura_bloco = 800, 320
+    largura_telhado, altura_telhado = 830, 20
+    altura_total = altura_bloco + altura_telhado
+    largura_total = largura_telhado + 500
+    largura_faixa = largura_bloco 
+    altura_faixa = 30
+#105 - meio, altura grade 20
+    largura_grade, altura_grade = 8, 40
+    largura_topo_grade, altura_topo_grade = largura_bloco, 5
+
+    x_bloco = 15
+    superficie_blocoG = pygame.Surface((largura_total, altura_total), pygame.SRCALPHA)
+
+    vertices_bloco = retangulo_para_poligono(x_bloco, altura_telhado, largura_bloco, altura_bloco)
+    scanline_fill(superficie_blocoG, vertices_bloco, BRANCO)
+
+    vertices_telhado = retangulo_para_poligono(0, 0, largura_telhado, altura_telhado)
+    scanline_fill(superficie_blocoG, vertices_telhado, COR_TELHADO_BLOCO)
+
+    vertices_faixa1 = retangulo_para_poligono(x_bloco, altura_telhado, largura_faixa, altura_faixa)
+    scanline_fill(superficie_blocoG, vertices_faixa1, BEGE)
+
+    COR_SOMBRA = (80, 80, 80)
+    vertices_sombra1 = retangulo_para_poligono(x_bloco, altura_telhado + altura_faixa - 2, largura_bloco, 8)
+    scanline_fill(superficie_blocoG, vertices_sombra1, COR_SOMBRA)
+
+    vertices_faixa2 = retangulo_para_poligono(x_bloco, altura_telhado + 150, largura_faixa, altura_faixa)
+    scanline_fill(superficie_blocoG, vertices_faixa2, BEGE)
+
+    vertices_sombra2 = retangulo_para_poligono(x_bloco, altura_telhado + 150 + altura_faixa - 2, largura_bloco, 8)
+    scanline_fill(superficie_blocoG, vertices_sombra2, COR_SOMBRA)
+
+    cores_portas = [
+        COR_JANELA_RU, COR_JANELA_RU, COR_JANELA_RU2, COR_JANELA_RU2
+    ]
+
+    largura_porta, altura_porta = 50, 80
+    num_portas = 5
+    y_porta_baixo = altura_telhado + altura_bloco - altura_porta
+    y_porta_cima = altura_telhado + 150 - altura_porta
+    distancia = largura_bloco // num_portas
+    for i in range(num_portas):
+        x_centro = x_bloco + (i * distancia) + (distancia // 2)
+        x_porta = x_centro - (largura_porta // 2)
+    
+        vertices_porta = retangulo_para_poligono(x_porta, y_porta_baixo, largura_porta, altura_porta)
+        scanline_fill_gradiente(superficie_blocoG, vertices_porta, cores_portas)
+
+    for i in range(num_portas):
+        x_centro = x_bloco + (i * distancia) + (distancia // 2)
+        x_porta = x_centro - (largura_porta // 2)
+        
+        vertices_porta = retangulo_para_poligono(x_porta, y_porta_cima, largura_porta, altura_porta)
+        scanline_fill_gradiente(superficie_blocoG, vertices_porta, cores_portas)
+
+    x_fim = largura_bloco + 15 - largura_grade
+    x_colunas_grade = list(range(x_bloco, x_fim + 1, 70))
+
+    for cx in x_colunas_grade:
+        vertices_colunas_grade = retangulo_para_poligono(cx, altura_telhado + 110, largura_grade, altura_grade)
+        scanline_fill(superficie_blocoG, vertices_colunas_grade, COR_GRADES)
+
+    vertices_topo_grade = retangulo_para_poligono(x_bloco, altura_telhado + 110, largura_topo_grade, altura_topo_grade)
+    scanline_fill(superficie_blocoG, vertices_topo_grade, COR_GRADES)
+
+
+    largura_g, altura_g = 160, 160
+    vertices_g = retangulo_para_poligono(largura_telhado + 20, altura_telhado + altura_bloco - altura_g, largura_g, altura_g)
+    scanline_fill(superficie_blocoG, vertices_g, BRANCO)    
+    largura_g_menor, altura_g_menor = 80, 80
+    vertices_g_menor = retangulo_para_poligono(largura_telhado + 60, altura_telhado + altura_bloco - 1.5 * altura_g_menor  , largura_g_menor, altura_g_menor)
+    scanline_fill(superficie_blocoG, vertices_g_menor, AZUL_ESCURO)
+    
+    fonte_titulo = pygame.font.Font(CAMINHO_FONTE, 35)
+
+    texto_G = fonte_titulo.render("G", True, BRANCO)
+    superficie_blocoG.blit(texto_G, (largura_telhado + 85, altura_telhado + altura_bloco -  altura_g_menor -16 ))
+
+
+    return superficie_blocoG
 
 def desenhar_rua():
     largura_calcada, altura_calcada = 1262, 50
@@ -374,7 +646,7 @@ def desenhar_predio_r():
 
 
 def iniciar_cenario():
-    global superficie_lua, superficie_nuvem, superficie_arbusto, superficie_nc2a, superficie_arvore, superficie_predio_r, superficie_predio_generico1, superficie_predio_generico2, superficie_predio_generico3, cenarios_fases, superficie_arbusto_maior, superficie_arvore_maior, superficie_rua, predios_cenario_atual, vegetacao_cenario_atual
+    global superficie_lua, superficie_nuvem, superficie_arbusto, superficie_nupeinsc, superficie_arvore, superficie_predio_r, superficie_predio_generico1, superficie_predio_generico2, superficie_predio_generico3, cenarios_fases, superficie_arbusto_maior, superficie_arvore_maior, superficie_rua, predios_cenario_atual, vegetacao_cenario_atual, superficie_ru, superficie_nupeinsc, superficie_carrinho, superficie_blocoG
 
     superficie_lua = desenhar_lua(50)
     superficie_arvore = desenhar_arvore()
@@ -388,75 +660,126 @@ def iniciar_cenario():
     superficie_arvore_maior = pygame.transform.scale(superficie_arvore, (200, 350))
     superficie_arbusto_maior = pygame.transform.scale(superficie_arbusto, (150, 130))
     superficie_rua = desenhar_rua()
-
+    superficie_ru = desenhar_ru()
+    superficie_nupeinsc = desenhar_nupeinsc()
+    superficie_carrinho = desenhar_carrinho_billy()
+    superficie_blocoG = desenhar_blocoG()
 
     cenarios_fases = {
-        #largura das fases: [5632, 6464, 6304]
-        #largura nc2a: 360
-        #largura reitoria 500
-        #largura prediog1 250
-        #largura prediog2 300
-        #largura predio g3 200
-        #largura arbusto 120
+        # largura fases: [7744, 8888, 8668]
+        # largura nc2a: 360
+        # largura reitoria: 500
+        # largura prediog1: 250
+        # largura prediog2: 300
+        # largura prediog3: 200
+        # largura arbusto: 120
+        # largura nupeinsc: 420
+        # largura arvore: 150
+        
         0 : {
             "predios" : [
-                (500, superficie_nc2a),
-                (1100, superficie_predio_generico1),
-                (1700, superficie_predio_generico2),
-                (2300, superficie_predio_generico3),
+                (150, superficie_nc2a),               
+                (700, superficie_predio_generico1),    
+                (1250, superficie_nupeinsc),              
+                (1850, superficie_predio_generico3),
+                (2350, superficie_predio_generico2),
             ],
             "vegetacao" : [
-                (100, superficie_arvore),
-                (200, superficie_arbusto),
-                (900, superficie_arbusto),
-                (1400, superficie_arvore_maior),
-                (1500, superficie_arbusto_maior),
-                (2500, superficie_arvore_maior),
+                (25, superficie_arvore),
+                (250, superficie_arbusto),
+                (580, superficie_arvore),
+                (950, superficie_arvore),
+                (1050, superficie_arbusto),
+                (1100, superficie_arvore),
+                (1650, superficie_arvore),
+                (1800, superficie_arbusto),
+                (2050, superficie_arvore),
+                (2250, superficie_arbusto),
+                (2600, superficie_arvore),
+                (2650, superficie_arbusto),
+                (2700, superficie_arvore),
+                (3150,superficie_arvore ),
+                (3200, superficie_arbusto),
+                (3350, superficie_arbusto),
+                (3650, superficie_arvore),
+                (3750,superficie_arbusto)
             ]
         },
 
         1 : {
             "predios" : [
-                (500, superficie_predio_r),
-                (1100, superficie_predio_generico1),
-                (1700, superficie_predio_generico2),
-                (2300, superficie_predio_generico3),
+                (150, superficie_blocoG),               
+                (1600, superficie_carrinho),             
+                (1850, superficie_predio_generico3),
+                (2350, superficie_predio_generico2),
             ],
 
             "vegetacao" : [
-                (100, superficie_arvore_maior),
+                (50, superficie_arbusto),
+                (400, superficie_arbusto),
+                (750, superficie_arbusto),
+                (1100, superficie_arvore),
+                (1150, superficie_arbusto),
+                (1350, superficie_arvore),
+                (1550, superficie_arbusto),
+                (1780, superficie_arvore),
+                (1950, superficie_arbusto),
+                (2150, superficie_arvore),
+                (2350, superficie_arbusto),
+                (2700, superficie_arvore),
+                (2750, superficie_arbusto),
+                (2900, superficie_arvore),
+                (3050, superficie_arbusto),
+            ]
+        },
+
+        2 : {
+            "predios" : [
+               (150, superficie_predio_generico1),
+               (750, superficie_ru),                   
+               (1950, superficie_predio_r),               
+               (2850, superficie_predio_generico1)
+            ],
+    
+            "vegetacao": [
+                (50, superficie_arvore),
                 (200, superficie_arbusto),
+                (350, superficie_arvore),
+                (550, superficie_arbusto),
+                (650, superficie_arvore),
                 (900, superficie_arbusto),
-                (1400, superficie_arvore_maior),
-                (1500, superficie_arbusto_maior),
-                (2500, superficie_arvore_maior),
+                (1300, superficie_arbusto),
+                (1700, superficie_arbusto),
+                (1800, superficie_arvore),
+                (2100, superficie_arbusto),
+                (2400, superficie_arvore),
+                (2500, superficie_arbusto),
+                (2700, superficie_arvore),
+                (3150, superficie_arvore)
             ]
         }
     }
 
-def carregar_estruturas_fase(indice_fase):
-    global predios_cenario_atual, vegetacao_cenario_atual
-    informacao = cenarios_fases.get(indice_fase, {})
-    predios_cenario_atual = informacao.get("predios", [])
-    vegetacao_cenario_atual = informacao.get("vegetacao", []) 
-    
 
-
-def desenhar_cenario(superficie, x_camera, y_chao=690, largura_tela=1262):
+def desenhar_cenario(superficie, x_camera, fase_atual,  y_chao=690, largura_tela=1262):
 
     superficie.fill(COR_CEU)
+    if fase_atual not in cenarios_fases:
+        return
+
+    dados_fase = cenarios_fases[fase_atual]
 
     if superficie_lua:
-        superficie.blit(superficie_lua, (1000, 50))
-    
+        superficie.blit(superficie_lua, ((200, 50)))
+        
     if superficie_nuvem:
-        superficie.blit(superficie_nuvem, ((80, 40)))
-        superficie.blit(superficie_nuvem, ((400, 50)))
+        superficie.blit(superficie_nuvem, ((350 - int(x_camera * 0.1), 40)))
+        superficie.blit(superficie_nuvem, ((650 - int(x_camera * 0.1), 50)))
 
     if superficie_rua:
         superficie.blit(superficie_rua, (0, 550))
 
-    for x_mundo, superficie_predio in predios_cenario_atual:
+    for x_mundo, superficie_predio in dados_fase["predios"]:
         x_tela = x_mundo - int(x_camera * 0.3)
         largura_predio = superficie_predio.get_width()
 
@@ -465,8 +788,8 @@ def desenhar_cenario(superficie, x_camera, y_chao=690, largura_tela=1262):
             superficie.blit(superficie_predio, (x_tela, posicao_y - 120))
 
 
-    for x_mundo, superficie_vegetacao in vegetacao_cenario_atual:
-        x_tela = x_mundo - int(x_camera * 0.6)
+    for x_mundo, superficie_vegetacao in dados_fase["vegetacao"]:
+        x_tela = x_mundo - int(x_camera * 0.3)
         largura = superficie_vegetacao.get_width()
 
         if -largura <= x_tela <= largura_tela:

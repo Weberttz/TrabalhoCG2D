@@ -1,10 +1,10 @@
 from settings import *
 
 class Humanoide(): 
-    def __init__(self, plataformas, inimigos, equipamentos, pos, cor):
+    def __init__(self, plataformas, inimigos, equipamentos, pos, cor, tamanho):
         self.vida = 100
         self.cor = cor
-        self.tamanho = TAMANHO_QUADRADO
+        self.tamanho = tamanho
         self.equipamentos = equipamentos
         self.vertices = []
 

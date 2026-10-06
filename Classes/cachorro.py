@@ -1,10 +1,10 @@
 import random
 from Classes.humanoide import Humanoide
-from settings import TAMANHO_QUADRADO
+from settings import TAMANHO_QUADRADO, TAMANHO_CACHORRO
 
 class Cachorro(Humanoide):
     def __init__(self, plataformas, pos, equipamentos, cor, nivel_dificuldade):
-        super().__init__(plataformas, [], equipamentos, pos, cor)
+        super().__init__(plataformas, [], equipamentos, pos, cor, TAMANHO_CACHORRO)
         self.vertices = []
         self.tempo_mudar_direcao = 0
         self.vivo = True

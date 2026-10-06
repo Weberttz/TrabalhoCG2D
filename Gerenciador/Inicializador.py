@@ -10,6 +10,7 @@ import csv
 COR_ASFALTO, BORDA_ASFALTO = (74, 74, 74),   (44, 44, 48)
 COR_CAIXA,   BORDA_CAIXA   = (178, 122, 66), (104, 66, 32)
 COR_METAL,   BORDA_METAL   = (70, 130, 170), (36, 74, 104)
+COR_TRONCO = (66, 60, 41)
 ROXO = (98, 0, 102)
 
 # tile -> (cor, borda)
@@ -108,7 +109,7 @@ def criar_inimigos(mapa, plataformas, blocks, nivel_dificuldade = None):
                     zumbi = Zumbi(plats + blocks, Vetor(x_aux, y_aux), [], (53, 66, 35), nivel_dificuldade)
                     zumbis.append(zumbi)
                 case 12:
-                    cachorro = Cachorro(plats + blocks, Vetor(x_aux, y_aux), [], (53, 66, 35), nivel_dificuldade)
+                    cachorro = Cachorro(plats + blocks, Vetor(x_aux, y_aux), [], (154, 124, 186), nivel_dificuldade)
                     cachorros.append(cachorro)
                 case 13:
                     pombo = Pombo(plats + blocks, Vetor(x_aux, y_aux), (53, 66, 35), nivel_dificuldade)    

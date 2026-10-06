@@ -1,11 +1,11 @@
 import pygame 
 import Biblioteca.transformacoes as transformacoes
 from Classes.humanoide import Humanoide
-from settings import Vetor, Retangulo
+from settings import Vetor, Retangulo, TAMANHO_JOGADOR
 
 class Jogador(Humanoide):
     def __init__(self, pos, plataformas, inimigos, coletaveis, equipamentos, cor):
-        super().__init__(plataformas, inimigos, equipamentos, pos, cor)
+        super().__init__(plataformas, inimigos, equipamentos, pos, cor, TAMANHO_JOGADOR)
         self.tempo = pygame.time.get_ticks()
         self.olhando = 1
         self.pontuacao = 0
@@ -57,8 +57,7 @@ class Jogador(Humanoide):
         if keys[pygame.K_LEFT]:  x -= 1
 
         y = 0
-        if keys[pygame.K_UP] and x == 0:   y -= 1    # cima
-        # if keys[pygame.K_DOWN] and not self.no_chao: y += 1  # baixo só no ar
+        if keys[pygame.K_UP] and x == 0:  y -= 1    # cima
 
         if x == 0 and y == 0:
             x = self.olhando              # parado: atira para onde olha
@@ -70,8 +69,7 @@ class Jogador(Humanoide):
         '''Recebe comandos de teclado para atirar projéteis.
            \nArma acionada pela tecla : Z  
         '''
-        pos = Vetor(self.pos.x + self.tamanho // 2,
-                            self.pos.y - self.tamanho // 2 - self.equipamento.altura)
+        pos = Vetor(self.pos.x + self.tamanho // 2, self.pos.y - self.tamanho // 2 + 4)
 
         tempo = pygame.time.get_ticks()
         if tempo - self.equipamento.tempo >= self.equipamento.intervalo_tiro:
@@ -90,6 +88,8 @@ class Jogador(Humanoide):
         keys = pygame.key.get_pressed()
 
         self.vel_x = 0
+
+        if keys[pygame.K_UP] and self.vel_x == 0: self.olhando = 0
 
         if keys[pygame.K_LEFT]:
             self.vel_x += -self.velocidade
@@ -229,4 +229,42 @@ class Jogador(Humanoide):
             self.vida -= dano
             self.invulneravel = True
             self.momento_ultimo_dano = pygame.time.get_ticks() 
+
+    def animar(self, lista_idle_left, lista_idle_right,
+           lista_walk_left, lista_walk_right,
+           lista_jump_left, lista_jump_right, lista_to_look_up):
+
+        # Personagem no ar
+        if self.aceleracao.y != 0:
+            if self.olhando == -1:
+                self.mudar_frame(lista_jump_left)
+            else:
+                self.mudar_frame(lista_jump_right)
+
+        # Personagem parado
+        elif self.vel_x == 0:
+            if self.olhando == -1:
+                self.mudar_frame(lista_idle_left)
+            elif self.olhando == 1:
+                self.mudar_frame(lista_idle_right)
+            else:
+                self.mudar_frame(lista_to_look_up)
+
+        # Andando para esquerda
+        elif self.vel_x < 0:
+            self.olhando = -1
+            self.mudar_frame(lista_walk_left)
+
+        # Andando para direita
+        else:
+            self.olhando = 1
+            self.mudar_frame(lista_walk_right)
+   
+    def mudar_frame(self, lista_animacao):
+        '''Avança para o próximo quadro da animação '''
         
+        # O operador '%' (módulo) faz com que a contagem volte a 0 quando chegar ao fim da lista.
+        self.frame = (self.frame + 1) % len(lista_animacao)
+        
+        # Atualiza a imagem do herói para a imagem do quadro atual.
+        self.image = lista_animacao[self.frame]

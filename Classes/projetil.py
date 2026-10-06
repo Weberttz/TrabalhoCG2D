@@ -1,4 +1,5 @@
 from settings import *
+import Biblioteca.algoritmos as bibgraf
 
 class Projetil():
     def __init__(self, pos:Vetor, disparou_para:Vetor, cor,bala_inimiga=False):
@@ -14,6 +15,13 @@ class Projetil():
         self.aceleracao = Vetor(0,10)
         self.direcao = Vetor(self.disparou_para.x - self.pos.x, self.disparou_para.y - self.pos.y)
         vec = Vetor(1,0)
+
+        self.uvs = [
+            (0, 1),  # inferior-esquerdo
+            (0, 0),  # superior-esquerdo
+            (1, 0),  # superior-direito
+            (1, 1),  # inferior-direito
+        ]
 
         self.angulo = self.direcao.angulo_para(vec)
 
@@ -76,7 +84,9 @@ class Projetil():
         novo_vetor = self.pos_incial - self.pos
         distancia = novo_vetor.calcular_norma()
 
+        vertices = camera.aplicar_vertices(self.retangulo.vertices)
+
         if distancia > tolerancia:
             self.ativo = False
             
-        superficie.blit(self.image, camera.aplicar(self))
+        bibgraf.scanline_texture(superficie, vertices, self.uvs, self.image)
