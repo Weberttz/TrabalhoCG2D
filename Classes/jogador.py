@@ -162,13 +162,14 @@ class Jogador(Humanoide):
     def colidir_com_coletavel(self):
         '''Trata colisão com coletáveis'''
         for coletavel in self.coletaveis:
+            tipo = coletavel.tipo
             if self.retangulo.colidiu_com(coletavel.retangulo) and coletavel.ativo:
                 if coletavel.tipo == "tapioca":
                     self.vida+= 30 
                 if coletavel.tipo == "municao":
                     self.equipamento.municao+=10
 
-                if coletavel.tipo == "especial":
+                if tipo == "especial" or tipo == "moeda":
                     self.pontuacao += 100
                     self.coletaveis_missao+=1
 
@@ -184,7 +185,7 @@ class Jogador(Humanoide):
 
         if qnt_inimigos < self.quantidade_inimigos_anterior:
             self.quantidade_inimigos_anterior = qnt_inimigos
-            self.pontuacao+= diferenca * 50
+            self.pontuacao= self.pontuacao + diferenca * 200
     
     def colidir_com_inimigo(self):
         '''Trata colisão com inimigos''' 
