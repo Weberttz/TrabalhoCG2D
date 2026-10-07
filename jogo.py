@@ -202,7 +202,7 @@ class Jogo:
         #comeca o jogo apenas se o estado foi alterado para "jogando" a partir do retorno de acao_menu
         elif self.estado_jogo == "jogando":
             x_camera = abs(self.camera.retangulo.x)
-            desenhar_cenario(self.tela, x_camera, self.gerenciadorFases.fase_atual)
+            desenhar_cenario(self.tela, x_camera, self.gerenciadorFases.fase_atual, self.largura_mapa)
             # self.tela.fill(AZUL_NOTURNO)
             self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
 
