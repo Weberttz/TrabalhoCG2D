@@ -100,16 +100,17 @@ def criar_inimigos(mapa, plataformas, blocks, nivel_dificuldade = None):
 
     for y, row in enumerate(mapa):
         for x, tile in enumerate(row):
-            x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO - TAMANHO_QUADRADO
-
             match tile:
                 case 11:
+                    x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + TAMANHO_ZUMBI
                     zumbi = Zumbi(plats + blocks, Vetor(x_aux, y_aux), [], (53, 66, 35), nivel_dificuldade)
                     zumbis.append(zumbi)
                 case 12:
+                    x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + TAMANHO_CACHORRO
                     cachorro = Cachorro(plats + blocks, Vetor(x_aux, y_aux), [], (154, 124, 186), nivel_dificuldade)
                     cachorros.append(cachorro)
                 case 13:
+                    x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + TAMANHO_POMBO
                     pombo = Pombo(plats + blocks, Vetor(x_aux, y_aux), (53, 66, 35), nivel_dificuldade)    
                     pombos.append(pombo)
 
