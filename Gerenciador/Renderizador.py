@@ -105,6 +105,13 @@ def desenhar_jogador(jogo):
         aabb = r.calcular_aabb(vertices_rect)
         bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
+def desenhar_debug_entidades(jogo, vertices, entidade):
+    texto = jogo.fonte.render(f"Vida: {entidade.vida}", 1, WHITE)
+    jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
+    vertices_rect = jogo.camera.aplicar_vertices(entidade.retangulo.vertices)
+    aabb = r.calcular_aabb(vertices_rect)
+    bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+
 def desenhar_chefe(jogo):
     if jogo.chefe == None: return
     vertices = jogo.camera.aplicar_vertices(jogo.chefe.vertices)
@@ -112,10 +119,12 @@ def desenhar_chefe(jogo):
     bibgraf.scanline_fill(jogo.tela, vertices, jogo.chefe.cor)
 
     if jogo.debug:
-        vertices_rect = jogo.camera.aplicar_vertices(jogo.chefe.retangulo.vertices)
-        aabb = r.calcular_aabb(vertices_rect)
-        bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+        desenhar_debug_entidades(jogo, vertices, jogo.chefe)
+        return
 
+    texto = jogo.fonte.render(f"Vida: {jogo.chefe.vida}", 1, WHITE)
+    jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
+    
 
 def desenhar_coletaveis(jogo):
     for coletavel in jogo.coletaveis_visiveis:
@@ -157,11 +166,7 @@ def desenhar_pombos(jogo):
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
         if jogo.debug:
-            texto = jogo.fonte.render(f"Vida: {pombo.vida}", 1, WHITE)
-            jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
-            vertices_rect = jogo.camera.aplicar_vertices(pombo.retangulo.vertices)
-            aabb = r.calcular_aabb(vertices_rect)
-            bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+            desenhar_debug_entidades(jogo, vertices, pombo)
 
 def desenhar_zumbis(jogo):
     for zumbi in jogo.zumbis_visiveis:
@@ -175,11 +180,7 @@ def desenhar_zumbis(jogo):
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
         if jogo.debug:
-            texto = jogo.fonte.render(f"Vida: {zumbi.vida}", 1, WHITE)
-            jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
-            vertices_rect = jogo.camera.aplicar_vertices(zumbi.retangulo.vertices)
-            aabb = r.calcular_aabb(vertices_rect)
-            bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+            desenhar_debug_entidades(jogo, vertices, zumbi)
 
 def desenhar_cachorros(jogo):
     for cachorro in jogo.cachorros_visiveis:
@@ -193,11 +194,7 @@ def desenhar_cachorros(jogo):
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
         if jogo.debug:
-            texto = jogo.fonte.render(f"Vida: {cachorro.vida}", 1, WHITE)
-            jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
-            vertices_rect = jogo.camera.aplicar_vertices(cachorro.retangulo.vertices)
-            aabb = r.calcular_aabb(vertices_rect)
-            bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+            desenhar_debug_entidades(jogo, vertices, cachorro)
 
 def corte_borda_viewport(vertices_view, viewport):
     Vxmin, Vymin, Vxmax, Vymax = viewport

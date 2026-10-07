@@ -1,6 +1,6 @@
 import pygame
 
-from settings import TAMANHO_QUADRADO,random, CINZA
+from settings import TAMANHO_ZUMBI, TAMANHO_QUADRADO,random, CINZA
 from Classes.vetor import Vetor
 from Classes.retangulo import Retangulo
 from Classes.humanoide import Humanoide
@@ -8,7 +8,7 @@ from Classes.projetil import Projetil
 
 class Chefe(Humanoide):
     def __init__(self, plataformas, pos, cor, nivel_dificuldade):
-        self.tamanho = TAMANHO_QUADRADO * 2
+        self.tamanho = TAMANHO_ZUMBI * 2
         super().__init__(plataformas, [],[] , pos, cor,self.tamanho)
         self.momento_ultimo_lancamento = pygame.time.get_ticks()
         self.plataformas = plataformas
@@ -21,7 +21,7 @@ class Chefe(Humanoide):
         self.atualizar_vertices()
 
         # podia exibir a vida do chefe tbm na tela final   
-        self.vida = 90
+        self.vida = 400
         self.vel_x = 0
         self.vel_y = 0
         self.velocidade = 2
@@ -32,7 +32,7 @@ class Chefe(Humanoide):
         self.tempo_mudar_direcao = 0
         self.vivo = True
         self.dano = self.definir_dano(nivel_dificuldade)
-        self.campo_de_visao = 30 * TAMANHO_QUADRADO
+        self.campo_de_visao = 30 * TAMANHO_ZUMBI
         
     def definir_dano(self,nivel_dificuldade):
         '''Define o dano do inimigo pelo nível de dificuldade escolhido pelo jogador.'''
