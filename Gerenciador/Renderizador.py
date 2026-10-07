@@ -50,12 +50,32 @@ def desenhar_portais(jogo):
     for portal in jogo.portais_visiveis:
         desenhar_portal_estilizado(jogo.tela, portal, jogo.camera)
 
+def obter_cor_jogador(jogo):
+    cor_efeito = None
+
+    if jogo.jogador.tomando_dano:
+
+        fase = jogo.jogador.tempo_dano // jogo.jogador.tempo_piscar
+
+        if fase % 2 == 0:
+            cor_efeito = (255, 255, 255)
+        else:
+            cor_efeito = (0, 0, 0)
+
+        jogo.jogador.tempo_dano -= 1
+
+        if jogo.jogador.tempo_dano <= 0:
+            jogo.jogador.tomando_dano = False
+
+    return cor_efeito
+
 def desenhar_jogador(jogo):
     jogador = jogo.jogador
     vertices = jogo.camera.aplicar_vertices(jogo.jogador.vertices)
     imagem = jogo.imagens_jogador.get(jogador.image)
     if imagem != None:
-        bibgraf.scanline_texture(jogo.tela, vertices, uvs_jogador, imagem)
+        cor_efeito = obter_cor_jogador(jogo)
+        bibgraf.scanline_texture(jogo.tela, vertices, uvs_jogador, imagem, cor_efeito)
     else:
         bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
         bibgraf.scanline_fill(jogo.tela, vertices, jogo.jogador.cor)
@@ -232,6 +252,27 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         cachorro_view[1][1], cachorro_view[2][1] = y1, y1
 
         bibgraf.scanline_fill(jogo.tela, cachorro_view, cachorro.cor)
+
+    for pombo in jogo.pombos_visiveis:
+        pombo_view =[transformacoes.produto_matriz(matriz_viewport,
+                                    [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
+                                    for vertice in pombo.vertices]
+        x0 = pombo_view[0][0]
+        y0 = pombo_view[0][1]
+        x1 = pombo_view[2][0]
+        y1 = pombo_view[1][1]
+        
+        if (x1 > Vxmax or x0 < Vxmin 
+            or y0 < Vymin or y1 > Vymax):
+            _, rx0, ry0, rx1, ry1 = bibgraf.cohen_sutherland( x0, y0, x1, y1, Vxmin, Vymin, Vxmax, Vymax)
+            x0, y0, x1, y1 = rx0, ry0, rx1, ry1
+
+        pombo_view[0][0], pombo_view[1][0] = x0, x0
+        pombo_view[0][1], pombo_view[3][1] = y0, y0
+        pombo_view[2][0], pombo_view[3][0] = x1, x1
+        pombo_view[1][1], pombo_view[2][1] = y1, y1
+
+        bibgraf.scanline_fill(jogo.tela, pombo_view, pombo.cor)
 
 
     bibgraf.draw_polygonon(jogo.tela, borda, WHITE)

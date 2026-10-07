@@ -111,7 +111,7 @@ def criar_inimigos(mapa, plataformas, blocks, nivel_dificuldade = None):
                     cachorros.append(cachorro)
                 case 13:
                     x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + TAMANHO_POMBO
-                    pombo = Pombo(plats + blocks, Vetor(x_aux, y_aux), (53, 66, 35), nivel_dificuldade)    
+                    pombo = Pombo(plats + blocks, Vetor(x_aux, y_aux), (121, 108, 152), nivel_dificuldade)    
                     pombos.append(pombo)
 
     return zumbis, cachorros, pombos
