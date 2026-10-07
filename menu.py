@@ -46,6 +46,20 @@ botoes_dificuldade = [
 
 ]
 
+instrucoes = [
+    "OBJETIVOS DO JOGO:",
+    "- ELIMINAR OS INIMIGOS",
+    "- COLETAR O MAIOR NÚMERO POSSÍVEL DE OBJETOS",
+    
+    "JOGABILIDADE:",
+    "TECLA <- (Home) : Andar para a esquerda",
+    "TECLA -> (End): Andar para a direita",
+    "TECLA ESPAÇO : Pular",
+    "TECLA Z : Atirar"
+]
+
+voltar = {"x0": 50, "y0": 50, "x1": 150, "y1": 100}
+
 def criar_superficie_botao(largura, altura, cor, cor_borda):
     superficie = pygame.Surface((largura, altura))
     linha_bresenham(superficie, 0, 0, largura - 1, 0, cor_borda)
@@ -160,6 +174,33 @@ def desenhar_menu(superficie, posicao_mouse):
             texto_y = botao["y0"] + altura_botao // 2 - texto.get_height() // 2
 
             superficie.blit(texto, (texto_x, texto_y))
+
+    elif estado_menu == "INSTRUCOES":
+        superficie_transparente = pygame.Surface((LARGURA, ALTURA), pygame.SRCALPHA)
+        superficie_transparente.fill((0, 0, 0, 150))
+        superficie.blit(imagem_fundo, (0, 0))
+        superficie.blit(superficie_transparente, (0, 0))
+
+        texto_titulo = fonte_titulo.render("INSTRUÇÕES", True, COR_TITULO)
+        x_titulo = LARGURA // 2 - texto_titulo.get_width() // 2
+        superficie.blit(texto_titulo, (x_titulo, 121))
+        y_inicial = 250
+        espacamento = 40
+
+        for i, linha in enumerate(instrucoes):
+            texto = fonte.render(linha, True, COR_TEXTO)
+            x_texto = LARGURA // 2 - texto.get_width() // 2
+            y_texto = y_inicial + (i * espacamento)
+
+            superficie.blit(texto, (x_texto, y_texto))
+        texto_voltar = fonte.render("VOLTAR", True, COR_TEXTO)
+
+        largura = texto_voltar.get_width()
+        altura = texto_voltar.get_height()
+        if ponto_no_botao(posicao_mouse[0], posicao_mouse[1], voltar["x0"],  voltar["y0"], voltar["x0"] + largura, voltar["y0"] + altura):
+            texto_voltar = fonte.render("VOLTAR", True, COR_BOTAO)
+        superficie.blit(texto_voltar, (voltar["x0"], voltar["y0"]))
+    
     else:
         texto_titulo = fonte_titulo.render("DIFICULDADE", True, COR_TITULO)
         superficie.blit(texto_titulo, (160, 121))
@@ -189,16 +230,23 @@ def acao_menu(evento, posicao_mouse):
 
     if estado_menu == "INICIO":
         if evento.type == pygame.MOUSEBUTTONDOWN:
-            mouse_x, mouse_y = posicao_mouse
-
             for botao in botoes_inicio:
                 if ponto_no_botao(posicao_mouse[0], posicao_mouse[1], botao["x0"], botao["y0"], botao["x1"], botao["y1"]):
                     if botao["acao"] == "dificuldade":
                        estado_menu = "DIFICULDADE"
                        dificuldade_selecionada = 0
                        return None
+
+                    elif botao["acao"] == "instrucoes":
+                        estado_menu = "INSTRUCOES"
+                        return None
                     else:
                         return botao["acao"]
+
+    elif estado_menu == "INSTRUCOES":
+        if evento.type == pygame.MOUSEBUTTONDOWN:
+            if(ponto_no_botao(posicao_mouse[0], posicao_mouse[1], voltar["x0"], voltar["y0"], voltar["x1"], voltar["y1"])):
+                estado_menu = "INICIO"
 
     elif estado_menu == "DIFICULDADE":
         if evento.type == pygame.KEYDOWN:
@@ -226,36 +274,4 @@ def acao_menu(evento, posicao_mouse):
 
 def get_dificuldade():
     return dificuldade
-
-if __name__ == "__main__":
-    pygame.init()
-
-    tela = pygame.display.set_mode((LARGURA, ALTURA))
-    pygame.display.set_caption("Menu Jogo")
-
-    iniciar_menu()
-
-    relogio = pygame.time.Clock()
-    rodando = True
-
-    while rodando:
-        relogio.tick(60)
-        posicao_mouse = pygame.mouse.get_pos()
-
-        for evento in pygame.event.get():
-            if evento.type == pygame.QUIT:
-                rodando = False
-
-            if evento.type == pygame.MOUSEBUTTONDOWN:
-                acao = acao_menu(posicao_mouse)
-
-                if acao == "sair":
-                    rodando = False
-
-        desenhar_menu(tela, posicao_mouse)
-        pygame.display.flip()
-
-    pygame.quit()
-    sys.exit()
-
 
