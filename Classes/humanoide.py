@@ -25,12 +25,16 @@ class Humanoide():
 
         # Movimento
         self.velocidade = 5
-        self.forca_pulo = -17
+        self.forca_pulo = -18
         self.plataformas = plataformas
         self.inimigos = inimigos
 
         self.frame = 0
         self.image = None
+
+        self.tomando_dano = False
+        self.tempo_dano = 0
+        self.tempo_piscar = 5
 
     def aplicar_gravidade(self):
         # aplicar gravidade se não estiver no chão
@@ -87,6 +91,10 @@ class Humanoide():
                     self.retangulo.top = objeto.retangulo.bottom
                     self.aceleracao.y = 0
                 self.pos.y = self.retangulo.bottom # Sincroniza a posição com o eixo y do obstáculo
+
+    def tomar_dano(self, tempo = 40):
+        self.tomando_dano = True
+        self.tempo_dano = tempo
 
     def animar(self, lista_idle_left, lista_idle_right, lista_walk_left, lista_walk_right):
         if self.vel_x == 0:

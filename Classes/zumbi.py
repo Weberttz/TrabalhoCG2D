@@ -39,6 +39,8 @@ class Zumbi(Humanoide):
             if projetil.retangulo.colidiu_com(self.retangulo):
                 self.vida -= projetil.dano
                 projetil.ativo = False
+                self.tomando_dano = True
+                self.tomar_dano()
                 if self.vida <= 0: self.vida = 0
 
     def lidar_com_colisoes(self):
@@ -48,6 +50,9 @@ class Zumbi(Humanoide):
                 self.bateu_cabeca = True
 
         return super().lidar_com_colisoes()
+
+    def tomar_dano(self):
+        return super().tomar_dano(10)
     
     def movimentar(self):
         if not self.inimigos:

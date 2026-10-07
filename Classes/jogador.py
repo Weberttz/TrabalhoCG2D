@@ -19,9 +19,6 @@ class Jogador(Humanoide):
         self.momento_ultimo_teleport = 100
         self.teleport_colidiu = None
         self.momento_entrada_teleport = None 
-        self.tomando_dano = False
-        self.tempo_dano = 0
-        self.tempo_piscar = 5
         self.quantidade_inimigos_anterior = len(inimigos)
 
     def resetar(self, pos_inicial):
@@ -45,10 +42,6 @@ class Jogador(Humanoide):
         self.atirar()
         self.atualizar_invulnerabilidade()
         self.contabilizar_pontuacao()
-
-    def tomar_dano(self):
-        self.tomando_dano = True
-        self.tempo_dano = 40
 
     def get_direcao_tiro(self):
         '''Determina a direção do tiro.'''
@@ -173,7 +166,7 @@ class Jogador(Humanoide):
                 if coletavel.tipo == "tapioca":
                     self.vida+= 30 
                 if coletavel.tipo == "municao":
-                    self.equipamento.municao+=1
+                    self.equipamento.municao+=10
 
                 if coletavel.tipo == "especial":
                     self.pontuacao += 100

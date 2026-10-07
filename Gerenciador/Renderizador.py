@@ -58,9 +58,9 @@ def obter_cor_jogador(jogo):
         fase = jogo.jogador.tempo_dano // jogo.jogador.tempo_piscar
 
         if fase % 2 == 0:
-            cor_efeito = (255, 255, 255)
+            cor_efeito = WHITE
         else:
-            cor_efeito = (0, 0, 0)
+            cor_efeito = BLACK
 
         jogo.jogador.tempo_dano -= 1
 
@@ -68,6 +68,26 @@ def obter_cor_jogador(jogo):
             jogo.jogador.tomando_dano = False
 
     return cor_efeito
+
+def obter_cor_zumbi(zumbi):
+    cor_efeito = None
+
+    if zumbi.tomando_dano:
+
+        fase = zumbi.tempo_dano // zumbi.tempo_piscar
+
+        if fase % 2 == 0:
+            cor_efeito = VERMELHO
+        else:
+            cor_efeito = BLACK
+
+        zumbi.tempo_dano -= 1
+
+        if zumbi.tempo_dano <= 0:
+            zumbi.tomando_dano = False
+
+    return cor_efeito
+
 
 def desenhar_jogador(jogo):
     jogador = jogo.jogador
@@ -130,7 +150,8 @@ def desenhar_zumbis(jogo):
         vertices = jogo.camera.aplicar_vertices(zumbi.vertices)
         imagem = jogo.imagens_zumbi.get(zumbi.image)
         if imagem is not None:
-            bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem)
+            cor_efeito = obter_cor_zumbi(zumbi)
+            bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem, cor_efeito)
         else:
             bibgraf.scanline_fill(jogo.tela, vertices, zumbi.cor)
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
