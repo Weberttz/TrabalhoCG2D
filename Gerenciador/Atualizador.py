@@ -130,7 +130,8 @@ def atualizar_zumbis(jogo):
     for zumbi in jogo.zumbis_visiveis:
         zumbi.atualizar(projeteis)
         if jogo.avancar_frame:
-            zumbi.animar(jogo.anim_zumbi_idle, jogo.anim_zumbi_esquerda, jogo.anim_zumbi_direita)
+            zumbi.animar(jogo.anim_zumbi_idle_esquerda, jogo.anim_zumbi_idle_direita
+                         ,jogo.anim_zumbi_esquerda, jogo.anim_zumbi_direita)
 
 def atualizar_cachorros(jogo):
     for cachorro in jogo.cachorros_visiveis:

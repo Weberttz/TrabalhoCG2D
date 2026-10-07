@@ -57,6 +57,7 @@ class Zumbi(Humanoide):
          # se bateu cabeça, troca de direção e anda por um bom tempo até querer voltar ao normal
         if self.bateu_cabeca: 
             self.vel_x = -self.vel_x
+            self.olhando *= -1
             self.bateu_cabeca = False
             self.tempo_mudar_direcao = random.randint(30, 60) # dobro do tempo max normalmente
             return
@@ -66,7 +67,9 @@ class Zumbi(Humanoide):
 
             if esta_no_campo_de_visao:
                 if self.inimigo.pos.x != self.pos.x:
-                    self.vel_x = 3 * ((self.inimigo.pos.x - self.pos.x) / abs(self.inimigo.pos.x - self.pos.x))
+                    sinal = ((self.inimigo.pos.x - self.pos.x) / abs(self.inimigo.pos.x - self.pos.x))
+                    self.vel_x = 3 * sinal
+                    self.olhando = -1 * sinal
                 else:
                     self.vel_x = 0
             else: 
