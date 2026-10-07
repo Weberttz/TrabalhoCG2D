@@ -2,7 +2,8 @@ from settings import (
     LARGURA, 
     POS_INICIO, 
     VEL_ANIMACAO, 
-    TAMANHO_QUADRADO, 
+    TAMANHO_QUADRADO,
+    TAMANHO_JOGADOR, 
     Vetor
 )
 
@@ -63,7 +64,8 @@ def verificar_voltou_fase(jogo):
         return
 
     jogo.gerenciadorFases.voltar()
-    j.resetar(Vetor(jogo.gerenciadorFases.largura_fase_atual() - TAMANHO_QUADRADO, 690))
+    altura = jogo.gerenciadorFases.altura_fase_atual()
+    j.resetar(Vetor(jogo.gerenciadorFases.largura_fase_atual() - TAMANHO_JOGADOR, altura - TAMANHO_JOGADOR))
     jogo.voltando = True
     jogo.carregar_fase(jogo.gerenciadorFases.caminho_fase_atual())
 
