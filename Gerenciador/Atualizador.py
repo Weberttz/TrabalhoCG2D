@@ -137,4 +137,5 @@ def atualizar_cachorros(jogo):
     for cachorro in jogo.cachorros_visiveis:
         cachorro.atualizar()
         if jogo.avancar_frame:
-            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_esquerda, jogo.anim_cachorro_direita)
+            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_idle, 
+                            jogo.anim_cachorro_esquerda, jogo.anim_cachorro_direita)

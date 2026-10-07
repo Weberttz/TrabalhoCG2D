@@ -1,4 +1,4 @@
-from settings import TAMANHO_QUADRADO, Vetor, Retangulo, pygame, random, LARGURA, CINZA
+from settings import TAMANHO_QUADRADO, TAMANHO_POMBO, Vetor, Retangulo, pygame, random, LARGURA, CINZA
 from Classes.projetil import Projetil
 
 class Pombo():
@@ -7,7 +7,7 @@ class Pombo():
         self.plataformas = plataformas
         self.pos = pos
         self.cor = cor
-        self.tamanho = TAMANHO_QUADRADO
+        self.tamanho = TAMANHO_POMBO
         self.vertices = []
         self.pedras = []
         self.inimigos = []
