@@ -24,7 +24,7 @@ class Humanoide():
 
         # Movimento
         self.velocidade = 5
-        self.forca_pulo = -20
+        self.forca_pulo = -16
         self.plataformas = plataformas
         self.inimigos = inimigos
 
