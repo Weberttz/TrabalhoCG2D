@@ -105,6 +105,18 @@ def desenhar_jogador(jogo):
         aabb = r.calcular_aabb(vertices_rect)
         bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
+def desenhar_chefe(jogo):
+    if jogo.chefe == None: return
+    vertices = jogo.camera.aplicar_vertices(jogo.chefe.vertices)
+    bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
+    bibgraf.scanline_fill(jogo.tela, vertices, jogo.chefe.cor)
+
+    if jogo.debug:
+        vertices_rect = jogo.camera.aplicar_vertices(jogo.chefe.retangulo.vertices)
+        aabb = r.calcular_aabb(vertices_rect)
+        bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+
+
 def desenhar_coletaveis(jogo):
     for coletavel in jogo.coletaveis_visiveis:
         vertices = jogo.camera.aplicar_vertices(coletavel.vertices)
@@ -127,6 +139,11 @@ def desenhar_projeteis(jogo):
     for pombo in jogo.pombos:
         for pedra in pombo.pedras:
             pedra.desenhar(jogo.tela, scroll, jogo.camera)
+
+    if jogo.chefe != None:
+        for livro in jogo.chefe.livros:
+            livro.desenhar(jogo.tela, scroll, jogo.camera)
+
 
 def desenhar_pombos(jogo):
     for pombo in jogo.pombos_visiveis:
@@ -182,6 +199,25 @@ def desenhar_cachorros(jogo):
             aabb = r.calcular_aabb(vertices_rect)
             bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
+def corte_borda_viewport(vertices_view, viewport):
+    Vxmin, Vymin, Vxmax, Vymax = viewport
+    x0 = vertices_view[0][0]
+    y0 = vertices_view[0][1]
+    x1 = vertices_view[2][0]
+    y1 = vertices_view[2][1]
+    
+    if (x1 > Vxmax or x0 < Vxmin 
+        or y0 < Vymin or y1 > Vymax):
+        _, rx0, ry0, rx1, ry1 = bibgraf.cohen_sutherland( x0, y0, x1, y1, Vxmin, Vymin, Vxmax, Vymax)
+        x0, y0, x1, y1 = rx0, ry0, rx1, ry1
+    
+    vertices_view[0][0], vertices_view[1][0] = x0, x0
+    vertices_view[0][1], vertices_view[3][1] = y0, y0
+    vertices_view[2][0], vertices_view[3][0] = x1, x1
+    vertices_view[1][1], vertices_view[2][1] = y1, y1
+    return vertices_view
+
+
 def desenhar_viewport(jogo, matriz_viewport, viewport):
     
     Vxmin, Vymin, Vxmax, Vymax = viewport
@@ -201,6 +237,8 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
     jogador_view = [transformacoes.produto_matriz(matriz_viewport,
                     [[vertice[0]+ limites_camera.left],[vertice[1]+ limites_camera.top],[1]])
                      for vertice in j.retangulo.vertices]
+
+    jogador_view = corte_borda_viewport(jogador_view,viewport)
          
     bibgraf.scanline_fill(jogo.tela, jogador_view, j.cor)
 
@@ -215,21 +253,9 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         plataforma_view =[transformacoes.produto_matriz(matriz_viewport,
                     [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
                     for vertice in plataforma.vertices]
+        
         # Se tiver intersceção com a borda usa o clipping
-        x0 = plataforma_view[0][0]
-        y0 = plataforma_view[0][1]
-        x1 = plataforma_view[2][0]
-        y1 = plataforma_view[1][1]
-
-        if (x1 > Vxmax or x0 < Vxmin 
-            or y0 < Vymin or y1 > Vymax):
-            _, rx0, ry0, rx1, ry1 = bibgraf.cohen_sutherland( x0, y0, x1, y1, Vxmin, Vymin, Vxmax, Vymax)
-            x0, y0, x1, y1 = rx0, ry0, rx1, ry1
-
-        plataforma_view[0][0], plataforma_view[1][0] = x0, x0
-        plataforma_view[0][1], plataforma_view[3][1] = y0, y0
-        plataforma_view[2][0], plataforma_view[3][0] = x1, x1
-        plataforma_view[1][1], plataforma_view[2][1] = y1, y1
+        plataforma_view = corte_borda_viewport(plataforma_view,viewport)
         
         bibgraf.scanline_fill(jogo.tela, plataforma_view, plataforma.cor)
 
@@ -237,20 +263,8 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         zumbi_view =[transformacoes.produto_matriz(matriz_viewport,
                             [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
                             for vertice in zumbi.vertices]
-        x0 = zumbi_view[0][0]
-        y0 = zumbi_view[0][1]
-        x1 = zumbi_view[2][0]
-        y1 = zumbi_view[1][1]
         
-        if (x1 > Vxmax or x0 < Vxmin 
-            or y0 < Vymin or y1 > Vymax):
-            _, rx0, ry0, rx1, ry1 = bibgraf.cohen_sutherland( x0, y0, x1, y1, Vxmin, Vymin, Vxmax, Vymax)
-            x0, y0, x1, y1 = rx0, ry0, rx1, ry1
-
-        zumbi_view[0][0], zumbi_view[1][0] = x0, x0
-        zumbi_view[0][1], zumbi_view[3][1] = y0, y0
-        zumbi_view[2][0], zumbi_view[3][0] = x1, x1
-        zumbi_view[1][1], zumbi_view[2][1] = y1, y1
+        zumbi_view = corte_borda_viewport(zumbi_view, viewport)
 
         bibgraf.scanline_fill(jogo.tela, zumbi_view, VERDE)
 

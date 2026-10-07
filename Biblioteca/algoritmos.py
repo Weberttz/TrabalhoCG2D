@@ -1,5 +1,4 @@
 import math
-from Biblioteca import transformacoes
 
 def set_pixel(superficie, x, y, cor, clip_atual = None):
     if 0 <= x < superficie.get_width() and 0 <= y < superficie.get_height():
@@ -253,9 +252,10 @@ RIGHT = 2
 BOTTOM = 4
 TOP = 8
 
-# Recebe um ponto e determina a localização dele em relacao a uma janela
-# dada por dois pontos
+
 def codigo_regiao(x, y, xmin, ymin, xmax, ymax):
+    '''Recebe um ponto e determina a localização dele em relação a uma janela
+        dada por dois pontos (máximo e mínimo).'''
     codigo = INSIDE
     if x < xmin:
         codigo |= LEFT
@@ -271,10 +271,12 @@ def codigo_regiao(x, y, xmin, ymin, xmax, ymax):
 
     return codigo
 
-# Recebe dois pontos que determinando uma reta e uma janela
-# Return se tem alguma parte visivel e as coordenadas de intersceção com a janela
 def cohen_sutherland(x0, y0, x1, y1, xmin, ymin, xmax, ymax):
-
+    ''' Recebe dois pares de pontos que determinam uma reta e uma janela 
+    (com seus pontos máximo e mínimo)
+    \nReturn se a reta tem alguma parte visivel na janela e as coordenadas 
+    de intersecção com a ela.
+    '''
     c0 = codigo_regiao(x0, y0, xmin, ymin, xmax, ymax)
 
     c1 = codigo_regiao(x1, y1, xmin, ymin, xmax, ymax)
@@ -315,27 +317,7 @@ def cohen_sutherland(x0, y0, x1, y1, xmin, ymin, xmax, ymax):
             y1 = y
             c1 = codigo_regiao(x1, y1, xmin, ymin, xmax, ymax)
 
-# Acho que não precisa desse agora
-def desenhar_linha_recortada(superficie, x0, y0, x1, y1, janela, cor):
-    xmin, ymin, xmax, ymax = janela
-    visivel, rx0, ry0, rx1, ry1 = cohen_sutherland(
-        x0, y0, x1, y1,
-        xmin, ymin, xmax, ymax)
-
-    if visivel:
-        linha_bresenham(superficie,
-            rx0, ry0,
-            rx1, ry1,
-            cor
-        )
-
-def retangulo_para_poligono(
-    x,
-    y,
-    largura,
-    altura
-):
-
+def retangulo_para_poligono(x, y, largura, altura):
     return [
         (x, y),
         (x + largura, y),

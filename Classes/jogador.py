@@ -7,15 +7,20 @@ class Jogador(Humanoide):
     def __init__(self, pos, plataformas, inimigos, coletaveis, equipamentos, cor):
         super().__init__(plataformas, inimigos, equipamentos, pos, cor, TAMANHO_JOGADOR)
         self.tempo = pygame.time.get_ticks()
-        self.pontuacao = 0
-        self.coletaveis_missao = 0
         self.olhando = 1
+        self.pontuacao = 0
         self.coletaveis = coletaveis
         self.quantidade_coletada = 0
+        self.coletaveis_missao = 0
+
         self.invulneravel = False
         self.tempo_invulnerabilidade = 1.0  # 1 seg
         self.momento_ultimo_dano = 0
-        self.tempo_teleport = 1.0
+        self.forca_afastamento = 20
+        self.atrito_afastamento = 0.85
+        self.vel_afastamento = 0
+
+        self.tempo_teleport = 2.0
         self.momento_ultimo_teleport = 100
         self.teleport_colidiu = None
         self.momento_entrada_teleport = None 
@@ -27,7 +32,8 @@ class Jogador(Humanoide):
         self.vel_y = 0
         self.aceleracao = Vetor(0, 10) 
         self.no_chao = False
-        # self.vida = 100
+        self.vida = 100
+        # bottomleft
         self.retangulo = Retangulo(self.pos.x, self.pos.y - self.tamanho,
                                 self.tamanho, self.tamanho)
         self.atualizar_vertices()
@@ -101,6 +107,9 @@ class Jogador(Humanoide):
             self.aceleracao.y = self.forca_pulo
             self.no_chao = False
 
+        self.vel_x += self.vel_afastamento
+        self.vel_afastamento *= self.atrito_afastamento
+
     def lidar_com_colisoes(self):
         self.colidir_com_coletavel()
         self.colidir_com_inimigo()
@@ -108,6 +117,7 @@ class Jogador(Humanoide):
         return super().lidar_com_colisoes()
 
     def colidir_com_teleport(self):
+        '''Detecta se o jogador está na área de teletransporte e teleporta.'''
         teleports = [p for p in self.plataformas if p.tipo == "teleport"]
 
         # encontrar teleport atual
@@ -166,6 +176,7 @@ class Jogador(Humanoide):
             if self.retangulo.colidiu_com(coletavel.retangulo) and coletavel.ativo:
                 if coletavel.tipo == "tapioca":
                     self.vida+= 30 
+                
                 if coletavel.tipo == "municao":
                     self.equipamento.municao+=10
 
@@ -188,7 +199,11 @@ class Jogador(Humanoide):
             self.pontuacao= self.pontuacao + diferenca * 200
     
     def colidir_com_inimigo(self):
-        '''Trata colisão com inimigos''' 
+        '''Trata colisão com inimigos.
+        \n Ordem dos acontecimentos da reação - o jogador:
+        \n - Perde vida;
+        \n - É afastado do inimigo; 
+        \n - Torna-se temporariamente invulnerável. ''' 
         for inimigo in self.inimigos:
             if self.retangulo.colidiu_com(inimigo.retangulo) and not self.invulneravel:
                 self.vida -= inimigo.dano
@@ -198,12 +213,30 @@ class Jogador(Humanoide):
 
     def atualizar_invulnerabilidade(self):
         '''Verifica se já passou o tempo de invulnerabilidade:
-        \n - se sim, torna vulnerável outra vez
+        \n - se sim, torna vulnerável outra vez e para o o afastamento
         \n - se não, permanece invulnerável (não perde vida em colisões com inimigos)
         '''
         if self.invulneravel:
             if (pygame.time.get_ticks() - self.momento_ultimo_dano) >= self.tempo_invulnerabilidade * 1000:
                 self.invulneravel = False
+                self.vel_afastamento = 0
+
+    def afastar_do_inimigo(self, inimigo):
+        '''Provoca a reação de afastamento quando colide com o inimigo se o jogador estiver vulnerável.'''
+        # primeiro afasta e depois torna invulneravel
+        # pq assim afasta so uma vez por segundo tbm
+        # se colidir pela esquerda, empurra pra esquerda
+        if self.pos.x < inimigo.pos.x:
+            direcao = -1
+        else:
+            direcao = 1
+        self.vel_afastamento = direcao * self.forca_afastamento
+    
+    def perder_vida(self, dano):
+        if not self.invulneravel:
+            self.vida -= dano
+            self.invulneravel = True
+            self.momento_ultimo_dano = pygame.time.get_ticks() 
 
     def animar(self, lista_idle_left, lista_idle_right,
            lista_walk_left, lista_walk_right,

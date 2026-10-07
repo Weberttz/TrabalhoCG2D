@@ -2,6 +2,7 @@ from Classes.plataforma import Plataforma
 from Classes.zumbi import Zumbi
 from Classes.cachorro import Cachorro
 from Classes.pombo import Pombo
+from Classes.chefe import Chefe
 from Classes.coletavel import Coletavel
 from settings import *
 import csv
@@ -96,6 +97,7 @@ def criar_inimigos(mapa, plataformas, blocks, nivel_dificuldade = None):
     zumbis = []
     cachorros = []
     pombos = []
+    chefe = None
     plats = [p for p in plataformas if p.tipo != "teleport"]
 
     for y, row in enumerate(mapa):
@@ -113,5 +115,8 @@ def criar_inimigos(mapa, plataformas, blocks, nivel_dificuldade = None):
                     x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + TAMANHO_ZUMBI
                     pombo = Pombo(plats + blocks, Vetor(x_aux, y_aux), (53, 66, 35), nivel_dificuldade)    
                     pombos.append(pombo)
+                case '14' | 'D':
+                    x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + 2 * TAMANHO_ZUMBI
+                    chefe = Chefe(plats + blocks, Vetor( x_aux, y_aux), (53, 66, 35), nivel_dificuldade)
 
-    return zumbis, cachorros, pombos
+    return zumbis, cachorros, pombos, chefe

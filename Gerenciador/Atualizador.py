@@ -33,12 +33,12 @@ def atualizar_entidades(jogo, dt):
     atualizar_zumbis(jogo)
     atualizar_cachorros(jogo)
     atualizar_pombos(jogo)
+    atualizar_chefe(jogo)
 
 def verificar_morte_jogador(jogo):
     j = jogo.jogador
     if j.vida <= 0 or j.pos.y > jogo.altura_mapa:
-        j.resetar(POS_INICIO)
-        j.vida = 100
+        j.vida = 0
 
 def verificar_passou_de_fase(jogo):
     j = jogo.jogador
@@ -121,6 +121,12 @@ def atualizar_projeteis(jogo, dt):
         for pedra in pedras:
             pedra.atualizar(dt, colisores)
 
+    if jogo.chefe != None:
+        livros = jogo.chefe.livros
+        livros[:] = [l for l in livros if l.ativo]
+        for livro in livros:
+            livro.atualizar(dt,colisores)
+
 def atualizar_pombos(jogo):
     projeteis = jogo.jogador.equipamento.projeteis
     for pombo in jogo.pombos_visiveis:
@@ -140,5 +146,10 @@ def atualizar_cachorros(jogo):
     for cachorro in jogo.cachorros_visiveis:
         cachorro.atualizar()
         if jogo.avancar_frame:
-            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_idle, 
+            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_idle,
                             jogo.anim_cachorro_esquerda, jogo.anim_cachorro_direita)
+
+def atualizar_chefe(jogo):
+    if jogo.chefe != None:
+        jogo.chefe.atualizar(jogo.jogador.equipamento.projeteis)
+
