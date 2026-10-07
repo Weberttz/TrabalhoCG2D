@@ -8,7 +8,7 @@ import csv
 
 COR_ASFALTO, BORDA_ASFALTO = (74, 74, 74),   (44, 44, 48)
 COR_CAIXA,   BORDA_CAIXA   = (178, 122, 66), (104, 66, 32)
-COR_METAL,   BORDA_METAL   = (70, 130, 170), (36, 74, 104)
+COR_METAL,   BORDA_METAL   = (143, 139, 136), (36, 74, 104)
 COR_TRONCO = (66, 60, 41)
 ROXO = (98, 0, 102)
 
@@ -75,7 +75,7 @@ def criar_level(layout):
 
                 case '7' | 'M':  # moeda
                     coletaveis.append(
-                        Coletavel(Vetor(px, py ), T, T, AMARELO, "moeda", "especial", imagem_moeda))
+                        Coletavel(Vetor(px, py ), T, T, AMARELO, "moeda", "circular", imagem_moeda))
 
                 case '8' | 'N':  # munição
                     coletaveis.append(
