@@ -5,7 +5,7 @@ from Classes.projetil import Projetil
 class Arma(Equipamento):
     def __init__(self, quantidade_uso, pos, cor):
         super().__init__(quantidade_uso, pos, cor, 20, 8)
-        self.municao = 30
+        self.municao = 100
         self.pode_atirar = True
         self.projeteis = []
         self.tempo = pygame.time.get_ticks()
