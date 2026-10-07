@@ -7,6 +7,12 @@ from settings import (
 )
 
 def atualizar_jogador(jogo):
+    jogador = jogo.jogador
+    if jogo.avancar_frame:
+        jogador.animar(jogo.anim_jogador_idle_left, jogo.anim_jogador_idle_right,
+                       jogo.anim_jogador_walk_left, jogo.anim_jogador_walk_right,
+                       jogo.anim_jogador_jump_left, jogo.anim_jogador_jump_right,
+                       jogo.anim_jogador_to_look_up)
     verificar_morte_jogador(jogo)
     verificar_passou_de_fase(jogo)
     verificar_voltou_fase(jogo)
@@ -77,7 +83,7 @@ def atualizar_visiveis(jogo):
     ]
     jogo.coletaveis_visiveis = [
         c for c in jogo.coletaveis
-        if -dx - c.tamanho <= c.pos.x <= -dx + LARGURA
+        if -dx - c.largura <= c.pos.x <= -dx + LARGURA
     ]
     jogo.cachorros_visiveis = [
         c for c in jogo.cachorros
@@ -95,6 +101,8 @@ def atualizar_visiveis(jogo):
 def atualizar_coletaveis(jogo):
     """Remove os coletáveis que já foram pegos"""
     jogo.coletaveis[:] = [c for c in jogo.coletaveis if c.ativo]
+    for c in jogo.coletaveis:
+        c.atualizar()
 
 def atualizar_projeteis(jogo, dt):
     """Atualiza o estado do projétil e remove os que estão inativos da lista"""
@@ -115,16 +123,20 @@ def atualizar_pombos(jogo):
     projeteis = jogo.jogador.equipamento.projeteis
     for pombo in jogo.pombos_visiveis:
         pombo.atualizar(projeteis)
+        if jogo.avancar_frame:
+            pombo.animar(jogo.anim_pombo_esquerda, jogo.anim_pombo_direita)
 
 def atualizar_zumbis(jogo):
     projeteis = jogo.jogador.equipamento.projeteis
     for zumbi in jogo.zumbis_visiveis:
         zumbi.atualizar(projeteis)
         if jogo.avancar_frame:
-            zumbi.animar(jogo.anim_zumbi_idle, jogo.anim_zumbi_esquerda, jogo.anim_zumbi_direita)
+            zumbi.animar(jogo.anim_zumbi_idle_esquerda, jogo.anim_zumbi_idle_direita
+                         ,jogo.anim_zumbi_esquerda, jogo.anim_zumbi_direita)
 
 def atualizar_cachorros(jogo):
     for cachorro in jogo.cachorros_visiveis:
         cachorro.atualizar()
         if jogo.avancar_frame:
-            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_esquerda, jogo.anim_cachorro_direita)
+            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_idle, 
+                            jogo.anim_cachorro_esquerda, jogo.anim_cachorro_direita)

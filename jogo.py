@@ -49,18 +49,17 @@ class Jogo:
 
     # Inicialização
     def carregar_sprites(self):
-        self.anim_zumbi_idle = Inicializador.gerar_lista_animacoes("zumbi", "idle", 8)
-        self.anim_zumbi_esquerda = Inicializador.gerar_lista_animacoes("zumbi", "walk_left", 8)
-        self.anim_zumbi_direita = Inicializador.gerar_lista_animacoes("zumbi", "walk_right", 8)
+        self.anim_zumbi_idle_esquerda = Inicializador.gerar_lista_animacoes("zumbi", "idle_left", 4)
+        self.anim_zumbi_idle_direita = Inicializador.gerar_lista_animacoes("zumbi", "idle_right", 4)                
+        self.anim_zumbi_esquerda = Inicializador.gerar_lista_animacoes("zumbi", "walk_left", 6)
+        self.anim_zumbi_direita = Inicializador.gerar_lista_animacoes("zumbi", "walk_right", 6)
 
         imagens = {}
-        for lista in (self.anim_zumbi_idle, self.anim_zumbi_esquerda, self.anim_zumbi_direita):
+        for lista in (self.anim_zumbi_idle_esquerda,
+                      self.anim_zumbi_idle_direita, self.anim_zumbi_esquerda, self.anim_zumbi_direita):
             imagens |= Inicializador.carregar_animacoes(lista)
 
-        # redimensiona uma vez só, na carga -> matrizes de escala
-        self.imagens_zumbi = {nome: pygame.transform.scale(img, (32, 32))
-                              for nome, img in imagens.items()}
-
+        self.imagens_zumbi = imagens
         self.anim_cachorro_idle = Inicializador.gerar_lista_animacoes("dog", "idle", 5)
         self.anim_cachorro_esquerda = Inicializador.gerar_lista_animacoes("dog", "walk_left", 8)
         self.anim_cachorro_direita = Inicializador.gerar_lista_animacoes("dog", "walk_right", 8)
@@ -68,18 +67,39 @@ class Jogo:
         imagens = {}
         for lista in (self.anim_cachorro_idle, self.anim_cachorro_esquerda, self.anim_cachorro_direita):
             imagens |= Inicializador.carregar_animacoes(lista)
+            
+        self.imagens_cachorro = imagens
 
-        # redimensiona uma vez só, na carga -> matrizes de escala
-        self.imagens_cachorro = {nome: pygame.transform.scale(img, (32, 32))
-                                      for nome, img in imagens.items()}
-        
+        self.anim_pombo_esquerda = Inicializador.gerar_lista_animacoes("pombo", "fly_left", 4)
+        self.anim_pombo_direita = Inicializador.gerar_lista_animacoes("pombo", "fly_right", 4)
+        imagens = {}
+        for lista in (self.anim_pombo_esquerda, self.anim_pombo_direita):
+                    imagens |= Inicializador.carregar_animacoes(lista)
+
+        self.imagens_pombos = imagens
+
+        self.anim_jogador_idle_left = Inicializador.gerar_lista_animacoes("soldado", "idle_left", 4)
+        self.anim_jogador_idle_right = Inicializador.gerar_lista_animacoes("soldado", "idle_right", 4)
+        self.anim_jogador_walk_left = Inicializador.gerar_lista_animacoes("soldado", "walk_left", 4)
+        self.anim_jogador_walk_right = Inicializador.gerar_lista_animacoes("soldado", "walk_right", 4)
+        self.anim_jogador_jump_right = Inicializador.gerar_lista_animacoes("soldado", "jump_right", 3)
+        self.anim_jogador_jump_left = Inicializador.gerar_lista_animacoes("soldado", "jump_left", 3)
+        self.anim_jogador_to_look_up = Inicializador.gerar_lista_animacoes("soldado", "to_look_up", 4)
+
+        imagens = {}
+        for lista in (self.anim_jogador_idle_left, self.anim_jogador_idle_right, 
+                      self.anim_jogador_walk_left, self.anim_jogador_walk_right,
+                      self.anim_jogador_jump_right, self.anim_jogador_jump_left,
+                      self.anim_jogador_to_look_up):
+                    imagens |= Inicializador.carregar_animacoes(lista)
+                
+        self.imagens_jogador = imagens
+
 
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
-        self.zumbis = Inicializador.criar_inimigos("zumbi", self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
-        self.cachorros = Inicializador.criar_inimigos("cachorro", self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
-        self.pombos = Inicializador.criar_inimigos("pombo", self.plataformas, self.blocks, nivel_dificuldade = self.nivel_dificuldade)
+        self.zumbis, self.cachorros, self.pombos = Inicializador.criar_inimigos(mapa, self.plataformas, self.blocks)
         self.portais = [p for p in self.plataformas if p.tipo == "teleport"]
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
@@ -89,9 +109,11 @@ class Jogo:
         inimigos = self.zumbis + self.cachorros + self.pombos
 
         if self.gerenciadorFases.fase_atual == 0 and self.voltando == False:
-            arma = Arma(60, POS_INICIO.copy(), "yellow")
+            arma = Arma(60, POS_INICIO.copy(), AMARELO)
             self.jogador = Jogador(POS_INICIO.copy(), self.plataformas, inimigos, 
-                                self.coletaveis, [arma], "red")
+                                self.coletaveis, [arma], VERMELHO)
+            self.jogador.tamanho = TAMANHO_JOGADOR
+            self.jogador.image = self.anim_jogador_idle_right[0]
         else:
             self.jogador.plataformas = self.plataformas
             self.jogador.coletaveis = self.coletaveis
@@ -100,7 +122,7 @@ class Jogo:
         self.camera = Camera(self.jogador, self.largura_mapa, self.altura_mapa)
 
         for z in self.zumbis:
-            z.image = self.anim_zumbi_idle[0]
+            z.image = self.anim_zumbi_idle_direita[0]
             z.inimigos.append(self.jogador)
 
         for c in self.cachorros:
@@ -108,6 +130,7 @@ class Jogo:
             c.inimigos.append(self.jogador)
 
         for p in self.pombos:
+            p.image = self.anim_pombo_esquerda[0]
             p.inimigos.append(self.jogador)
 
         self.mundo_surface = self.renderizar_mundo()
@@ -121,11 +144,6 @@ class Jogo:
             if plataforma.tipo == "normal":
                 draw_polygonon(surface, plataforma.vertices, plataforma.cor_borda)
                 scanline_fill(surface, plataforma.vertices, plataforma.cor)
-            elif plataforma.tipo == "teleport":
-                desenhar_elipse(surface, plataforma.x0 + plataforma.largura // 2, plataforma.y1 - plataforma.altura,
-                                8, 28, BLACK, preenchida=True)
-                desenhar_elipse(surface, plataforma.x0 + plataforma.largura // 2, plataforma.y1 - plataforma.altura,
-                                6, 26, plataforma.cor, preenchida=True)
                 
         return surface
     
@@ -139,8 +157,8 @@ class Jogo:
 
     # Loop principal
     def rodar(self):
-        self.tocar_musica()
-        faulthandler.dump_traceback_later(5, repeat=True)
+        # self.tocar_musica()
+        faulthandler.enable()
         while self.rodando:
             dt = self.clock.tick(60) / 1000 # único tick por frame
             self.tratar_eventos()
@@ -174,10 +192,11 @@ class Jogo:
                 
     # Atualização
     def atualizar(self, dt):
-        Atualizador.atualizar_jogador(self)
-        self.camera.atualizar()
-        Atualizador.atualizar_animacao(self, dt)
-        Atualizador.atualizar_entidades(self, dt)
+        if self.estado_jogo == "jogando":
+            Atualizador.atualizar_jogador(self)
+            self.camera.atualizar()
+            Atualizador.atualizar_animacao(self, dt)
+            Atualizador.atualizar_entidades(self, dt)
 
     # Renderização
     def desenhar(self):
@@ -192,12 +211,13 @@ class Jogo:
             # self.tela.fill(AZUL_NOTURNO)
             self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
 
-            Renderizador.desenhar_jogador(self)
+            Renderizador.desenhar_portais(self)
             Renderizador.desenhar_coletaveis(self)
             Renderizador.desenhar_projeteis(self)
             Renderizador.desenhar_zumbis(self)
             Renderizador.desenhar_cachorros(self)
             Renderizador.desenhar_pombos(self)
+            Renderizador.desenhar_jogador(self)
             Renderizador.desenhar_hud(self)
             if self.debug:
                 Renderizador.desenhar_aabb_de_portal(self)

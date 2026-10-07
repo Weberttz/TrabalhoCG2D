@@ -1,17 +1,28 @@
 from settings import *
+import Biblioteca.algoritmos as bibgraf
 
 class Projetil():
-    def __init__(self, pos:Vetor, disparou_para:Vetor, bala_inimiga=False):
+    def __init__(self, pos:Vetor, disparou_para:Vetor, cor,bala_inimiga=False, image = None):
         super().__init__()
+        self.cor = cor
         self.pos = pos
         self.disparou_para = disparou_para
-        self.image = pygame.surface.Surface((10,10)).convert() # ajeitar isso, se precisar
-        self.image.fill('white')
+        self.pos_incial = pos
+        self.image = None
+        if image != None:
+            self.image.fill(cor)
         self.retangulo = Retangulo(pos.x, pos.y, 10, 10)
         self.retangulo.topleft = self.pos
         self.velocidade = 400
         self.direcao = Vetor(self.disparou_para.x - self.pos.x, self.disparou_para.y - self.pos.y)
         vec = Vetor(1,0)
+
+        self.uvs = [
+            (0, 1),  # inferior-esquerdo
+            (0, 0),  # superior-esquerdo
+            (1, 0),  # superior-direito
+            (1, 1),  # inferior-direito
+        ]
 
         self.angulo = self.direcao.angulo_para(vec)
 
@@ -36,8 +47,19 @@ class Projetil():
                 self.ativo = False
 
     def desenhar(self, superficie, scroll, camera):
-        tolerancia = 500
-        pos = self.pos - scroll
-        if pos.x < -tolerancia or pos.x > LARGURA+tolerancia  or pos.y < -tolerancia or pos.y  >  ALTURA+tolerancia:
+        tolerancia = 12 * TAMANHO_QUADRADO
+        novo_vetor = self.pos_incial - self.pos
+        distancia = novo_vetor.calcular_norma()
+
+        vertices = camera.aplicar_vertices(self.retangulo.vertices)
+
+        if distancia > tolerancia:
             self.ativo = False
-        superficie.blit(self.image, camera.aplicar(self))
+       
+        if self.image != None:
+            bibgraf.scanline_texture(superficie, vertices, self.uvs, self.image)
+
+        x_min = min(x for x, y in vertices)
+        y_min = min(y for x, y in vertices)
+        
+        bibgraf.desenhar_circulo(superficie,(x_min + 5, y_min + 5), 4, self.cor, True)

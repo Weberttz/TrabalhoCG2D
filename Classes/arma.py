@@ -5,7 +5,7 @@ from Classes.projetil import Projetil
 class Arma(Equipamento):
     def __init__(self, quantidade_uso, pos, cor):
         super().__init__(quantidade_uso, pos, cor, 20, 8)
-        self.municao = 100
+        self.municao = 30
         self.pode_atirar = True
         self.projeteis = []
         self.tempo = pygame.time.get_ticks()
@@ -14,7 +14,7 @@ class Arma(Equipamento):
     def atacar(self, direcao, pos):
         if self.pode_atirar and self.municao > 0:
             pos = Vetor(pos)
-            projetil = Projetil(pos, pos + direcao)   # alvo = 1 unidade à frente
+            projetil = Projetil(pos, pos + direcao, AMARELO)   # alvo = 1 unidade à frente
             self.projeteis.append(projetil)
             self.pode_atirar = False
             self.municao -= 1

@@ -1,5 +1,4 @@
-import random, pygame
-from settings import TAMANHO_QUADRADO, Vetor, Retangulo
+from settings import TAMANHO_QUADRADO, TAMANHO_POMBO, Vetor, Retangulo, pygame, random, LARGURA, CINZA
 from Classes.projetil import Projetil
 
 class Pombo():
@@ -8,7 +7,7 @@ class Pombo():
         self.plataformas = plataformas
         self.pos = pos
         self.cor = cor
-        self.tamanho = 30
+        self.tamanho = TAMANHO_POMBO
         self.vertices = []
         self.pedras = []
         self.inimigos = []
@@ -21,12 +20,15 @@ class Pombo():
         self.velocidade = 10
         self.aceleracao = Vetor(0, 10)
 
-        self.intervalo_lancamento_pedra = 4
+        self.frame = 0
+        self.imagem = None
+
+        self.intervalo_lancamento_pedra = 2
         self.pode_lancar = True
         self.tempo_mudar_direcao = 0
         self.vivo = True
         self.dano = self.definir_dano(nivel_dificuldade)
-        self.campo_de_visao = 40 * TAMANHO_QUADRADO
+        self.campo_de_visao = 20 * TAMANHO_QUADRADO
 
     def definir_dano(self,nivel_dificuldade):
         '''Define o dano do inimigo pelo nível de dificuldade escolhido pelo jogador.'''
@@ -51,6 +53,7 @@ class Pombo():
 
     def atualizar(self, projeteis):
         self.atualizar_vertices()
+        self.lidar_com_colisao()
         self.movimentar()
         self.checar_atingido(projeteis)
         self.morrer()
@@ -64,47 +67,76 @@ class Pombo():
                                         (self.pos.x + self.tamanho, self.pos.y)]
 
     def atingiu_jogador(self):
-        jogador = self.inimigo
         for pedra in self.pedras:
-            if pedra.retangulo.colidiu_com(jogador.retangulo):
-                pedra.ativa = False
-                jogador.vida -= self.dano
-                jogador.invulneravel = True
-                jogador.momento_ultimo_dano = pygame.time.get_ticks() 
+            if pedra.retangulo.colidiu_com(self.jogador.retangulo):
+                pedra.ativo = False
+                self.jogador.vida -= self.dano
+                self.jogador.invulneravel = True
+                self.jogador.momento_ultimo_dano = pygame.time.get_ticks() 
+
+        # assim que atingir o jogador, tiramos ela do array
+        self.pedras[:] = [p for p in self.pedras if p.ativo]
 
     def atirar(self):
-        jogador = self.inimigo
-        pos = Vetor(self.pos.x, self.pos.y)
+        tolerancia = 10
+        delta_x = abs(self.pos.x -  self.jogador.pos.x)
 
         tempo = pygame.time.get_ticks()
         if tempo - self.tempo >= self.intervalo_lancamento_pedra * 1000: 
             self.tempo = tempo
             self.pode_lancar = True
 
-        if self.pode_lancar and self.pos.x == jogador.pos.x:
-            pedra = Projetil(pos, Vetor(jogador.pos.x, jogador.pos.y), True)
+        if self.pode_lancar and delta_x <= tolerancia:
+            pedra = Projetil(self.pos, self.jogador.pos, CINZA, True)
             self.pedras.append(pedra)
             self.pode_lancar = False
 
-    def movimentar(self):
+    def lidar_com_colisao(self):
         self.pos.x += self.vel_x
         self.retangulo.x = self.pos.x
+        objetos = [p for p in self.plataformas if not p.tipo == "teleport"]
+                
+        # Colisão com eixo X
+        for objeto in objetos:
+            if self.retangulo.colidiu_com(objeto.retangulo):
+                if self.vel_x > 0:  # Movendo para a direita
+                    self.retangulo.right = objeto.retangulo.left
+                elif self.vel_x < 0:  # Movendo para a esquerda
+                    self.retangulo.left = objeto.retangulo.right
+                self.pos.x = self.retangulo.x # Sincroniza a posição com o eixo x do obstáculo
 
-        self.inimigo = self.inimigos[0]
+        if self.pos.x < 0: self.pos.x = 0
+
+    def movimentar(self):
         # Move o pombo baseado na direção atual
-        self.retangulo.x += self.vel_x * self.velocidade
+        self.jogador = self.inimigos[0]
 
         # Diminui o contador e muda de direção aleatoriamente ao zerar
         self.tempo_mudar_direcao -= 1
         if self.tempo_mudar_direcao <= 0:
-            esta_no_campo_de_visao = (abs(self.inimigo.pos.x - self.pos.x) < self.campo_de_visao)
+            esta_no_campo_de_visao = (abs(self.jogador.pos.x - self.pos.x) < self.campo_de_visao)
 
             if esta_no_campo_de_visao:
-                if self.inimigo.pos.x != self.pos.x:
-                    self.vel_x = ((self.inimigo.pos.x - self.pos.x) / abs(self.inimigo.pos.x - self.pos.x))
+                if self.jogador.pos.x != self.pos.x:
+                    self.vel_x = 2 * ((self.jogador.pos.x - self.pos.x) / abs(self.jogador.pos.x - self.pos.x))
                 else:
                     self.vel_x = 0
             else: 
                 self.vel_x = random.choice([-1, 0, 1])
 
             self.tempo_mudar_direcao = random.randint(30, 60)  # Quadros (Frames)
+
+    def animar(self, lista_walk_left, lista_walk_right):
+        if self.vel_x < 0:
+            self.mudar_frame(lista_walk_left)
+        else:
+            self.mudar_frame(lista_walk_right)
+
+    def mudar_frame(self, lista_animacao):
+        '''Avança para o próximo quadro da animação '''
+        
+        # O operador '%' (módulo) faz com que a contagem volte a 0 quando chegar ao fim da lista.
+        self.frame = (self.frame + 1) % len(lista_animacao)
+        
+        # Atualiza a imagem do herói para a imagem do quadro atual.
+        self.image = lista_animacao[self.frame]

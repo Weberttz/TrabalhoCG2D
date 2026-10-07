@@ -1,12 +1,13 @@
 from settings import *
 
 class Humanoide(): 
-    def __init__(self, plataformas, inimigos, equipamentos, pos, cor):
+    def __init__(self, plataformas, inimigos, equipamentos, pos, cor, tamanho):
         self.vida = 100
         self.cor = cor
-        self.tamanho = 30
+        self.tamanho = tamanho
         self.equipamentos = equipamentos
         self.vertices = []
+        self.olhando = 1
 
         if len(equipamentos) > 0:
             self.equipamento = equipamentos[0]
@@ -24,7 +25,7 @@ class Humanoide():
 
         # Movimento
         self.velocidade = 5
-        self.forca_pulo = -15
+        self.forca_pulo = -17
         self.plataformas = plataformas
         self.inimigos = inimigos
 
@@ -87,9 +88,12 @@ class Humanoide():
                     self.aceleracao.y = 0
                 self.pos.y = self.retangulo.bottom # Sincroniza a posição com o eixo y do obstáculo
 
-    def animar(self, lista_idle, lista_walk_left, lista_walk_right):
+    def animar(self, lista_idle_left, lista_idle_right, lista_walk_left, lista_walk_right):
         if self.vel_x == 0:
-            self.mudar_frame(lista_idle)
+            if self.olhando == -1:
+                self.mudar_frame(lista_idle_left)
+            else:
+                self.mudar_frame(lista_idle_right)
         elif self.vel_x < 0:
             self.mudar_frame(lista_walk_left)
         else:
