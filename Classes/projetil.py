@@ -2,13 +2,15 @@ from settings import *
 import Biblioteca.algoritmos as bibgraf
 
 class Projetil():
-    def __init__(self, pos:Vetor, disparou_para:Vetor, cor,bala_inimiga=False):
+    def __init__(self, pos:Vetor, disparou_para:Vetor, cor,bala_inimiga=False, image = None):
         super().__init__()
+        self.cor = cor
         self.pos = pos
         self.disparou_para = disparou_para
         self.pos_incial = pos
-        self.image = pygame.surface.Surface((10,10)).convert() # ajeitar isso, se precisar
-        self.image.fill(cor)
+        self.image = None
+        if image != None:
+            self.image.fill(cor)
         self.retangulo = Retangulo(pos.x, pos.y, 10, 10)
         self.retangulo.topleft = self.pos
         self.velocidade = 400
@@ -53,5 +55,11 @@ class Projetil():
 
         if distancia > tolerancia:
             self.ativo = False
-            
-        bibgraf.scanline_texture(superficie, vertices, self.uvs, self.image)
+       
+        if self.image != None:
+            bibgraf.scanline_texture(superficie, vertices, self.uvs, self.image)
+
+        x_min = min(x for x, y in vertices)
+        y_min = min(y for x, y in vertices)
+        
+        bibgraf.desenhar_circulo(superficie,(x_min + 5, y_min + 5), 4, self.cor, True)

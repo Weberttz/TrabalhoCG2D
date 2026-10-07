@@ -39,6 +39,8 @@ class Zumbi(Humanoide):
             if projetil.retangulo.colidiu_com(self.retangulo):
                 self.vida -= projetil.dano
                 projetil.ativo = False
+                self.tomando_dano = True
+                self.tomar_dano()
                 if self.vida <= 0: self.vida = 0
 
     def lidar_com_colisoes(self):
@@ -48,28 +50,58 @@ class Zumbi(Humanoide):
                 self.bateu_cabeca = True
 
         return super().lidar_com_colisoes()
+
+    def tomar_dano(self):
+        return super().tomar_dano(10)
     
     def movimentar(self):
+        if not self.inimigos:
+            return
+
         self.inimigo = self.inimigos[0]
-        # Diminui o contador e muda de direção aleatoriamente ao zerar
+
+        # Distância horizontal até o inimigo
+        distancia_x = self.inimigo.pos.x - self.pos.x
+
+        esta_no_campo_de_visao = abs(distancia_x) < self.campo_visao
+
+        # Se bateu em uma parede, vai inverter imediatamente
+        if self.bateu_cabeca:
+            if self.vel_x != 0:
+                self.vel_x *= -1
+                self.olhando *= -1
+            else:
+                self.vel_x = random.choice([-1, 1])
+                self.olhando = self.vel_x
+
+            self.bateu_cabeca = False
+            self.tempo_mudar_direcao = random.randint(30, 60)
+            return
+
+        # Se viu o jogador, persegue continuamente
+        if esta_no_campo_de_visao:
+
+            if distancia_x > 0:
+                self.vel_x = 3
+                self.olhando = 1
+
+            elif distancia_x < 0:
+                self.vel_x = -3
+                self.olhando = -1
+
+            else:
+                self.vel_x = 0
+
+            return
+
+        # Fora do campo de visão -> movimento aleatório
         self.tempo_mudar_direcao -= 1
 
-         # se bateu cabeça, troca de direção e anda por um bom tempo até querer voltar ao normal
-        if self.bateu_cabeca: 
-            self.vel_x = -self.vel_x
-            self.bateu_cabeca = False
-            self.tempo_mudar_direcao = random.randint(30, 60) # dobro do tempo max normalmente
-            return
-        
         if self.tempo_mudar_direcao <= 0:
-            esta_no_campo_de_visao = (abs(self.inimigo.pos.x - self.pos.x) < self.campo_visao)
+            self.vel_x = random.choice([-1, 0, 1])
 
-            if esta_no_campo_de_visao:
-                if self.inimigo.pos.x != self.pos.x:
-                    self.vel_x = 3 * ((self.inimigo.pos.x - self.pos.x) / abs(self.inimigo.pos.x - self.pos.x))
-                else:
-                    self.vel_x = 0
-            else: 
-                self.vel_x = random.choice([-1, 0, 1])
+            # Não coloca olhando = 0, variável para mudar sprite do zumbi
+            if self.vel_x != 0:
+                self.olhando = 1 if self.vel_x > 0 else -1
 
-            self.tempo_mudar_direcao = random.randint(30, 60)  # Quadros (Frames)
+            self.tempo_mudar_direcao = random.randint(30, 60)

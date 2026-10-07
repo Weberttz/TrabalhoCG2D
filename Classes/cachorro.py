@@ -50,7 +50,7 @@ class Cachorro(Humanoide):
             if esta_no_campo_de_visao:
                 if self.inimigo.pos.x != self.pos.x:
                     self.vel_x = ((self.inimigo.pos.x - self.pos.x) / abs(self.inimigo.pos.x - self.pos.x))
-                    self.vel_x *= 2
+                    self.vel_x *= 3
                 else:
                     self.vel_x = 0
             else: 

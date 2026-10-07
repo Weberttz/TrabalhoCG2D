@@ -7,6 +7,7 @@ class Humanoide():
         self.tamanho = tamanho
         self.equipamentos = equipamentos
         self.vertices = []
+        self.olhando = 1
 
         if len(equipamentos) > 0:
             self.equipamento = equipamentos[0]
@@ -24,12 +25,16 @@ class Humanoide():
 
         # Movimento
         self.velocidade = 5
-        self.forca_pulo = -20
+        self.forca_pulo = -18
         self.plataformas = plataformas
         self.inimigos = inimigos
 
         self.frame = 0
         self.image = None
+
+        self.tomando_dano = False
+        self.tempo_dano = 0
+        self.tempo_piscar = 5
 
     def aplicar_gravidade(self):
         # aplicar gravidade se não estiver no chão
@@ -87,9 +92,16 @@ class Humanoide():
                     self.aceleracao.y = 0
                 self.pos.y = self.retangulo.bottom # Sincroniza a posição com o eixo y do obstáculo
 
-    def animar(self, lista_idle, lista_walk_left, lista_walk_right):
+    def tomar_dano(self, tempo = 40):
+        self.tomando_dano = True
+        self.tempo_dano = tempo
+
+    def animar(self, lista_idle_left, lista_idle_right, lista_walk_left, lista_walk_right):
         if self.vel_x == 0:
-            self.mudar_frame(lista_idle)
+            if self.olhando == -1:
+                self.mudar_frame(lista_idle_left)
+            else:
+                self.mudar_frame(lista_idle_right)
         elif self.vel_x < 0:
             self.mudar_frame(lista_walk_left)
         else:

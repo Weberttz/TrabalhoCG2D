@@ -25,9 +25,9 @@ class Jogo:
        
         self.rodando = True
         self.debug = False
-        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
-             "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
-                
+        self.gerenciadorFases = GerenciadorFases(["./Mapas/estagio11.csv",
+             "./Mapas/estagio12.csv","./Mapas/estagio13.csv"], TAMANHO_QUADRADO)
+
         iniciar_cenario()
         
         self.run_finalizada = False
@@ -48,12 +48,14 @@ class Jogo:
 
     # Inicialização
     def carregar_sprites(self):
-        self.anim_zumbi_idle = Inicializador.gerar_lista_animacoes("zumbi", "idle", 8)
-        self.anim_zumbi_esquerda = Inicializador.gerar_lista_animacoes("zumbi", "walk_left", 8)
-        self.anim_zumbi_direita = Inicializador.gerar_lista_animacoes("zumbi", "walk_right", 8)
+        self.anim_zumbi_idle_esquerda = Inicializador.gerar_lista_animacoes("zumbi", "idle_left", 4)
+        self.anim_zumbi_idle_direita = Inicializador.gerar_lista_animacoes("zumbi", "idle_right", 4)                
+        self.anim_zumbi_esquerda = Inicializador.gerar_lista_animacoes("zumbi", "walk_left", 6)
+        self.anim_zumbi_direita = Inicializador.gerar_lista_animacoes("zumbi", "walk_right", 6)
 
         imagens = {}
-        for lista in (self.anim_zumbi_idle, self.anim_zumbi_esquerda, self.anim_zumbi_direita):
+        for lista in (self.anim_zumbi_idle_esquerda,
+                      self.anim_zumbi_idle_direita, self.anim_zumbi_esquerda, self.anim_zumbi_direita):
             imagens |= Inicializador.carregar_animacoes(lista)
 
         self.imagens_zumbi = imagens
@@ -117,7 +119,7 @@ class Jogo:
         self.camera = Camera(self.jogador, self.largura_mapa, self.altura_mapa)
 
         for z in self.zumbis:
-            z.image = self.anim_zumbi_idle[0]
+            z.image = self.anim_zumbi_idle_direita[0]
             z.inimigos.append(self.jogador)
 
         for c in self.cachorros:

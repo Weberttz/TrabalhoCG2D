@@ -54,8 +54,11 @@ class Jogador(Humanoide):
         y = 0
         if keys[pygame.K_UP] and x == 0:  y -= 1    # cima
 
-        if x == 0 and y == 0:
-            x = self.olhando              # parado: atira para onde olha
+        if x == 0 and y == 0:       # parado: atira para onde olha
+            if self.olhando == 0:
+                y = -1
+            else:
+                x = self.olhando             
 
         direcao = Vetor(x, y)
         return direcao.normalizar()
@@ -163,7 +166,7 @@ class Jogador(Humanoide):
                 if coletavel.tipo == "tapioca":
                     self.vida+= 30 
                 if coletavel.tipo == "municao":
-                    self.equipamento.municao+=1
+                    self.equipamento.municao+=10
 
                 if coletavel.tipo == "especial":
                     self.pontuacao += 100
@@ -189,6 +192,7 @@ class Jogador(Humanoide):
             if self.retangulo.colidiu_com(inimigo.retangulo) and not self.invulneravel:
                 self.vida -= inimigo.dano
                 self.invulneravel = True
+                self.tomar_dano()
                 self.momento_ultimo_dano = pygame.time.get_ticks() 
 
     def atualizar_invulnerabilidade(self):

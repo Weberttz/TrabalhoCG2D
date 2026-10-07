@@ -1,4 +1,4 @@
-from settings import TAMANHO_QUADRADO, Vetor, Retangulo, pygame, random, LARGURA, CINZA
+from settings import *
 from Classes.projetil import Projetil
 
 class Pombo():
@@ -7,7 +7,7 @@ class Pombo():
         self.plataformas = plataformas
         self.pos = pos
         self.cor = cor
-        self.tamanho = TAMANHO_QUADRADO
+        self.tamanho = TAMANHO_POMBO
         self.vertices = []
         self.pedras = []
         self.inimigos = []
@@ -23,6 +23,9 @@ class Pombo():
         self.frame = 0
         self.imagem = None
 
+        self.tomando_dano = False
+        self.tempo_dano = 0
+        self.tempo_piscar = 5
         self.intervalo_lancamento_pedra = 2
         self.pode_lancar = True
         self.tempo_mudar_direcao = 0
@@ -44,11 +47,17 @@ class Pombo():
     def morrer(self):
         if self.vida == 0: self.vivo = False
 
+    def tomar_dano(self):
+        self.tomando_dano = True
+        self.tempo_dano = 10
+
     def checar_atingido(self, projeteis):
         for projetil in projeteis:
             if projetil.retangulo.colidiu_com(self.retangulo):
                 self.vida -= projetil.dano
                 projetil.ativo = False
+                self.tomando_dano = True
+                self.tomar_dano()
                 if self.vida <= 0: self.vida = 0
 
     def atualizar(self, projeteis):
@@ -87,7 +96,7 @@ class Pombo():
             self.pode_lancar = True
 
         if self.pode_lancar and delta_x <= tolerancia:
-            pedra = Projetil(self.pos, self.jogador.pos, CINZA, True)
+            pedra = Projetil(self.pos, self.jogador.pos, WHITE, True)
             self.pedras.append(pedra)
             self.pode_lancar = False
 

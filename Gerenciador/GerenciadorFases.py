@@ -6,13 +6,18 @@ class GerenciadorFases:
         self.fase_atual = 0
         self.max_fases = len(fases)
         self.larguras = [len(Inicializador.carregar_mapa(fase)[0]) * TAMANHO_QUADRADO 
-                        for fase in self.fases]           
+                        for fase in self.fases] 
+        self.alturas =  [len(Inicializador.carregar_mapa(fase)) * TAMANHO_QUADRADO 
+                        for fase in self.fases]  
 
     def caminho_fase_atual(self):
         return self.fases[self.fase_atual]
 
     def largura_fase_atual(self):
         return self.larguras[self.fase_atual]
+
+    def altura_fase_atual(self):
+        return self.alturas[self.fase_atual]
     
     def avancar(self):
         if(self.fase_atual < len(self.fases)):

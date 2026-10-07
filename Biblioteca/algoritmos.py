@@ -343,7 +343,7 @@ def retangulo_para_poligono(
         (x, y + altura)
     ]
 
-def scanline_texture(superficie, pontos, uvs, textura):
+def scanline_texture(superficie, pontos, uvs, textura, cor_efeito=None):
     tex_w = textura.get_width()
     tex_h = textura.get_height()
 
@@ -372,9 +372,11 @@ def scanline_texture(superficie, pontos, uvs, textura):
                 continue
 
             t = (y - y0) / (y1 - y0)
+
             x = x0 + t * (x1 - x0)
             u = u0 + t * (u1 - u0)
             v = v0 + t * (v1 - v0)
+
             intersecoes.append((x, u, v))
 
         intersecoes.sort(key=lambda item: item[0])
@@ -390,37 +392,53 @@ def scanline_texture(superficie, pontos, uvs, textura):
                 continue
 
             for x in range(int(x_ini), int(x_fim) + 1):
+
                 t = (x - x_ini) / (x_fim - x_ini)
+
                 u = u_ini + t * (u_fim - u_ini)
                 v = v_ini + t * (v_fim - v_ini)
 
                 tx = int(u * (tex_w - 1))
                 ty = int(v * (tex_h - 1))
 
-                if 0 <= tx < tex_w and 0 <= ty < tex_h: 
-                    # ao invés de só pintar, temos que retirar os quadrados transparentes
-                    cor = textura.get_at((tx, ty))
-                    a = cor.a
+                if not (0 <= tx < tex_w and 0 <= ty < tex_h):
+                    continue
 
-                    if a == 0:
-                        continue
+                cor_original = textura.get_at((tx, ty))
+                a = cor_original.a
 
-                    if not (0 <= x < superficie.get_width()
-                            and 0 <= y < superficie.get_height()):
-                        continue
+                # pixel transparente da sprite
+                if a == 0:
+                    continue
 
-                    if a < 255:
-                        fundo = superficie.get_at((x, y))
-                        fator = a / 255
-                        cor = (
-                            int(cor.r * fator + fundo.r * (1 - fator)),
-                            int(cor.g * fator + fundo.g * (1 - fator)),
-                            int(cor.b * fator + fundo.b * (1 - fator)),
-                        )
-                    else:
-                        cor = (cor.r, cor.g, cor.b)
+                if not (
+                    0 <= x < superficie.get_width()
+                    and 0 <= y < superficie.get_height()
+                ):
+                    continue
 
-                    set_pixel(superficie, x, y, cor)
+                if cor_efeito is not None:
+                    r, g, b = cor_efeito
+                else:
+                    r = cor_original.r
+                    g = cor_original.g
+                    b = cor_original.b
+
+                # mantém o alpha original da sprite
+                if a < 255:
+                    fundo = superficie.get_at((x, y))
+                    fator = a / 255
+
+                    cor = (
+                        int(r * fator + fundo.r * (1 - fator)),
+                        int(g * fator + fundo.g * (1 - fator)),
+                        int(b * fator + fundo.b * (1 - fator)),
+                    )
+
+                else:
+                    cor = (r, g, b)
+
+                set_pixel(superficie, x, y, cor)
 
 def interpola_cor(c1, c2, t):
     r = int(c1[0] + (c2[0]-c1[0])*t)
