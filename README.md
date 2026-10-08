@@ -85,6 +85,7 @@ cd TrabalhoCG2D
 python3 -m venv .venv
 source .venv/bin/activate
 ```
+
     * Windows (no Command Prompt)
 ```
 python -m venv .venv
