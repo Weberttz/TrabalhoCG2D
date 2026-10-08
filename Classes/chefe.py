@@ -56,7 +56,8 @@ class Chefe(Humanoide):
             if projetil.retangulo.colidiu_com(self.retangulo):
                 self.vida -= projetil.dano
                 projetil.ativo = False
-                #print(f'Vida chefe: {self.vida}')
+                self.tomando_dano = True
+                self.tomar_dano(10)
                 if self.vida <= 0: self.vida = 0
 
     def atualizar(self,projeteis):

@@ -117,7 +117,8 @@ def desenhar_chefe(jogo):
     vertices = jogo.camera.aplicar_vertices(jogo.chefe.vertices)
     imagem = jogo.imagens_chefe.get(jogo.chefe.image)
     if imagem is not None:
-        bibgraf.scanline_texture(jogo.tela, vertices, uvs_jogador, imagem)
+        cor_efeito = obter_cor_inimigo(jogo.chefe)
+        bibgraf.scanline_texture(jogo.tela, vertices, uvs_jogador, imagem, cor_efeito)
     else:
         bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
         bibgraf.scanline_fill(jogo.tela, vertices, jogo.chefe.cor)
