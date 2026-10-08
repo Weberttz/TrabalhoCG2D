@@ -86,7 +86,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-    * Windows (no Command Prompt)
+   * Windows (no Command Prompt)
 ```
 python -m venv .venv
 .venv\Scripts\activate.bat
