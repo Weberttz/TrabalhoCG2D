@@ -1,6 +1,6 @@
 # Projeto PANDORA
 
-Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por cenário típicos da Uece - Campus Itaperi (divididos em três fases) e enfrenta um grande vilão ao final.
+Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por cenário típicos da Uece - Campus Itaperi (divididos em quatro estágios) e enfrenta um grande vilão ao final.
 
 ## Funcionalidades
 * Set Pixel -> todo o jogo foi renderizado pixel por pixel
@@ -11,6 +11,7 @@ Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por c
 * Preenchimento de Regiões 
     * Flood Fill/Boundary Fill -> foi usado principalmente no menu, mas também em partes do cenário, como Lua, nuvens e carrinho do Billy
     * Scanline -> usado no jogo em si (mapas, viewport, cenário)
+    **Scanline com gradiente -> janelas dos prédios do cenário
 * Transformações Geométricas 
     * Rotação -> Giro em coletável (moeda)
     * Translação -> Teleport 
