@@ -157,7 +157,7 @@ class Jogo:
 
         self.mundo_surface = self.renderizar_mundo()
         self.viewport_surface = self.criar_surface_viewport()
-        self.voltando = False 
+        self.voltando = False  
 
     def renderizar_mundo(self):
         """Desenha o mapa estático uma única vez numa superficie gigante."""
@@ -226,12 +226,12 @@ class Jogo:
                         self.debug = not self.debug
 
                     elif evento.key == pygame.K_w:
-                        self.estado_jogo = "win"
+                        self.estado_jogo = "Win"
 
                     elif evento.key == pygame.K_g:
-                        self.estado_jogo = "gameover"
+                        self.estado_jogo = "Game Over"
 
-            elif self.estado_jogo == "win" or self.estado_jogo == "gameover":
+            elif self.estado_jogo == "Win" or self.estado_jogo == "Game Over":
                  acao = acao_tela_final(evento)
                  if acao == "reiniciar":
                       self.reiniciar()
@@ -272,7 +272,7 @@ class Jogo:
             if self.debug:
                 Renderizador.desenhar_aabb_de_portal(self)
 
-        elif self.estado_jogo == "win" or self.estado_jogo == "gameover":
+        elif self.estado_jogo == "Win" or self.estado_jogo == "Game Over":
             x_camera = abs(self.camera.retangulo.x)
             desenhar_cenario(self.tela, x_camera, self.gerenciadorFases.fase_atual)
             # self.tela.fill(AZUL_NOTURNO)
