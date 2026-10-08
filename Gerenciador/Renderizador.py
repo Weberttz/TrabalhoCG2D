@@ -313,12 +313,22 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
     return
 
 def desenhar_hud(jogo):
-    texto_vida = jogo.fonte.render(f"Vida: {jogo.jogador.vida}", 1, AMARELO)
+    if jogo.jogador.vida >= 70:
+        cor = VERDE
+    elif jogo.jogador.vida >= 40:
+        cor = AMARELO 
+    else:
+        cor = VERMELHO
+
+    fonte_vida = pygame.font.SysFont("Arial", 20, bold=True)
+    cheia = fonte_vida.render("█" * int(jogo.jogador.vida / 5), True, cor)
+    vazia = fonte_vida.render("░" * int((VIDA_MAXIMA - jogo.jogador.vida) / 5), True, (100, 100, 100))
     texto_municao = jogo.fonte.render(f"Munição: {jogo.jogador.equipamento.municao}", 1, AMARELO)
     texto_pontuacao = jogo.fonte.render(f"Pontuação: {jogo.jogador.pontuacao}", 1, AMARELO)
     texto_coletaveis = jogo.fonte.render(f"Coletáveis: {jogo.jogador.quantidade_coletada}", 1, AMARELO)
 
-    jogo.tela.blit(texto_vida, (30, 10))
+    jogo.tela.blit(cheia, (30, 10))
+    jogo.tela.blit(vazia, (30 + cheia.get_width(), 10))
     jogo.tela.blit(texto_municao, (30, 40))
     jogo.tela.blit(texto_coletaveis, (30, 70))
     jogo.tela.blit(texto_pontuacao, (30, 100))
