@@ -156,6 +156,7 @@ python jogo.py
 │   └── fase3.csv
 ├── menu.py
 ├── README.md
+├── requirements.txt
 ├── settings.py
 ├── Sons
 │   └── suspense_sobrenatural_loop.wav
