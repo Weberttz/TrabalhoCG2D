@@ -15,6 +15,7 @@ def atualizar_jogador(jogo, dt):
                        jogo.anim_jogador_jump_left, jogo.anim_jogador_jump_right,
                        jogo.anim_jogador_to_look_up)
     verificar_morte_jogador(jogo)
+    verificar_morte_chefe(jogo)
     verificar_passou_de_fase(jogo)
     verificar_voltou_fase(jogo)
     jogo.jogador.atualizar(dt)
@@ -39,6 +40,12 @@ def verificar_morte_jogador(jogo):
     j = jogo.jogador
     if j.vida <= 0 or j.pos.y > jogo.altura_mapa:
         jogo.estado_jogo = "gameover"
+
+def verificar_morte_chefe(jogo):
+    if jogo.chefe != None:
+        c = jogo.chefe
+        if c.vida <= 0:
+            jogo.estado_jogo = "win"
 
 def verificar_passou_de_fase(jogo):
     j = jogo.jogador
