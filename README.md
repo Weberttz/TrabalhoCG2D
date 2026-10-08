@@ -1,9 +1,92 @@
-# Árvore do projeto
+# Nome do jogo
 
+Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por cenário típicos da Uece - Campus Itapery (divididos em três fases) e enfrenta um grande vilão ao final.
+
+## Funcionalidades
+* Set Pixel -> todo o jogo foi renderizado pixel por pixel
+* Primitivas de Rasterização 
+    * Linha -> modelagem dos prédios, botões do menu
+    * Círculo -> modelagem da Lua
+    * Elipse -> modelagem das nuvens
+* Preenchimento de Regiões 
+    * Flood Fill/Boundary Fill -> foi usado principalmente no menu, mas também em partes do cenário, como Lua, nuvens e carrinho do Billy
+    * Scanline -> usado no jogo em si (mapas, viewport, cenário)
+* Transformações Geométricas 
+    * Rotação -> Giro em coletável (moeda)
+    * Translação -> Teleport 
+    * Escala -> Viewport(minimapa)
+* Animação 2D -> Movimentação dos personagens
+* Janela e Viewport -> criação de minimapa 
+* Recorte de Cohen-Sutherland (Clipping) -> usado no minimapa para plataformas que estavam nas bordas da viewport
+* Mapeamento de Textura -> Sprites dos personagens e componentes do cenário
+* Input (Teclado e/ou Mouse) -> Usado no menu e para movimentar o jogador 
+
+## Lore
+Um cientista conhecido como Dr. M trabalhava em uma universidade chamada Uece, e era muito bom em suas pesquisas. Em um de seus projetos, chamado TPBST (Teleportation breaks through space and time), conseguiu construir um portal que teletransporta pessoas de um lugar à outro instantaneamente. Mas ele não se contentava facilmente, por isso decidiu trabalhar em um mais ousado. O (Nome do projeto) visava evoluir todas as características de seres vivos, força, resistência, inteligência, habilidades motoras, etc. Ele sabia que o projeto seria arriscado, pois aquele estudo tinha muitos perigos, mutações inesperadas eram possíveis e, por esse motivo, já tinha se precavido e desenvolvido uma possível cura, caso as coisas saissem do controle. Mas o que ele não sabia, é que as coisas já haviam saído do controle. O seu gás tóxico, capaz de mudar um ser vivo, foi despejado à noite, ele tentou conter, mas já era tarde demais, o caos já havia sido instaurado, a mutação se espalhou, por humanos, por cachorros e até por pombos. O Dr. M tentou usar sua cura, mas não conseguiu, seu cerébro já havia sido consumido, não tinha mais capacidade de agir por si, e ele mesmo virou parte do caos, uma criatura gigante, ele parecia sofrer com a mutação de forma diferente....
+    Com o caos que havia se alastrado pela universidade, militares do exército foram chamados, com uma missão, conter a mutação.
+<Nome do personagem> e sua equipe foram salvar o que restou, mas se separam quando avistaram aquela situação, então <Nome do perosnagem> que era condecorado, possuia muitas habilidades com seu rifle e tinha experiência em combate, acreditava que estaria bem, mas ele não tinha noção do que realmente o esperava.
+    Aquilo que deveria ser uma operação de contensão, acabou se tornando uma luta pela sobrevivência, e uma busca pela verdade do que 
+aconteceu de fato naquela noite.
+
+### Inimigos
+* Zumbi - inimigo básico
+* Cientista zumbi - inimigo final que lança livros
+* Cachorro fantasma - inimigo imortal
+* Pombo tóxico - inimigo aéreo que lança pedras
+
+### Coletáveis
+* Tapioca (aumenta vida)
+* Munição (aumenta estoque para tiro)
+* Fusível (missão principal)
+* Remédio (missão principal - cura)
+* Moedas (comprar alguma coisa)
+
+### Cenário
+#### Estruturas 
+* NC2A 
+* NUPEINSC
+* Blocos G e R e outros genéricos
+* Reitoria
+* Carrinho do Billy 
+* RU 
+* Biblioteca central 
+* Prédio da Medicina - existe uma cura??
+
+#### Background
+* Lua 
+* Árvores 
+* Nuvens 
+* Paredes
+
+# Mecânicas 
+* Pulo 
+* Corrida
+* Tiro
+* Ataque corpo a corpo
+
+# Dificuldades
+* Fácil - Dano de inimigo = 10
+* Médio -  Dano de inimigo = 20
+* Difícil - Dano de inimigo = 40
+
+# Tutorial -> Como compilar e executar 
+
+# Link para video de execução do programa
+ [clique aqui](link)
+
+# Árvore do projeto
 ```
 .
+├── Assets
+│   ├── parede-pedra-1.png 
+|   ├── predio-quebrado.png
+│   ├── PressStart2P-Regular.ttf 
+│   ├── tapioca.png 
+│   ├── textura-tijolos.png
+│   ├── tijolos-escuros.png
+│   └── uece-noite.png
 ├── Biblioteca
-│   ├── algoritmos.py  (algoritmos das aulas)
+│   ├── algoritmos.py  (algoritmos de renderização e rasterização)
 │   └── transformacoes.py (matrizes de transformações lineares)
 ├── Classes
 │   ├── arma.py  (arma do jogador)
@@ -67,71 +150,4 @@
     ├── zumbi_walk_right_5.png
     ├── zumbi_walk_right_6.png
     └── zumbi_walk_right_7.png
-```
-
-# Ideias para aplicar
-## Transformações lineares
-```
-Teleport - Translação
-Giro nos coletáveis - Rotação
-Chefe gigante - Escala
-```
-
-## Inimigos
-```
-Zumbi - inimigo básico
-Doutor zumbi - inimigo básico que lança livros
-Cachorro fantasma - inimigo imortal
-Pombo tóxico - inimigo aéreo
-```
-
-# Cenário
-## Estruturas 
-```
-NC2A - prédio top - fusível vai está lá
-Reitoria
-Carrinho do Billy - melhor lugar para lanchar
-RU - muita comida - tapioca tem que existir
-Biblioteca central - documentos importantes
-Prédio da Medicina - existe uma cura??
-```
-## Background
-```
-Lua - simbolizar noite
-Árvores - uece é muito arborizada
-Nuvens - céu bem cheio - parallax?
-Estrelas - céu estrelado
-```
-
-# Lore
-```
-Em um mundo pós apocalíptico, é preciso visitar universidades para encontrar pesquisas úteis para mitgar pragas e curar pessoas, qualquer recurso é bem vindo. Você foi contratado para uma missão impossível, ir à uma universidade chamada Uece, coletar itens importantes e voltar com vida (a parte mais difícil, pois você não espera o que existe naquele local sombrio...). 
-```
-
-# Mecânicas 
-```
-Pulo (duplo?)
-Corrida
-Tiro
-Ataque corpo a corpo
-Lançar granadas ( temos que fazer isso kkk)
-```
-
-# Coletáveis
-```
-Tapioca ( cura vida )
-Munição ( aumenta estoque para tiro)
-Fusível ( missão principal )
-Remédio ( missão principal)
-Pacotes de comida ( missão principal )
-Protótipo tecnológico ( melhoria de arma )
-Moedas ( comprar alguma coisa )
-Refrigerante ( aumentar velocidade - pulo duplo? dash? )
-```
-
-# Dificuldades
-```
-Fácil - Dano de inimigo = 10
-Médio -  Dano de inimigo = 20
-Difícil - Dano de inimigo = 40
 ```

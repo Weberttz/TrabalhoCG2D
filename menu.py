@@ -26,7 +26,7 @@ superficie_elipse = None
 superficie_nuvem = None
 
 estado_menu = "INICIO"
-dificuldade = "FACIL"
+dificuldade = "facil"
 dificuldade_selecionada = 0
 #0, 1, 2, 3
 
@@ -40,7 +40,7 @@ botoes_inicio = [
 
 botoes_dificuldade = [
     {"nome": "FACIL", "acao": "facil", "x0": 150, "y0": 250, "x1": 550, "y1": 330, "cor": COR_BOTAO},
-    {"nome": "MEDIA", "acao": "media", "x0": 150, "y0": 360, "x1": 550, "y1": 440, "cor": COR_MEDIA},
+    {"nome": "MEDIO", "acao": "medio", "x0": 150, "y0": 360, "x1": 550, "y1": 440, "cor": COR_MEDIA},
     {"nome": "DIFICIL", "acao": "dificil", "x0": 150, "y0": 470, "x1": 550, "y1": 550, "cor": COR_DIFICIL},
     {"nome": "VOLTAR", "acao": "voltar", "x0": 150, "y0": 580, "x1": 550, "y1": 660, "cor": COR_VOLTAR},
 
@@ -162,7 +162,7 @@ def desenhar_menu(superficie, posicao_mouse):
                 superficie_botao = botao["superficie"]
 
             superficie.blit(superficie_botao, (botao["x0"], botao["y0"]))
-            texto_titulo = fonte_titulo.render("ZUMBI GAME", True, COR_TITULO)
+            texto_titulo = fonte_titulo.render("NOITE NA UECE", True, COR_TITULO)
             superficie.blit(texto_titulo, (160, 121))
 
             texto = fonte.render(botao["nome"], True, COR_TEXTO)
@@ -208,7 +208,7 @@ def desenhar_menu(superficie, posicao_mouse):
         for i, opcao in enumerate(botoes_dificuldade):
             if i == dificuldade_selecionada:
                 cor = opcao["cor"]
-                texto_exibido = f"> {opcao["nome"]}"
+                texto_exibido = "> " + opcao["nome"]
             else:
                 cor = COR_TEXTO
                 texto_exibido = opcao["nome"]
@@ -223,9 +223,12 @@ def desenhar_menu(superficie, posicao_mouse):
             superficie.blit(superficie_texto, (x_opcao, y_opcao))
 
 
-#identifica o clique do mouse e retorna o nome da acao associada ao botao
 #quando estiver na tela de selecionar dificuldade, identifica a tecla pressionada para navegar nas opcoes e para retornar a dificuldade
 def acao_menu(evento, posicao_mouse):
+    '''Identifica o clique do mouse e retorna o nome da ação associada ao botão.
+    Quando estiver na tela de selecionar dificuldade, identifica a tecla pressionada 
+    para navegar nas opções e para retornar a dificuldade escolhida.'''
+
     global estado_menu, dificuldade, dificuldade_selecionada
 
     if estado_menu == "INICIO":
@@ -262,10 +265,10 @@ def acao_menu(evento, posicao_mouse):
 
             elif evento.key == pygame.K_RETURN:
                 opcao = botoes_dificuldade[dificuldade_selecionada]
-                if opcao["acao"] in ["facil", "media", "dificil"]:
-                    dificuldade = opcao["acao"].upper()
+                if opcao["acao"] in ["facil", "medio", "dificil"]:
+                    dificuldade = opcao["acao"]
                     estado_menu = "INICIO"
-                    return None
+                    return opcao['acao']
                 elif opcao["acao"] == "voltar":
                     estado_menu = "INICIO"
                     return None
@@ -273,5 +276,6 @@ def acao_menu(evento, posicao_mouse):
     return None
 
 def get_dificuldade():
+    global dificuldade
     return dificuldade
 

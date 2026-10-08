@@ -2,7 +2,8 @@ from settings import (
     LARGURA, 
     POS_INICIO, 
     VEL_ANIMACAO, 
-    TAMANHO_QUADRADO, 
+    TAMANHO_QUADRADO,
+    TAMANHO_JOGADOR, 
     Vetor
 )
 
@@ -32,12 +33,12 @@ def atualizar_entidades(jogo, dt):
     atualizar_zumbis(jogo)
     atualizar_cachorros(jogo)
     atualizar_pombos(jogo)
+    atualizar_chefe(jogo)
 
 def verificar_morte_jogador(jogo):
     j = jogo.jogador
     if j.vida <= 0 or j.pos.y > jogo.altura_mapa:
-        j.resetar(POS_INICIO)
-        j.vida = 100
+        j.vida = 0
 
 def verificar_passou_de_fase(jogo):
     j = jogo.jogador
@@ -57,13 +58,16 @@ def verificar_voltou_fase(jogo):
     if j.pos.x >= 0:
         return
 
-    if jogo.gerenciadorFases.fase_atual == 0:
+    fase_atual = jogo.gerenciadorFases.fase_atual 
+    max_fases = jogo.gerenciadorFases.max_fases - 1
+    if fase_atual == 0 or fase_atual == max_fases:
         j.pos.x = 0                   
         j.retangulo.x = 0
         return
 
     jogo.gerenciadorFases.voltar()
-    j.resetar(Vetor(jogo.gerenciadorFases.largura_fase_atual() - TAMANHO_QUADRADO, 690))
+    altura = jogo.gerenciadorFases.altura_fase_atual()
+    j.resetar(Vetor(jogo.gerenciadorFases.largura_fase_atual() - TAMANHO_JOGADOR, altura - TAMANHO_JOGADOR))
     jogo.voltando = True
     jogo.carregar_fase(jogo.gerenciadorFases.caminho_fase_atual())
 
@@ -119,6 +123,12 @@ def atualizar_projeteis(jogo, dt):
         for pedra in pedras:
             pedra.atualizar(dt, colisores)
 
+    if jogo.chefe != None:
+        livros = jogo.chefe.livros
+        livros[:] = [l for l in livros if l.ativo]
+        for livro in livros:
+            livro.atualizar(dt,colisores)
+
 def atualizar_pombos(jogo):
     projeteis = jogo.jogador.equipamento.projeteis
     for pombo in jogo.pombos_visiveis:
@@ -138,5 +148,13 @@ def atualizar_cachorros(jogo):
     for cachorro in jogo.cachorros_visiveis:
         cachorro.atualizar()
         if jogo.avancar_frame:
-            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_idle, 
+            cachorro.animar(jogo.anim_cachorro_idle, jogo.anim_cachorro_idle,
                             jogo.anim_cachorro_esquerda, jogo.anim_cachorro_direita)
+
+def atualizar_chefe(jogo):
+    if jogo.chefe != None:
+        jogo.chefe.atualizar(jogo.jogador.equipamento.projeteis)
+        if jogo.avancar_frame:
+            jogo.chefe.animar(jogo.anim_chefe_idle_left, jogo.anim_chefe_idle_right,
+                                    jogo.anim_chefe_walk_left, jogo.anim_chefe_walk_right)
+
