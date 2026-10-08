@@ -100,7 +100,7 @@ python jogo.py
 ```
 
 ## Link para video de execução do programa
- [Clique aqui para assistir demo](https://youtu.be/F1_0v30ZeeQ))
+ [Clique aqui para assistir demo](https://youtu.be/F1_0v30ZeeQ)
 
 # Árvore do projeto
 ```
