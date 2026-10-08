@@ -58,7 +58,9 @@ def verificar_voltou_fase(jogo):
     if j.pos.x >= 0:
         return
 
-    if jogo.gerenciadorFases.fase_atual == 0:
+    fase_atual = jogo.gerenciadorFases.fase_atual 
+    max_fases = jogo.gerenciadorFases.max_fases - 1
+    if fase_atual == 0 or fase_atual == max_fases:
         j.pos.x = 0                   
         j.retangulo.x = 0
         return
@@ -152,4 +154,7 @@ def atualizar_cachorros(jogo):
 def atualizar_chefe(jogo):
     if jogo.chefe != None:
         jogo.chefe.atualizar(jogo.jogador.equipamento.projeteis)
+        if jogo.avancar_frame:
+            jogo.chefe.animar(jogo.anim_chefe_idle_left, jogo.anim_chefe_idle_right,
+                                    jogo.anim_chefe_walk_left, jogo.anim_chefe_walk_right)
 

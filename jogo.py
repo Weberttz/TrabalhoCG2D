@@ -26,7 +26,7 @@ class Jogo:
        
         self.rodando = True
         self.debug = False
-        self.gerenciadorFases = GerenciadorFases(["./Mapas/estagio11.csv",
+        self.gerenciadorFases = GerenciadorFases(["./Mapas/estagio14.csv",
              "./Mapas/estagio12.csv","./Mapas/estagio13.csv", "./Mapas/estagio14.csv"], TAMANHO_QUADRADO)
 
         iniciar_cenario()
@@ -75,6 +75,18 @@ class Jogo:
 
         self.imagens_pombos = imagens
 
+        self.anim_chefe_idle_left = Inicializador.gerar_lista_animacoes("drm", "idle_left", 4)
+        self.anim_chefe_idle_right = Inicializador.gerar_lista_animacoes("drm", "idle_right", 4)
+        self.anim_chefe_walk_left = Inicializador.gerar_lista_animacoes("drm", "walk_left", 5)
+        self.anim_chefe_walk_right = Inicializador.gerar_lista_animacoes("drm", "walk_right", 5)
+
+        imagens = {}
+        for lista in (self.anim_chefe_idle_left, self.anim_chefe_idle_right, 
+                    self.anim_chefe_walk_left, self.anim_chefe_walk_right):
+                imagens |= Inicializador.carregar_animacoes(lista)
+                        
+        self.imagens_chefe = imagens
+        
         self.anim_jogador_idle_left = Inicializador.gerar_lista_animacoes("soldado", "idle_left", 4)
         self.anim_jogador_idle_right = Inicializador.gerar_lista_animacoes("soldado", "idle_right", 4)
         self.anim_jogador_walk_left = Inicializador.gerar_lista_animacoes("soldado", "walk_left", 4)
@@ -131,6 +143,7 @@ class Jogo:
             p.inimigos.append(self.jogador)
 
         if self.chefe != None:
+            self.chefe.image = self.anim_chefe_idle_left[0]
             self.chefe.jogador = self.jogador
 
         self.mundo_surface = self.renderizar_mundo()

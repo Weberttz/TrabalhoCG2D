@@ -115,8 +115,13 @@ def desenhar_debug_entidades(jogo, vertices, entidade):
 def desenhar_chefe(jogo):
     if jogo.chefe == None: return
     vertices = jogo.camera.aplicar_vertices(jogo.chefe.vertices)
-    bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
-    bibgraf.scanline_fill(jogo.tela, vertices, jogo.chefe.cor)
+    imagem = jogo.imagens_chefe.get(jogo.chefe.image)
+    if imagem is not None:
+        cor_efeito = obter_cor_inimigo(jogo.chefe)
+        bibgraf.scanline_texture(jogo.tela, vertices, uvs_jogador, imagem, cor_efeito)
+    else:
+        bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
+        bibgraf.scanline_fill(jogo.tela, vertices, jogo.chefe.cor)
 
     if jogo.debug:
         desenhar_debug_entidades(jogo, vertices, jogo.chefe)
@@ -238,6 +243,15 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
     jogador_view = corte_borda_viewport(jogador_view,viewport)
          
     bibgraf.scanline_fill(jogo.tela, jogador_view, j.cor)
+
+    c = jogo.chefe
+    chefe_view = [transformacoes.produto_matriz(matriz_viewport,
+                        [[vertice[0]+ limites_camera.left],[vertice[1]+ limites_camera.top],[1]])
+                         for vertice in c.retangulo.vertices]
+    
+    chefe_view = corte_borda_viewport(chefe_view, viewport)
+             
+    bibgraf.scanline_fill(jogo.tela, chefe_view, c.cor)
 
     plataformas = [p for p in jogo.plataformas 
                 if p.x0 <= LARGURA - limites_camera.left

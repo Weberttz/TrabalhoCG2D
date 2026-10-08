@@ -77,6 +77,8 @@ class Pombo():
         for pedra in self.pedras:
             if pedra.retangulo.colidiu_com(self.jogador.retangulo):
                 pedra.ativo = False
+                self.jogador.tomando_dano = True
+                self.jogador.tomar_dano()
                 self.jogador.perder_vida(self.dano)
                 
         # assim que atingir o jogador, tiramos ela do array
