@@ -20,9 +20,7 @@ class Cachorro(Humanoide):
 
     def definir_dano(self,nivel_dificuldade):
         '''Define o dano do inimigo pelo nível de dificuldade escolhido pelo jogador.'''
-        if nivel_dificuldade == None:
-            return 10
-        elif nivel_dificuldade == 'facil':
+        if nivel_dificuldade == 'facil':
             return 10
         elif nivel_dificuldade == 'medio':
             return 20
@@ -50,7 +48,7 @@ class Cachorro(Humanoide):
             if esta_no_campo_de_visao:
                 if self.inimigo.pos.x != self.pos.x:
                     self.vel_x = ((self.inimigo.pos.x - self.pos.x) / abs(self.inimigo.pos.x - self.pos.x))
-                    self.vel_x *= 2
+                    self.vel_x *= 3
                 else:
                     self.vel_x = 0
             else: 

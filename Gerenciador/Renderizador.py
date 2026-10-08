@@ -50,12 +50,52 @@ def desenhar_portais(jogo):
     for portal in jogo.portais_visiveis:
         desenhar_portal_estilizado(jogo.tela, portal, jogo.camera)
 
+def obter_cor_jogador(jogo):
+    cor_efeito = None
+
+    if jogo.jogador.tomando_dano:
+
+        fase = jogo.jogador.tempo_dano // jogo.jogador.tempo_piscar
+
+        if fase % 2 == 0:
+            cor_efeito = WHITE
+        else:
+            cor_efeito = BLACK
+
+        jogo.jogador.tempo_dano -= 1
+
+        if jogo.jogador.tempo_dano <= 0:
+            jogo.jogador.tomando_dano = False
+
+    return cor_efeito
+
+def obter_cor_inimigo(inimigo):
+    cor_efeito = None
+
+    if inimigo.tomando_dano:
+
+        fase = inimigo.tempo_dano // inimigo.tempo_piscar
+
+        if fase % 2 == 0:
+            cor_efeito = VERMELHO
+        else:
+            cor_efeito = BLACK
+
+        inimigo.tempo_dano -= 1
+
+        if inimigo.tempo_dano <= 0:
+            inimigo.tomando_dano = False
+
+    return cor_efeito
+
+
 def desenhar_jogador(jogo):
     jogador = jogo.jogador
     vertices = jogo.camera.aplicar_vertices(jogo.jogador.vertices)
     imagem = jogo.imagens_jogador.get(jogador.image)
     if imagem != None:
-        bibgraf.scanline_texture(jogo.tela, vertices, uvs_jogador, imagem)
+        cor_efeito = obter_cor_jogador(jogo)
+        bibgraf.scanline_texture(jogo.tela, vertices, uvs_jogador, imagem, cor_efeito)
     else:
         bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
         bibgraf.scanline_fill(jogo.tela, vertices, jogo.jogador.cor)
@@ -64,6 +104,32 @@ def desenhar_jogador(jogo):
         vertices_rect = jogo.camera.aplicar_vertices(jogo.jogador.retangulo.vertices)
         aabb = r.calcular_aabb(vertices_rect)
         bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+
+def desenhar_debug_entidades(jogo, vertices, entidade):
+    texto = jogo.fonte.render(f"Vida: {entidade.vida}", 1, WHITE)
+    jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
+    vertices_rect = jogo.camera.aplicar_vertices(entidade.retangulo.vertices)
+    aabb = r.calcular_aabb(vertices_rect)
+    bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+
+def desenhar_chefe(jogo):
+    if jogo.chefe == None: return
+    vertices = jogo.camera.aplicar_vertices(jogo.chefe.vertices)
+    imagem = jogo.imagens_chefe.get(jogo.chefe.image)
+    if imagem is not None:
+        cor_efeito = obter_cor_inimigo(jogo.chefe)
+        bibgraf.scanline_texture(jogo.tela, vertices, uvs_jogador, imagem, cor_efeito)
+    else:
+        bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
+        bibgraf.scanline_fill(jogo.tela, vertices, jogo.chefe.cor)
+
+    if jogo.debug:
+        desenhar_debug_entidades(jogo, vertices, jogo.chefe)
+        return
+
+    texto = jogo.fonte.render(f"Vida: {jogo.chefe.vida}", 1, WHITE)
+    jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
+    
 
 def desenhar_coletaveis(jogo):
     for coletavel in jogo.coletaveis_visiveis:
@@ -88,39 +154,38 @@ def desenhar_projeteis(jogo):
         for pedra in pombo.pedras:
             pedra.desenhar(jogo.tela, scroll, jogo.camera)
 
+    if jogo.chefe != None:
+        for livro in jogo.chefe.livros:
+            livro.desenhar(jogo.tela, scroll, jogo.camera)
+
+
 def desenhar_pombos(jogo):
     for pombo in jogo.pombos_visiveis:
         vertices = jogo.camera.aplicar_vertices(pombo.vertices)
         imagem = jogo.imagens_pombos.get(pombo.image)
         if imagem is not None:
-            bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem)
+            cor_efeito = obter_cor_inimigo(pombo)
+            bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem, cor_efeito)
         else:
             bibgraf.scanline_fill(jogo.tela, vertices, pombo.cor)
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
         if jogo.debug:
-            texto = jogo.fonte.render(f"Vida: {pombo.vida}", 1, WHITE)
-            jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
-            vertices_rect = jogo.camera.aplicar_vertices(pombo.retangulo.vertices)
-            aabb = r.calcular_aabb(vertices_rect)
-            bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+            desenhar_debug_entidades(jogo, vertices, pombo)
 
 def desenhar_zumbis(jogo):
     for zumbi in jogo.zumbis_visiveis:
         vertices = jogo.camera.aplicar_vertices(zumbi.vertices)
         imagem = jogo.imagens_zumbi.get(zumbi.image)
         if imagem is not None:
-            bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem)
+            cor_efeito = obter_cor_inimigo(zumbi)
+            bibgraf.scanline_texture(jogo.tela, vertices, uvs, imagem, cor_efeito)
         else:
             bibgraf.scanline_fill(jogo.tela, vertices, zumbi.cor)
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
         if jogo.debug:
-            texto = jogo.fonte.render(f"Vida: {zumbi.vida}", 1, WHITE)
-            jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
-            vertices_rect = jogo.camera.aplicar_vertices(zumbi.retangulo.vertices)
-            aabb = r.calcular_aabb(vertices_rect)
-            bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+            desenhar_debug_entidades(jogo, vertices, zumbi)
 
 def desenhar_cachorros(jogo):
     for cachorro in jogo.cachorros_visiveis:
@@ -134,11 +199,26 @@ def desenhar_cachorros(jogo):
             bibgraf.draw_polygonon(jogo.tela, vertices, "red")
 
         if jogo.debug:
-            texto = jogo.fonte.render(f"Vida: {cachorro.vida}", 1, WHITE)
-            jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
-            vertices_rect = jogo.camera.aplicar_vertices(cachorro.retangulo.vertices)
-            aabb = r.calcular_aabb(vertices_rect)
-            bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+            desenhar_debug_entidades(jogo, vertices, cachorro)
+
+def corte_borda_viewport(vertices_view, viewport):
+    Vxmin, Vymin, Vxmax, Vymax = viewport
+    x0 = vertices_view[0][0]
+    y0 = vertices_view[0][1]
+    x1 = vertices_view[2][0]
+    y1 = vertices_view[2][1]
+    
+    if (x1 > Vxmax or x0 < Vxmin 
+        or y0 < Vymin or y1 > Vymax):
+        _, rx0, ry0, rx1, ry1 = bibgraf.cohen_sutherland( x0, y0, x1, y1, Vxmin, Vymin, Vxmax, Vymax)
+        x0, y0, x1, y1 = rx0, ry0, rx1, ry1
+    
+    vertices_view[0][0], vertices_view[1][0] = x0, x0
+    vertices_view[0][1], vertices_view[3][1] = y0, y0
+    vertices_view[2][0], vertices_view[3][0] = x1, x1
+    vertices_view[1][1], vertices_view[2][1] = y1, y1
+    return vertices_view
+
 
 def desenhar_viewport(jogo, matriz_viewport, viewport):
     
@@ -159,8 +239,19 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
     jogador_view = [transformacoes.produto_matriz(matriz_viewport,
                     [[vertice[0]+ limites_camera.left],[vertice[1]+ limites_camera.top],[1]])
                      for vertice in j.retangulo.vertices]
+
+    jogador_view = corte_borda_viewport(jogador_view,viewport)
          
     bibgraf.scanline_fill(jogo.tela, jogador_view, j.cor)
+
+    c = jogo.chefe
+    chefe_view = [transformacoes.produto_matriz(matriz_viewport,
+                        [[vertice[0]+ limites_camera.left],[vertice[1]+ limites_camera.top],[1]])
+                         for vertice in c.retangulo.vertices]
+    
+    chefe_view = corte_borda_viewport(chefe_view, viewport)
+             
+    bibgraf.scanline_fill(jogo.tela, chefe_view, c.cor)
 
     plataformas = [p for p in jogo.plataformas 
                 if p.x0 <= LARGURA - limites_camera.left
@@ -173,21 +264,9 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         plataforma_view =[transformacoes.produto_matriz(matriz_viewport,
                     [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
                     for vertice in plataforma.vertices]
+        
         # Se tiver intersceção com a borda usa o clipping
-        x0 = plataforma_view[0][0]
-        y0 = plataforma_view[0][1]
-        x1 = plataforma_view[2][0]
-        y1 = plataforma_view[1][1]
-
-        if (x1 > Vxmax or x0 < Vxmin 
-            or y0 < Vymin or y1 > Vymax):
-            _, rx0, ry0, rx1, ry1 = bibgraf.cohen_sutherland( x0, y0, x1, y1, Vxmin, Vymin, Vxmax, Vymax)
-            x0, y0, x1, y1 = rx0, ry0, rx1, ry1
-
-        plataforma_view[0][0], plataforma_view[1][0] = x0, x0
-        plataforma_view[0][1], plataforma_view[3][1] = y0, y0
-        plataforma_view[2][0], plataforma_view[3][0] = x1, x1
-        plataforma_view[1][1], plataforma_view[2][1] = y1, y1
+        plataforma_view = corte_borda_viewport(plataforma_view,viewport)
         
         bibgraf.scanline_fill(jogo.tela, plataforma_view, plataforma.cor)
 
@@ -195,20 +274,8 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         zumbi_view =[transformacoes.produto_matriz(matriz_viewport,
                             [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
                             for vertice in zumbi.vertices]
-        x0 = zumbi_view[0][0]
-        y0 = zumbi_view[0][1]
-        x1 = zumbi_view[2][0]
-        y1 = zumbi_view[1][1]
         
-        if (x1 > Vxmax or x0 < Vxmin 
-            or y0 < Vymin or y1 > Vymax):
-            _, rx0, ry0, rx1, ry1 = bibgraf.cohen_sutherland( x0, y0, x1, y1, Vxmin, Vymin, Vxmax, Vymax)
-            x0, y0, x1, y1 = rx0, ry0, rx1, ry1
-
-        zumbi_view[0][0], zumbi_view[1][0] = x0, x0
-        zumbi_view[0][1], zumbi_view[3][1] = y0, y0
-        zumbi_view[2][0], zumbi_view[3][0] = x1, x1
-        zumbi_view[1][1], zumbi_view[2][1] = y1, y1
+        zumbi_view = corte_borda_viewport(zumbi_view, viewport)
 
         bibgraf.scanline_fill(jogo.tela, zumbi_view, VERDE)
 
@@ -232,6 +299,27 @@ def desenhar_viewport(jogo, matriz_viewport, viewport):
         cachorro_view[1][1], cachorro_view[2][1] = y1, y1
 
         bibgraf.scanline_fill(jogo.tela, cachorro_view, cachorro.cor)
+
+    for pombo in jogo.pombos_visiveis:
+        pombo_view =[transformacoes.produto_matriz(matriz_viewport,
+                                    [[vertice[0] + limites_camera.left],[vertice[1] + limites_camera.top],[1]])
+                                    for vertice in pombo.vertices]
+        x0 = pombo_view[0][0]
+        y0 = pombo_view[0][1]
+        x1 = pombo_view[2][0]
+        y1 = pombo_view[1][1]
+        
+        if (x1 > Vxmax or x0 < Vxmin 
+            or y0 < Vymin or y1 > Vymax):
+            _, rx0, ry0, rx1, ry1 = bibgraf.cohen_sutherland( x0, y0, x1, y1, Vxmin, Vymin, Vxmax, Vymax)
+            x0, y0, x1, y1 = rx0, ry0, rx1, ry1
+
+        pombo_view[0][0], pombo_view[1][0] = x0, x0
+        pombo_view[0][1], pombo_view[3][1] = y0, y0
+        pombo_view[2][0], pombo_view[3][0] = x1, x1
+        pombo_view[1][1], pombo_view[2][1] = y1, y1
+
+        bibgraf.scanline_fill(jogo.tela, pombo_view, pombo.cor)
 
 
     bibgraf.draw_polygonon(jogo.tela, borda, WHITE)

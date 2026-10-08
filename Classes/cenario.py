@@ -58,7 +58,7 @@ superficie_biblioteca = None
 
 cenarios_fases = {}
 
-textura_tijolos = pygame.image.load("Assets/textura-tijolos.jpg")
+textura_tijolos = pygame.image.load("Assets/tijolos-escuros.png")
 textura_tapioca = pygame.image.load("Assets/tapioca.png")
 textura_parede_pedra1 = pygame.image.load("Assets/parede-pedra-1.png")
 textura_predio_quebrado = pygame.image.load("Assets/predio-quebrado.png")

@@ -2,21 +2,22 @@ from Classes.plataforma import Plataforma
 from Classes.zumbi import Zumbi
 from Classes.cachorro import Cachorro
 from Classes.pombo import Pombo
+from Classes.chefe import Chefe
 from Classes.coletavel import Coletavel
 from settings import *
 import csv
 
 COR_ASFALTO, BORDA_ASFALTO = (74, 74, 74),   (44, 44, 48)
 COR_CAIXA,   BORDA_CAIXA   = (178, 122, 66), (104, 66, 32)
-COR_METAL,   BORDA_METAL   = (70, 130, 170), (36, 74, 104)
+COR_METAL,   BORDA_METAL   = (143, 139, 136), (36, 74, 104)
 COR_TRONCO = (66, 60, 41)
 ROXO = (98, 0, 102)
 
 # tile -> (cor, borda)
 ESTILO_PLATAFORMA = {
-    1: (COR_ASFALTO, BORDA_ASFALTO),
-    2: (COR_CAIXA,   BORDA_CAIXA),
-    3: (COR_METAL,   BORDA_METAL),
+    '1': (COR_ASFALTO, BORDA_ASFALTO),
+    '2': (COR_CAIXA,   BORDA_CAIXA),
+    '3': (COR_METAL,   BORDA_METAL),
 }
 
 def carregar_animacoes(lista_nomes, pasta="Sprites"):
@@ -39,7 +40,7 @@ def carregar_mapa(nome_arquivo):
     mapa = []
     with open(nome_arquivo, "r") as f:
         for linha in csv.reader(f):
-            mapa.append([int(bloco) for bloco in linha])
+            mapa.append(linha)
     return mapa
  
 def criar_level(layout):
@@ -57,34 +58,34 @@ def criar_level(layout):
             px, py = x * T, y * T
 
             match tile:
-                case 1 | 2 | 3:
+                case '1' | '2' | '3':
                     cor, borda = ESTILO_PLATAFORMA[tile]
                     plataformas.append(Plataforma(px, py, T, T, cor, borda))
 
-                case 4:  # teleport
+                case '4' | 'L':  # teleport
                     plataformas.append(
                         Plataforma(px, py, T, 2 * T, ROXO, BLACK, "teleport"))
 
-                case 5:  # block
+                case '5' | 'B':  # block
                     blocks.append(
                         Plataforma(px, py, T, T, AZUL_NOTURNO, BLACK, "block"))
 
-                case 6:  # tapioca
-                    tamanho = 34
-                    coletaveis.append(Coletavel(Vetor(px, py), tamanho, tamanho, WHITE, "tapioca", "circular", imagem_tapioca))
+                case '6' |'T':  # tapioca
+                    raio = 32
+                    coletaveis.append(Coletavel(Vetor(px, py), raio, raio, WHITE, "tapioca", "circular", imagem_tapioca))
 
-                case 7:  # moeda
+                case '7' | 'M':  # moeda
                     coletaveis.append(
-                        Coletavel(Vetor(px, py ), T, T, AMARELO, "moeda", "especial", imagem_moeda))
+                        Coletavel(Vetor(px, py ), T, T, AMARELO, "moeda", "circular", imagem_moeda))
 
-                case 8:  # munição
+                case '8' | 'N':  # munição
                     coletaveis.append(
                         Coletavel(Vetor(px, py), T, T, VERMELHO, "municao", imagem=imagem_municao))
                     
-                case 9: # seringa
+                case '9' | 'S': # seringa
                     coletaveis.append(Coletavel(Vetor(px, py), T, T, VERMELHO, "especial", imagem=imagem_seringa))
 
-                case 10: # fusível
+                case '10': # fusível
                     coletaveis.append(Coletavel(Vetor(px, py), T, T, VERMELHO, "especial", imagem=imagem_fusivel))
 
                 case _:  # 0 (vazio), 11-13 (inimigos/missão) e qualquer outro
@@ -96,21 +97,26 @@ def criar_inimigos(mapa, plataformas, blocks, nivel_dificuldade = None):
     zumbis = []
     cachorros = []
     pombos = []
+    chefe = None
     plats = [p for p in plataformas if p.tipo != "teleport"]
 
     for y, row in enumerate(mapa):
         for x, tile in enumerate(row):
-            x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO - TAMANHO_QUADRADO
-
             match tile:
-                case 11:
+                case '11' | 'Z':
+                    x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + TAMANHO_ZUMBI
                     zumbi = Zumbi(plats + blocks, Vetor(x_aux, y_aux), [], (53, 66, 35), nivel_dificuldade)
                     zumbis.append(zumbi)
-                case 12:
+                case '12' | 'C':
+                    x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + TAMANHO_CACHORRO
                     cachorro = Cachorro(plats + blocks, Vetor(x_aux, y_aux), [], (154, 124, 186), nivel_dificuldade)
                     cachorros.append(cachorro)
-                case 13:
+                case '13' | 'P':
+                    x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + TAMANHO_ZUMBI
                     pombo = Pombo(plats + blocks, Vetor(x_aux, y_aux), (53, 66, 35), nivel_dificuldade)    
                     pombos.append(pombo)
+                case '14' | 'D':
+                    x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + 2 * TAMANHO_ZUMBI
+                    chefe = Chefe(plats + blocks, Vetor( x_aux, y_aux), (53, 66, 35), nivel_dificuldade)
 
-    return zumbis, cachorros, pombos
+    return zumbis, cachorros, pombos, chefe

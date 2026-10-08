@@ -11,7 +11,7 @@ from Classes.jogador import Jogador
 from Classes.camera import Camera
 from Classes.arma import Arma
 from Classes.cenario import desenhar_cenario, iniciar_cenario
-from menu import iniciar_menu, desenhar_menu, acao_menu
+from menu import iniciar_menu, desenhar_menu, acao_menu, get_dificuldade
 from tela_final import desenhar_tela_final, acao_tela_final
 
 class Jogo:
@@ -26,9 +26,9 @@ class Jogo:
        
         self.rodando = True
         self.debug = False
-        self.gerenciadorFases = GerenciadorFases(["./Mapas/fase1.csv",
-             "./Mapas/fase2.csv","./Mapas/fase3.csv"], TAMANHO_QUADRADO)
-                
+        self.gerenciadorFases = GerenciadorFases(["./Mapas/estagio14.csv",
+             "./Mapas/estagio12.csv","./Mapas/estagio13.csv", "./Mapas/estagio14.csv"], TAMANHO_QUADRADO)
+
         iniciar_cenario()
         
         self.run_finalizada = False
@@ -40,7 +40,6 @@ class Jogo:
         self.coletaveis_visiveis = []
         self.cachorros_visiseis = []
 
-        self.nivel_dificuldade = None
         self.estado_jogo = "menu"
         iniciar_menu()
 
@@ -82,6 +81,18 @@ class Jogo:
 
         self.imagens_pombos = imagens
 
+        self.anim_chefe_idle_left = Inicializador.gerar_lista_animacoes("drm", "idle_left", 4)
+        self.anim_chefe_idle_right = Inicializador.gerar_lista_animacoes("drm", "idle_right", 4)
+        self.anim_chefe_walk_left = Inicializador.gerar_lista_animacoes("drm", "walk_left", 5)
+        self.anim_chefe_walk_right = Inicializador.gerar_lista_animacoes("drm", "walk_right", 5)
+
+        imagens = {}
+        for lista in (self.anim_chefe_idle_left, self.anim_chefe_idle_right, 
+                    self.anim_chefe_walk_left, self.anim_chefe_walk_right):
+                imagens |= Inicializador.carregar_animacoes(lista)
+                        
+        self.imagens_chefe = imagens
+        
         self.anim_jogador_idle_left = Inicializador.gerar_lista_animacoes("soldado", "idle_left", 4)
         self.anim_jogador_idle_right = Inicializador.gerar_lista_animacoes("soldado", "idle_right", 4)
         self.anim_jogador_walk_left = Inicializador.gerar_lista_animacoes("soldado", "walk_left", 4)
@@ -103,12 +114,14 @@ class Jogo:
     def carregar_fase(self, caminho):
         mapa = Inicializador.carregar_mapa(caminho)
         self.plataformas, self.blocks, self.coletaveis = Inicializador.criar_level(mapa)
-        self.zumbis, self.cachorros, self.pombos = Inicializador.criar_inimigos(mapa, self.plataformas, self.blocks)
+        self.zumbis, self.cachorros, self.pombos, self.chefe = Inicializador.criar_inimigos(mapa, self.plataformas, self.blocks, self.gerenciadorFases.dificuldade)
         self.portais = [p for p in self.plataformas if p.tipo == "teleport"]
         self.largura_mapa = len(mapa[0]) * TAMANHO_QUADRADO
         self.altura_mapa = len(mapa) * TAMANHO_QUADRADO
 
         inimigos = self.zumbis + self.cachorros + self.pombos
+        if self.chefe != None:
+            inimigos += [self.chefe] 
 
         if self.gerenciadorFases.fase_atual == 0 and self.voltando == False:
             arma = Arma(60, POS_INICIO.copy(), AMARELO)
@@ -119,7 +132,7 @@ class Jogo:
         else:
             self.jogador.plataformas = self.plataformas
             self.jogador.coletaveis = self.coletaveis
-            self.jogador.inimigos = self.zumbis + self.cachorros + self.pombos
+            self.jogador.inimigos = inimigos
 
         self.camera = Camera(self.jogador, self.largura_mapa, self.altura_mapa)
 
@@ -134,6 +147,10 @@ class Jogo:
         for p in self.pombos:
             p.image = self.anim_pombo_esquerda[0]
             p.inimigos.append(self.jogador)
+
+        if self.chefe != None:
+            self.chefe.image = self.anim_chefe_idle_left[0]
+            self.chefe.jogador = self.jogador
 
         self.mundo_surface = self.renderizar_mundo()
         self.viewport_surface = self.criar_surface_viewport()
@@ -159,8 +176,8 @@ class Jogo:
 
     # Loop principal
     def rodar(self):
-        # self.tocar_musica()
-        faulthandler.enable()
+        self.tocar_musica()
+        #faulthandler.dump_traceback_later(5, repeat=True)
         while self.rodando:
             dt = self.clock.tick(60) / 1000 # único tick por frame
             self.tratar_eventos()
@@ -194,6 +211,9 @@ class Jogo:
                     acao = acao_menu(evento, pygame.mouse.get_pos())
                     if acao == "jogar":
                         self.estado_jogo = "jogando"
+                        self.gerenciadorFases.definir_dificuldade(get_dificuldade())
+                        self.carregar_sprites()
+                        self.carregar_fase(self.gerenciadorFases.caminho_fase_atual())
                     elif acao == "sair":
                         self.rodando = False
 
@@ -214,7 +234,7 @@ class Jogo:
                       self.reiniciar()
                  elif acao == "menu":
                       self.estado_jogo = "menu"
-            
+                
     # Atualização
     def atualizar(self, dt):
         if self.estado_jogo == "jogando":
@@ -222,6 +242,7 @@ class Jogo:
             self.camera.atualizar()
             Atualizador.atualizar_animacao(self, dt)
             Atualizador.atualizar_entidades(self, dt)
+            self.gerenciadorFases.verificar_conclusao(self)
 
     # Renderização
     def desenhar(self):
@@ -242,6 +263,7 @@ class Jogo:
             Renderizador.desenhar_zumbis(self)
             Renderizador.desenhar_cachorros(self)
             Renderizador.desenhar_pombos(self)
+            Renderizador.desenhar_chefe(self)
             Renderizador.desenhar_jogador(self)
             Renderizador.desenhar_hud(self)
             if self.debug:
