@@ -212,6 +212,8 @@ class Jogador(Humanoide):
                 self.tomar_dano()
                 self.momento_ultimo_dano = pygame.time.get_ticks() 
 
+                if self.vida < 0: self.vida = 0
+
     def atualizar_invulnerabilidade(self):
         '''Verifica se já passou o tempo de invulnerabilidade:
         \n - se sim, torna vulnerável outra vez e para o o afastamento
