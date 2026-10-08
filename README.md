@@ -3,31 +3,31 @@
 Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por cenário típicos da Uece - Campus Itaperi (divididos em quatro estágios) e enfrenta um grande vilão ao final.
 
 ## Funcionalidades
-* Set Pixel -> todo o jogo foi renderizado pixel por pixel
+* Set Pixel -> Todo o jogo foi renderizado pixel por pixel
 * Primitivas de Rasterização 
-    * Linha -> modelagem dos prédios, botões do menu
-    * Círculo -> modelagem da Lua
-    * Elipse -> modelagem das nuvens
+    * Linha -> Modelagem dos prédios, botões do menu
+    * Círculo -> Modelagem da Lua
+    * Elipse -> Modelagem das nuvens
 * Preenchimento de Regiões 
-    * Flood Fill/Boundary Fill -> foi usado principalmente no menu, mas também em partes do cenário, como Lua, nuvens e carrinho do Billy
-    * Scanline -> usado no jogo em si (mapas, viewport, cenário)
-    **Scanline com gradiente -> janelas dos prédios do cenário
+    * Flood Fill/Boundary Fill -> Foi usado principalmente no menu, mas também em partes do cenário, como Lua, nuvens e carrinho do Billy
+    * Scanline -> Usado no jogo em si (mapas, viewport, cenário)
+    * Scanline com gradiente -> Janelas dos prédios do cenário
 * Transformações Geométricas 
     * Rotação -> Giro em coletável (moeda)
     * Translação -> Teleport 
     * Escala -> Viewport(minimapa)
 * Animação 2D -> Movimentação dos personagens
-* Janela e Viewport -> criação de minimapa 
-* Recorte de Cohen-Sutherland (Clipping) -> usado no minimapa para plataformas que estavam nas bordas da viewport
+* Janela e Viewport -> Criação de minimapa 
+* Recorte de Cohen-Sutherland (Clipping) -> Usado no minimapa para plataformas que estavam nas bordas da viewport
 * Mapeamento de Textura -> Sprites dos personagens e componentes do cenário
 * Input (Teclado e/ou Mouse) -> Usado no menu e para movimentar o jogador 
 
-## Lore
-Um cientista conhecido como Dr. M trabalhava em uma universidade chamada Uece, e era muito bom em suas pesquisas. Em um de seus projetos, chamado TPBST (Teleportation breaks through space and time), conseguiu construir um portal que teletransporta pessoas de um lugar à outro instantaneamente. Mas ele não se contentava facilmente, por isso decidiu trabalhar em um mais ousado. O PANDORA (Project for Advanced Natural Development, Organism Reinforcement and Adaptation) visava evoluir todas as características de seres vivos, força, resistência, inteligência, habilidades motoras, etc. Ele sabia que o projeto seria arriscado, pois aquele estudo tinha muitos perigos, mutações inesperadas eram possíveis e, por esse motivo, já tinha se precavido e desenvolvido uma possível cura, caso as coisas saissem do controle. Mas o que ele não sabia, é que as coisas já haviam saído do controle. O seu gás tóxico, capaz de mudar um ser vivo, foi despejado à noite, ele tentou conter, mas já era tarde demais, o caos já havia sido instaurado, a mutação se espalhou, por humanos, por cachorros e até por pombos. O Dr. M tentou usar sua cura, mas não conseguiu, seu cerébro já havia sido consumido, não tinha mais capacidade de agir por si, e ele mesmo virou parte do caos, uma criatura gigante, ele parecia sofrer com a mutação de forma diferente....
-    Com o caos que havia se alastrado pela universidade, militares do exército foram chamados, com uma missão, conter a mutação.
-Davi Maia e sua equipe foram salvar o que restou, mas se separam quando avistaram aquela situação, então Davi Maia que era condecorado, possuia muitas habilidades com seu rifle e tinha experiência em combate, acreditava que estaria bem, mas ele não tinha noção do que realmente o esperava.
-    Aquilo que deveria ser uma operação de contensão, acabou se tornando uma luta pela sobrevivência, e uma busca pela verdade do que 
-aconteceu de fato naquela noite.
+## Lore  
+<br>Um cientista conhecido como Dr. M trabalhava em uma universidade chamada Uece e era muito bom em suas pesquisas. Em um de seus projetos, chamado TPBST (Teleportation breaks through space and time), conseguiu construir um portal que teletransporta pessoas de um lugar para outro instantaneamente. Mas ele não se contentava facilmente, por isso decidiu trabalhar em um projeto mais ousado. O PANDORA (Project for Advanced Natural Development, Organism Reinforcement and Adaptation) visava evoluir todas as características de seres vivos, força, resistência, inteligência, habilidades motoras, etc. Ele sabia que o projeto seria arriscado, pois aquele estudo tinha muitos perigos, mutações inesperadas eram possíveis e, por esse motivo, já tinha se precavido e desenvolvido uma possível cura, caso as coisas saissem do controle. Mas o que ele não sabia, é que as coisas já haviam saído do controle. O seu gás tóxico, capaz de mudar um ser vivo, foi despejado à noite, ele tentou conter, mas já era tarde demais, o caos já havia sido instaurado, a mutação se espalhou, por humanos, por cachorros e até por pombos. O Dr. M tentou usar sua cura, mas não conseguiu, seu cerébro já havia sido consumido, não tinha mais capacidade de agir por si, e ele mesmo virou parte do caos, uma criatura gigante, ele parecia sofrer com a mutação de forma diferente....
+<br>Com o caos que havia se alastrado pela universidade, militares do exército foram chamados, com uma missão, conter a mutação.
+Davi Maia e sua equipe foram salvar o que restou, mas se separam quando avistaram aquela situação, então Sargento Maia que era condecorado, possuia muitas habilidades com seu rifle e tinha experiência em combate, acreditava que estaria bem, mas ele não tinha noção do que realmente o esperava.
+<br>Aquilo que deveria ser uma operação de contensão, acabou se tornando uma luta pela sobrevivência, e uma busca pela verdade do que 
+aconteceu de fato naquele lugar.
 
 ### Inimigos
 * Zumbi - inimigo básico
@@ -80,17 +80,17 @@ git clone
 cd TrabalhoCG2D
 ```
 * Crie um ambiente virtual
-** Linux/macOS
+    * Linux/macOS
 ```
 python3 -m venv .venv
 source .venv/bin/activate
 ```
-** Windows (no Command Prompt)
+    * Windows (no Command Prompt)
 ```
 python -m venv .venv
 .venv\Scripts\activate.bat
 ```
-* Intale as dependências (pip freeze > requirements.txt)
+* Intale as dependências 
 ```
 pip install -r requirements.txt
 ```
@@ -99,7 +99,7 @@ pip install -r requirements.txt
 python jogo.py 
 ```
 
-# Link para video de execução do programa
+## Link para video de execução do programa
  [clique aqui](link)
 
 # Árvore do projeto
