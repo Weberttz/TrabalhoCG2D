@@ -14,7 +14,9 @@ class Projetil():
         self.retangulo = Retangulo(pos.x, pos.y, 10, 10)
         self.retangulo.topleft = self.pos
         self.velocidade = 400
-        self.direcao = Vetor(self.disparou_para.x - self.pos.x, self.disparou_para.y - self.pos.y)
+        self.aceleracao = Vetor(0,10)
+        self.direcao = Vetor(self.disparou_para.x - self.pos.x, 
+                             self.disparou_para.y - self.pos.y)
         vec = Vetor(1,0)
 
         self.uvs = [
@@ -34,19 +36,22 @@ class Projetil():
         self.dano = 30 
         self.ativo = True
         self.time = 0
-    
+
+    # quem chama é o atualizador?
     def atualizar(self,dt, plataformas):
         self.pos += self.direcao * self.velocidade *dt
         self.pos = Vetor(self.pos)
         self.retangulo.topleft = self.pos
         self.checar_colisao_com_plataforma(plataformas)
-
+    
     def checar_colisao_com_plataforma(self, plataformas):
         for plataforma in plataformas:
             if plataforma.retangulo.colidiu_com(self.retangulo):
                 self.ativo = False
 
     def desenhar(self, superficie, scroll, camera):
+        '''Desenha projetil e desativa ele se percorrer a distância máxima sem colidir com nada.'''
+        # tolerancia = distancia maxima que o projetil vai percorrer se não colidir com nada antes 
         tolerancia = 12 * TAMANHO_QUADRADO
         novo_vetor = self.pos_incial - self.pos
         distancia = novo_vetor.calcular_norma()

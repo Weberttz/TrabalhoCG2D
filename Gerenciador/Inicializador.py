@@ -2,13 +2,14 @@ from Classes.plataforma import Plataforma
 from Classes.zumbi import Zumbi
 from Classes.cachorro import Cachorro
 from Classes.pombo import Pombo
+from Classes.chefe import Chefe
 from Classes.coletavel import Coletavel
 from settings import *
 import csv
 
 COR_ASFALTO, BORDA_ASFALTO = (74, 74, 74),   (44, 44, 48)
 COR_CAIXA,   BORDA_CAIXA   = (178, 122, 66), (104, 66, 32)
-COR_METAL,   BORDA_METAL   = (70, 130, 170), (36, 74, 104)
+COR_METAL,   BORDA_METAL   = (143, 139, 136), (36, 74, 104)
 COR_TRONCO = (66, 60, 41)
 ROXO = (98, 0, 102)
 
@@ -75,7 +76,7 @@ def criar_level(layout):
 
                 case '7' | 'M':  # moeda
                     coletaveis.append(
-                        Coletavel(Vetor(px, py ), T, T, AMARELO, "moeda", "especial", imagem_moeda))
+                        Coletavel(Vetor(px, py ), T, T, AMARELO, "moeda", "circular", imagem_moeda))
 
                 case '8' | 'N':  # munição
                     coletaveis.append(
@@ -96,6 +97,7 @@ def criar_inimigos(mapa, plataformas, blocks, nivel_dificuldade = None):
     zumbis = []
     cachorros = []
     pombos = []
+    chefe = None
     plats = [p for p in plataformas if p.tipo != "teleport"]
 
     for y, row in enumerate(mapa):
@@ -113,5 +115,8 @@ def criar_inimigos(mapa, plataformas, blocks, nivel_dificuldade = None):
                     x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + TAMANHO_ZUMBI
                     pombo = Pombo(plats + blocks, Vetor(x_aux, y_aux), (53, 66, 35), nivel_dificuldade)    
                     pombos.append(pombo)
+                case '14' | 'D':
+                    x_aux, y_aux = x * TAMANHO_QUADRADO, y * TAMANHO_QUADRADO + 2 * TAMANHO_ZUMBI
+                    chefe = Chefe(plats + blocks, Vetor( x_aux, y_aux), (53, 66, 35), nivel_dificuldade)
 
-    return zumbis, cachorros, pombos
+    return zumbis, cachorros, pombos, chefe

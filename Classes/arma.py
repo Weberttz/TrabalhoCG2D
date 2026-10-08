@@ -9,7 +9,7 @@ class Arma(Equipamento):
         self.pode_atirar = True
         self.projeteis = []
         self.tempo = pygame.time.get_ticks()
-        self.intervalo_tiro = 1000
+        self.intervalo_tiro = 600
 
     def atacar(self, direcao, pos):
         if self.pode_atirar and self.municao > 0:

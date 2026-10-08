@@ -35,9 +35,7 @@ class Pombo():
 
     def definir_dano(self,nivel_dificuldade):
         '''Define o dano do inimigo pelo nível de dificuldade escolhido pelo jogador.'''
-        if nivel_dificuldade == None:
-            return 10
-        elif nivel_dificuldade == 'facil':
+        if nivel_dificuldade == 'facil':
             return 10
         elif nivel_dificuldade == 'medio':
             return 20
@@ -70,19 +68,17 @@ class Pombo():
         self.atingiu_jogador()
 
     def atualizar_vertices(self):
-            self.vertices = [(self.pos.x, self.pos.y), 
-                                        (self.pos.x, self.pos.y - self.tamanho),
-                                        (self.pos.x + self.tamanho, self.pos.y - self.tamanho), 
-                                        (self.pos.x + self.tamanho, self.pos.y)]
+        self.vertices = [(self.pos.x, self.pos.y), 
+                            (self.pos.x, self.pos.y - self.tamanho),
+                            (self.pos.x + self.tamanho, self.pos.y - self.tamanho), 
+                            (self.pos.x + self.tamanho, self.pos.y)]
 
     def atingiu_jogador(self):
         for pedra in self.pedras:
             if pedra.retangulo.colidiu_com(self.jogador.retangulo):
                 pedra.ativo = False
-                self.jogador.vida -= self.dano
-                self.jogador.invulneravel = True
-                self.jogador.momento_ultimo_dano = pygame.time.get_ticks() 
-
+                self.jogador.perder_vida(self.dano)
+                
         # assim que atingir o jogador, tiramos ela do array
         self.pedras[:] = [p for p in self.pedras if p.ativo]
 
@@ -124,7 +120,7 @@ class Pombo():
         self.tempo_mudar_direcao -= 1
         if self.tempo_mudar_direcao <= 0:
             esta_no_campo_de_visao = (abs(self.jogador.pos.x - self.pos.x) < self.campo_de_visao)
-
+            # define vetor velocidade para a proxima movimentação
             if esta_no_campo_de_visao:
                 if self.jogador.pos.x != self.pos.x:
                     self.vel_x = 2 * ((self.jogador.pos.x - self.pos.x) / abs(self.jogador.pos.x - self.pos.x))
