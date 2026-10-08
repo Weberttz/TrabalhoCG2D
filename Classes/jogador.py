@@ -1,7 +1,7 @@
 import pygame 
 import Biblioteca.transformacoes as transformacoes
 from Classes.humanoide import Humanoide
-from settings import Vetor, Retangulo, TAMANHO_JOGADOR
+from settings import Vetor, Retangulo, TAMANHO_JOGADOR, VIDA_MAXIMA
 
 class Jogador(Humanoide):
     def __init__(self, pos, plataformas, inimigos, coletaveis, equipamentos, cor):
@@ -32,7 +32,7 @@ class Jogador(Humanoide):
         self.vel_y = 0
         self.aceleracao = Vetor(0, 10) 
         self.no_chao = False
-        self.vida = 100
+        self.vida = VIDA_MAXIMA
         # bottomleft
         self.retangulo = Retangulo(self.pos.x, self.pos.y - self.tamanho,
                                 self.tamanho, self.tamanho)
@@ -187,7 +187,7 @@ class Jogador(Humanoide):
                 self.quantidade_coletada += 1
                 coletavel.ativo = False   
 
-        if self.vida > 100: self.vida = 100
+        if self.vida > VIDA_MAXIMA: self.vida = VIDA_MAXIMA
 
     def contabilizar_pontuacao(self):
         qnt_inimigos = len(self.inimigos)

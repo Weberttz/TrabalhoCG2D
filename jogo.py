@@ -21,7 +21,7 @@ class Jogo:
         pygame.display.set_caption("Jogo")
         self.tela = pygame.display.set_mode((LARGURA, ALTURA))
         self.clock = pygame.time.Clock()
-        self.fonte = pygame.font.SysFont("Myriad Pro", 30)
+        self.fonte = pygame.font.Font(CAMINHO_FONTE, 25)
         self.viewport = (1000, 10, 1250, 200)
        
         self.rodando = True

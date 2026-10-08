@@ -2,7 +2,7 @@ from settings import *
 
 class Humanoide(): 
     def __init__(self, plataformas, inimigos, equipamentos, pos, cor, tamanho):
-        self.vida = 100
+        self.vida = VIDA_MAXIMA
         self.cor = cor
         self.tamanho = tamanho
         self.equipamentos = equipamentos
