@@ -24,7 +24,7 @@ class Chefe(Humanoide):
         self.vida = 400
         self.vel_x = 0
         self.vel_y = 0
-        self.velocidade = 2
+        self.velocidade = 1 
         self.aceleracao = Vetor(0, 10)
             
         self.intervalo_lancamento_livro = 3
@@ -32,7 +32,10 @@ class Chefe(Humanoide):
         self.tempo_mudar_direcao = 0
         self.vivo = True
         self.dano = self.definir_dano(nivel_dificuldade)
-        self.campo_de_visao = 30 * TAMANHO_ZUMBI
+        self.campo_de_visao = 20 * TAMANHO_QUADRADO
+        self.olhando = -1
+
+        self.imagem_livro = pygame.image.load("Sprites/livro.png").convert_alpha()
         
     def definir_dano(self,nivel_dificuldade):
         '''Define o dano do inimigo pelo nível de dificuldade escolhido pelo jogador.'''
@@ -78,6 +81,7 @@ class Chefe(Humanoide):
             if livro.retangulo.colidiu_com(self.jogador.retangulo):
                 livro.ativo = False
                 self.jogador.perder_vida(self.dano)
+                self.jogador.tomar_dano(self.dano)
      
             # assim que atingir o jogador, tiramos ele do array
             self.livros[:] = [p for p in self.livros if p.ativo]
@@ -86,18 +90,37 @@ class Chefe(Humanoide):
         '''Faz o inimigo ir em direção ao jogador.'''
         # Diminui o contador e muda de direção aleatoriamente ao zerar
         self.tempo_mudar_direcao -= 1
+
+        # Distância horizontal até o inimigo
+        distancia_x = self.jogador.pos.x - self.pos.x
+        esta_no_campo_de_visao = abs(distancia_x) < self.campo_de_visao
+
+        if esta_no_campo_de_visao:
+        
+            if distancia_x > 0:
+                self.vel_x = self.velocidade
+                self.olhando = 1
+
+            elif distancia_x < 0:
+                self.vel_x = - self.velocidade
+                self.olhando = -1
+
+            else:
+                self.vel_x = 0
+
+            return
+        
+        # Fora do campo de visão -> movimento aleatório
+        self.tempo_mudar_direcao -= 1
+
         if self.tempo_mudar_direcao <= 0:
-            esta_no_campo_de_visao = (abs(self.jogador.pos.x - self.pos.x) < self.campo_de_visao)
-    
-            if esta_no_campo_de_visao:
-                if self.jogador.pos.x != self.pos.x:
-                    self.vel_x = self.velocidade * ((self.jogador.pos.x - self.pos.x) / abs(self.jogador.pos.x - self.pos.x))
-                else:
-                    self.vel_x = 0
-            else: 
-                self.vel_x = random.choice([-1, 0, 1])
-    
-            self.tempo_mudar_direcao = random.randint(30, 60)  # Quadros (Frames)
+            self.vel_x = random.choice([-1, 0, 1])
+
+            # Não coloca olhando = 0, variável para mudar sprite do zumbi
+            if self.vel_x != 0:
+                self.olhando = 1 if self.vel_x > 0 else -1
+
+            self.tempo_mudar_direcao = random.randint(30, 60)
     
     def atirar(self):
         tolerancia = 12 * TAMANHO_QUADRADO
@@ -113,13 +136,13 @@ class Chefe(Humanoide):
             livro = None
             # lançamento horizontal
             if self.jogador.retangulo.bottom >= self.retangulo.top:
-                pos = Vetor(self.pos.x + self.tamanho, self.pos.y - 2*self.tamanho/3)
+                pos = Vetor(self.pos.x, self.pos.y - 2*self.tamanho/3)
                 alvo = Vetor(self.jogador.pos.x, self.jogador.retangulo.top + self.jogador.tamanho/2)
-                livro = Projetil(pos, alvo, CINZA, True)
+                livro = Projetil(pos, alvo, CINZA, True, self.imagem_livro)
             # lancamento vertical
             else:
                 pos = Vetor(self.pos.x + self.tamanho/2, self.pos.y - self.tamanho)
-                livro = Projetil(pos, self.jogador.pos, CINZA, True)
+                livro = Projetil(pos, self.jogador.pos, CINZA, True, self.imagem_livro)
                 
             self.livros.append(livro) 
             self.pode_lancar = False

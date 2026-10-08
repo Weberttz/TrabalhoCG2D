@@ -8,10 +8,11 @@ class Projetil():
         self.pos = pos
         self.disparou_para = disparou_para
         self.pos_incial = pos
-        self.image = None
-        if image != None:
-            self.image.fill(cor)
+        self.image = image
         self.retangulo = Retangulo(pos.x, pos.y, 10, 10)
+        if image is not None:
+            self.retangulo = Retangulo(pos.x, pos.y, 32, 32)
+        
         self.retangulo.topleft = self.pos
         self.velocidade = 400
         self.aceleracao = Vetor(0,10)
@@ -63,6 +64,7 @@ class Projetil():
        
         if self.image != None:
             bibgraf.scanline_texture(superficie, vertices, self.uvs, self.image)
+            return
 
         x_min = min(x for x, y in vertices)
         y_min = min(y for x, y in vertices)
