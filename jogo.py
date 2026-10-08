@@ -226,12 +226,12 @@ class Jogo:
                         self.debug = not self.debug
 
                     elif evento.key == pygame.K_w:
-                        self.estado_jogo = "win"
+                        self.estado_jogo = "Win"
 
                     elif evento.key == pygame.K_g:
-                        self.estado_jogo = "gameover"
+                        self.estado_jogo = "Game Over"
 
-            elif self.estado_jogo == "win" or self.estado_jogo == "gameover":
+            elif self.estado_jogo == "Win" or self.estado_jogo == "Game Over":
                  acao = acao_tela_final(evento)
                  if acao == "reiniciar":
                       self.reiniciar()
@@ -256,7 +256,7 @@ class Jogo:
         #comeca o jogo apenas se o estado foi alterado para "jogando" a partir do retorno de acao_menu
         elif self.estado_jogo == "jogando":
             x_camera = abs(self.camera.retangulo.x)
-            desenhar_cenario(self.tela, x_camera, self.gerenciadorFases.fase_atual, self.largura_mapa)
+            desenhar_cenario(self.tela, x_camera, self.gerenciadorFases.fase_atual)
             # self.tela.fill(AZUL_NOTURNO)
             self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
 
@@ -272,7 +272,7 @@ class Jogo:
             if self.debug:
                 Renderizador.desenhar_aabb_de_portal(self)
 
-        elif self.estado_jogo == "win" or self.estado_jogo == "gameover":
+        elif self.estado_jogo == "Win" or self.estado_jogo == "Game Over":
             x_camera = abs(self.camera.retangulo.x)
             desenhar_cenario(self.tela, x_camera, self.gerenciadorFases.fase_atual)
             # self.tela.fill(AZUL_NOTURNO)

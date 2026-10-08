@@ -15,8 +15,8 @@ def desenhar_tela_final(superficie, estado_jogo, jogador, fonte, fonte_titulo):
     tela_transparente.fill((0, 0, 0, 120))
     superficie.blit(tela_transparente, (0, 0))
 
-    cor_titulo = VERDE if estado_jogo == "win" else VERMELHO
-    texto_conteudo = "VICTORY" if estado_jogo == "win" else "GAME OVER"
+    cor_titulo = VERDE if estado_jogo == "Win" else VERMELHO
+    texto_conteudo = "VICTORY" if estado_jogo == "Win" else "GAME OVER"
     texto_titulo = fonte_titulo.render(texto_conteudo, True, cor_titulo)
     superficie.blit(texto_titulo, (superficie.get_width() // 2 - texto_titulo.get_width() // 2, 100))
 

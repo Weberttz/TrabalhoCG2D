@@ -46,7 +46,7 @@ class GerenciadorFases:
 
     def game_over(self,jogo):
         if jogo.jogador.vida == 0 or jogo.jogador.pos.y > jogo.altura_mapa:
-            jogo.estado_jogo = "Game over"
+            jogo.estado_jogo = "Game Over"
 
     def terminou(self):
         return self.fase_atual >= len(self.fases)

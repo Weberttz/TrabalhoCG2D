@@ -872,7 +872,7 @@ def iniciar_cenario():
     }
 
 
-def desenhar_cenario(superficie, x_camera, fase_atual, largura_mapa, y_chao=690, largura_tela=1262):
+def desenhar_cenario(superficie, x_camera, fase_atual, y_chao=690, largura_tela=1262):
 
     superficie.fill(COR_CEU)
     if fase_atual not in cenarios_fases:
@@ -890,19 +890,16 @@ def desenhar_cenario(superficie, x_camera, fase_atual, largura_mapa, y_chao=690,
         superficie.blit(superficie_rua, (0, 550))
 
     for x_mundo, superficie_predio in dados_fase["predios"]:
-        if x_mundo < largura_mapa:
+        x_tela = x_mundo - int(x_camera * 0.3)
+        largura_predio = superficie_predio.get_width()
 
-            x_tela = x_mundo - int(x_camera * 0.3)
-            largura_predio = superficie_predio.get_width()
-
-            if -largura_predio <= x_tela <= largura_tela:
-                posicao_y = y_chao - superficie_predio.get_height()
-                superficie.blit(superficie_predio, (x_tela, posicao_y - 120))
+        if -largura_predio <= x_tela <= largura_tela:
+            posicao_y = y_chao - superficie_predio.get_height()
+            superficie.blit(superficie_predio, (x_tela, posicao_y - 120))
 
 
     for x_mundo, superficie_vegetacao in dados_fase["vegetacao"]:
-        if x_mundo < largura_mapa:
-
+            
             x_tela = x_mundo - int(x_camera * 0.3)
             largura = superficie_vegetacao.get_width()
 
