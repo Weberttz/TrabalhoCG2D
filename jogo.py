@@ -196,14 +196,15 @@ class Jogo:
         pygame.mixer.music.play(-1)
 
     def reiniciar(self):
-         self.jogador.resetar(POS_INICIO)
-         self.jogador.vida = 100
-         self.jogador.pontuacao = 0
-         self.jogador.quantidade_coletada = 0
-         self.jogador.tempo = 0
+        self.jogador.resetar(POS_INICIO)
+        self.jogador.vida = 100
+        self.jogador.pontuacao = 0
+        self.jogador.quantidade_coletada = 0
+        self.jogador.tempo = 0
+        self.jogador.equipamento.municao = 100
 
-         self.gerenciadorFases.reiniciar()
-         self.estado_jogo = "jogando"
+        self.gerenciadorFases.reiniciar()
+        self.estado_jogo = "jogando"
 
     def tratar_eventos(self):
         for evento in pygame.event.get():
