@@ -115,8 +115,12 @@ def desenhar_debug_entidades(jogo, vertices, entidade):
 def desenhar_chefe(jogo):
     if jogo.chefe == None: return
     vertices = jogo.camera.aplicar_vertices(jogo.chefe.vertices)
-    bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
-    bibgraf.scanline_fill(jogo.tela, vertices, jogo.chefe.cor)
+    imagem = jogo.imagens_chefe.get(jogo.chefe.image)
+    if imagem is not None:
+        bibgraf.scanline_texture(jogo.tela, vertices, uvs_jogador, imagem)
+    else:
+        bibgraf.draw_polygonon(jogo.tela, vertices, BLACK)
+        bibgraf.scanline_fill(jogo.tela, vertices, jogo.chefe.cor)
 
     if jogo.debug:
         desenhar_debug_entidades(jogo, vertices, jogo.chefe)

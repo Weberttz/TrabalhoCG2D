@@ -152,4 +152,7 @@ def atualizar_cachorros(jogo):
 def atualizar_chefe(jogo):
     if jogo.chefe != None:
         jogo.chefe.atualizar(jogo.jogador.equipamento.projeteis)
+        if jogo.avancar_frame:
+            jogo.chefe.animar(jogo.anim_chefe_idle_left, jogo.anim_chefe_idle_right,
+                                    jogo.anim_chefe_walk_left, jogo.anim_chefe_walk_right)
 
