@@ -13,6 +13,8 @@ from Classes.arma import Arma
 from Classes.cenario import desenhar_cenario, iniciar_cenario
 
 from menu import iniciar_menu, desenhar_menu, acao_menu, get_dificuldade
+from menu import iniciar_menu, desenhar_menu, acao_menu
+from tela_final import desenhar_tela_final, acao_tela_final
 
 class Jogo:
     def __init__(self):
@@ -42,6 +44,13 @@ class Jogo:
 
         self.estado_jogo = "menu"
         iniciar_menu()
+
+        self.carregar_sprites()
+        self.carregar_fase(self.gerenciadorFases.caminho_fase_atual())
+
+        CAMINHO_FONTE = "Assets/PressStart2P-Regular.ttf"
+        self.fonte = pygame.font.Font(CAMINHO_FONTE, 20)
+        self.fonte_titulo = pygame.font.Font(CAMINHO_FONTE, 60)
 
         
     # Inicialização
@@ -186,6 +195,16 @@ class Jogo:
         pygame.mixer.music.set_volume(1.0) # volume: 0 - mudo, 1 - máximo
         pygame.mixer.music.play(-1)
 
+    def reiniciar(self):
+         self.jogador.resetar(POS_INICIO)
+         self.jogador.vida = 100
+         self.jogador.pontuacao = 0
+         self.jogador.quantidade_coletada = 0
+         self.jogador.tempo = 0
+
+         self.gerenciadorFases.reiniciar()
+         self.estado_jogo = "jogando"
+
     def tratar_eventos(self):
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
@@ -201,20 +220,28 @@ class Jogo:
                     elif acao == "sair":
                         self.rodando = False
 
-            if self.estado_jogo == "jogando":
+            elif self.estado_jogo == "jogando":
                 if evento.type == pygame.KEYDOWN:
                     if evento.key == pygame.K_h:
                         self.debug = not self.debug
 
-            # conclusão provisória 
-            if self.estado_jogo in ["Game over", "Win"]:
-                print(f'Estado do jogo: {self.estado_jogo}')
-                self.rodando = False
+                    elif evento.key == pygame.K_w:
+                        self.estado_jogo = "win"
+
+                    elif evento.key == pygame.K_g:
+                        self.estado_jogo = "gameover"
+
+            elif self.estado_jogo == "win" or self.estado_jogo == "gameover":
+                 acao = acao_tela_final(evento)
+                 if acao == "reiniciar":
+                      self.reiniciar()
+                 elif acao == "menu":
+                      self.estado_jogo = "menu"
                 
     # Atualização
     def atualizar(self, dt):
         if self.estado_jogo == "jogando":
-            Atualizador.atualizar_jogador(self)
+            Atualizador.atualizar_jogador(self, dt)
             self.camera.atualizar()
             Atualizador.atualizar_animacao(self, dt)
             Atualizador.atualizar_entidades(self, dt)
@@ -244,6 +271,25 @@ class Jogo:
             Renderizador.desenhar_hud(self)
             if self.debug:
                 Renderizador.desenhar_aabb_de_portal(self)
+
+        elif self.estado_jogo == "win" or self.estado_jogo == "gameover":
+            x_camera = abs(self.camera.retangulo.x)
+            desenhar_cenario(self.tela, x_camera, self.gerenciadorFases.fase_atual)
+            # self.tela.fill(AZUL_NOTURNO)
+            self.tela.blit(self.mundo_surface, self.camera.retangulo.topleft)
+
+            Renderizador.desenhar_portais(self)
+            Renderizador.desenhar_coletaveis(self)
+            Renderizador.desenhar_projeteis(self)
+            Renderizador.desenhar_zumbis(self)
+            Renderizador.desenhar_cachorros(self)
+            Renderizador.desenhar_pombos(self)
+            Renderizador.desenhar_jogador(self)
+            Renderizador.desenhar_hud(self)
+            if self.debug:
+                Renderizador.desenhar_aabb_de_portal(self)            
+
+            desenhar_tela_final(self.tela, self.estado_jogo, self.jogador, self.fonte, self.fonte_titulo)
 
         pygame.display.flip()
 
