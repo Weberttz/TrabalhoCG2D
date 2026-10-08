@@ -20,9 +20,11 @@ def desenhar_tela_final(superficie, estado_jogo, jogador, fonte, fonte_titulo):
     texto_titulo = fonte_titulo.render(texto_conteudo, True, cor_titulo)
     superficie.blit(texto_titulo, (superficie.get_width() // 2 - texto_titulo.get_width() // 2, 100))
 
+    tempo_min = int(jogador.tempo) // 60
+    seg = int(jogador.tempo) % 60
     estatisticas = [
         f"Total coletados: {jogador.quantidade_coletada}",
-        f"Duração da partida: {jogador.tempo}s",
+        f"Duração da partida: {tempo_min}min e {seg}s",
         f"Pontuação final: {jogador.pontuacao}"
     ]
 

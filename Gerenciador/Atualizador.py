@@ -6,7 +6,7 @@ from settings import (
     Vetor
 )
 
-def atualizar_jogador(jogo):
+def atualizar_jogador(jogo, dt):
     jogador = jogo.jogador
     if jogo.avancar_frame:
         jogador.animar(jogo.anim_jogador_idle_left, jogo.anim_jogador_idle_right,
@@ -16,7 +16,7 @@ def atualizar_jogador(jogo):
     verificar_morte_jogador(jogo)
     verificar_passou_de_fase(jogo)
     verificar_voltou_fase(jogo)
-    jogo.jogador.atualizar()
+    jogo.jogador.atualizar(dt)
 
 def atualizar_animacao(jogo, dt):
     jogo.tempo_animacao += dt

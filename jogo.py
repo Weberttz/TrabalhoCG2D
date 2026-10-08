@@ -180,6 +180,7 @@ class Jogo:
          self.jogador.vida = 100
          self.jogador.pontuacao = 0
          self.jogador.quantidade_coletada = 0
+         self.jogador.tempo = 0
 
          self.gerenciadorFases.reiniciar()
          self.estado_jogo = "jogando"
@@ -217,7 +218,7 @@ class Jogo:
     # Atualização
     def atualizar(self, dt):
         if self.estado_jogo == "jogando":
-            Atualizador.atualizar_jogador(self)
+            Atualizador.atualizar_jogador(self, dt)
             self.camera.atualizar()
             Atualizador.atualizar_animacao(self, dt)
             Atualizador.atualizar_entidades(self, dt)
