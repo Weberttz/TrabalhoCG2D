@@ -101,9 +101,7 @@ def desenhar_jogador(jogo):
         bibgraf.scanline_fill(jogo.tela, vertices, jogo.jogador.cor)
 
     if jogo.debug:
-        vertices_rect = jogo.camera.aplicar_vertices(jogo.jogador.retangulo.vertices)
-        aabb = r.calcular_aabb(vertices_rect)
-        bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
+        desenhar_debug_entidades(jogo, vertices, jogador)
 
 def desenhar_debug_entidades(jogo, vertices, entidade):
     texto = jogo.fonte_informacoes.render(f"Vida: {entidade.vida}", 1, WHITE)
