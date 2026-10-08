@@ -11,7 +11,9 @@ from Classes.jogador import Jogador
 from Classes.camera import Camera
 from Classes.arma import Arma
 from Classes.cenario import desenhar_cenario, iniciar_cenario
+
 from menu import iniciar_menu, desenhar_menu, acao_menu, get_dificuldade
+from menu import iniciar_menu, desenhar_menu, acao_menu
 from tela_final import desenhar_tela_final, acao_tela_final
 
 class Jogo:
@@ -50,6 +52,7 @@ class Jogo:
         self.fonte = pygame.font.Font(CAMINHO_FONTE, 20)
         self.fonte_titulo = pygame.font.Font(CAMINHO_FONTE, 60)
 
+        
     # Inicialização
     def carregar_sprites(self):
         self.anim_zumbi_idle_esquerda = Inicializador.gerar_lista_animacoes("zumbi", "idle_left", 4)

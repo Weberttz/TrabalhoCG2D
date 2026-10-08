@@ -4,6 +4,7 @@ class GerenciadorFases:
     def __init__(self, fases, TAMANHO_QUADRADO):
         self.fases = fases
         self.fase_atual = 0
+        self.dificuldade = "normal"
         self.max_fases = len(fases)
         self.larguras = [len(Inicializador.carregar_mapa(fase)[0]) * TAMANHO_QUADRADO 
                         for fase in self.fases] 
