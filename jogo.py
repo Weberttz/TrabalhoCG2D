@@ -48,9 +48,10 @@ class Jogo:
         self.carregar_sprites()
         self.carregar_fase(self.gerenciadorFases.caminho_fase_atual())
 
-        CAMINHO_FONTE = "Assets/PressStart2P-Regular.ttf"
-        self.fonte = pygame.font.Font(CAMINHO_FONTE, 20)
-        self.fonte_titulo = pygame.font.Font(CAMINHO_FONTE, 60)
+        self.fonte_informacoes = pygame.font.Font("Fontes/FreePixel.ttf", 20)
+        nova_fonte = "Assets/PressStart2P-Regular.ttf"
+        self.fonte = pygame.font.Font(nova_fonte, 20)
+        self.fonte_titulo = pygame.font.Font(nova_fonte, 60)
 
         
     # Inicialização

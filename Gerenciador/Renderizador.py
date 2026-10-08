@@ -106,7 +106,7 @@ def desenhar_jogador(jogo):
         bibgraf.desenhar_aabb(jogo.tela, aabb, WHITE)
 
 def desenhar_debug_entidades(jogo, vertices, entidade):
-    texto = jogo.fonte.render(f"Vida: {entidade.vida}", 1, WHITE)
+    texto = jogo.fonte_informacoes.render(f"Vida: {entidade.vida}", 1, WHITE)
     jogo.tela.blit(texto, (vertices[1][0], vertices[1][1] - 20))
     vertices_rect = jogo.camera.aplicar_vertices(entidade.retangulo.vertices)
     aabb = r.calcular_aabb(vertices_rect)
@@ -337,11 +337,12 @@ def desenhar_hud(jogo):
         cor = VERMELHO
 
     fonte_vida = pygame.font.SysFont("Arial", 20, bold=True)
+    fonte_informacoes = jogo.fonte_informacoes
     cheia = fonte_vida.render("█" * int(jogo.jogador.vida / 5), True, cor)
     vazia = fonte_vida.render("░" * int((VIDA_MAXIMA - jogo.jogador.vida) / 5), True, (100, 100, 100))
-    texto_municao = jogo.fonte.render(f"Munição: {jogo.jogador.equipamento.municao}", 1, AMARELO)
-    texto_pontuacao = jogo.fonte.render(f"Pontuação: {jogo.jogador.pontuacao}", 1, AMARELO)
-    texto_coletaveis = jogo.fonte.render(f"Coletáveis: {jogo.jogador.quantidade_coletada}", 1, AMARELO)
+    texto_municao = fonte_informacoes.render(f"Munição: {jogo.jogador.equipamento.municao}", 1, AMARELO)
+    texto_pontuacao = fonte_informacoes.render(f"Pontuação: {jogo.jogador.pontuacao}", 1, AMARELO)
+    texto_coletaveis = fonte_informacoes.render(f"Coletáveis: {jogo.jogador.quantidade_coletada}", 1, AMARELO)
 
     jogo.tela.blit(cheia, (30, 10))
     jogo.tela.blit(vazia, (30 + cheia.get_width(), 10))
