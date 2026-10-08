@@ -71,30 +71,30 @@ aconteceu de fato naquele lugar.
 
 # Tutorial 
 ## Como executar o jogo
-* Clone o repositório
+### Clone o repositório
 ```
 git clone https://github.com/Weberttz/TrabalhoCG2D
 ``` 
-* Entre na pasta do projeto
+### Entre na pasta do projeto
 ```
 cd TrabalhoCG2D
 ```
-* Crie um ambiente virtual
-    * Linux/macOS
+### Crie um ambiente virtual
+#### Linux/macOS
 ```
 python3 -m venv .venv
 source .venv/bin/activate
 ```
-   * Windows (no Command Prompt)
+#### Windows (no Command Prompt)
 ```
 python -m venv .venv
 .venv\Scripts\activate.bat
 ```
-* Intale as dependências 
+### Instale as dependências 
 ```
 pip install -r requirements.txt
 ```
-* Executar jogo
+### Executar jogo
 ```
 python jogo.py 
 ```
