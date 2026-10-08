@@ -38,7 +38,7 @@ def desenhar_tela_final(superficie, estado_jogo, jogador, fonte, fonte_titulo):
     for o, opcao in enumerate(botoes):
         if o == opcao_selecionada:
             cor = cor_titulo
-            texto = f">{opcao["nome"]}"
+            texto = "> " + opcao["nome"]
 
         else:
             cor = BRANCO

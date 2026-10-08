@@ -52,10 +52,10 @@ instrucoes = [
     "- COLETAR O MAIOR NÚMERO POSSÍVEL DE OBJETOS",
     
     "JOGABILIDADE:",
-    "TECLA <- (Home) : Andar para a esquerda",
-    "TECLA -> (End): Andar para a direita",
-    "TECLA ESPAÇO : Pular",
-    "TECLA Z : Atirar"
+    "Tecla LEFT : Andar para a esquerda",
+    "Tecla RIGHT: Andar para a direita",
+    "Tecla SPACE : Pular",
+    "Tecla Z : Atirar"
 ]
 
 voltar = {"x0": 50, "y0": 50, "x1": 150, "y1": 100}
@@ -162,7 +162,7 @@ def desenhar_menu(superficie, posicao_mouse):
                 superficie_botao = botao["superficie"]
 
             superficie.blit(superficie_botao, (botao["x0"], botao["y0"]))
-            texto_titulo = fonte_titulo.render("NOITE NA UECE", True, COR_TITULO)
+            texto_titulo = fonte_titulo.render("PROJETO PANDORA", True, COR_TITULO)
             superficie.blit(texto_titulo, (160, 121))
 
             texto = fonte.render(botao["nome"], True, COR_TEXTO)

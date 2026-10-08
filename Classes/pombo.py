@@ -26,7 +26,7 @@ class Pombo():
         self.tomando_dano = False
         self.tempo_dano = 0
         self.tempo_piscar = 5
-        self.intervalo_lancamento_pedra = 2
+        self.intervalo_lancamento_pedra = 3
         self.pode_lancar = True
         self.tempo_mudar_direcao = 0
         self.vivo = True

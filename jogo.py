@@ -1,4 +1,4 @@
-import sys, faulthandler
+import sys
 
 from Gerenciador import Renderizador 
 from Gerenciador import Atualizador
@@ -181,7 +181,6 @@ class Jogo:
     # Loop principal
     def rodar(self):
         self.tocar_musica()
-        #faulthandler.dump_traceback_later(5, repeat=True)
         while self.rodando:
             dt = self.clock.tick(60) / 1000 # único tick por frame
             self.tratar_eventos()

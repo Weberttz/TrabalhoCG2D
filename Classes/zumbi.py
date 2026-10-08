@@ -82,11 +82,11 @@ class Zumbi(Humanoide):
         if esta_no_campo_de_visao:
 
             if distancia_x > 0:
-                self.vel_x = 3
+                self.vel_x = 2
                 self.olhando = 1
 
             elif distancia_x < 0:
-                self.vel_x = -3
+                self.vel_x = -2
                 self.olhando = -1
 
             else:

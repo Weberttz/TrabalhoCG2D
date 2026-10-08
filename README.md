@@ -1,6 +1,6 @@
-# Nome do jogo
+# Projeto PANDORA
 
-Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por cenário típicos da Uece - Campus Itapery (divididos em três fases) e enfrenta um grande vilão ao final.
+Jogo de plataforma em 2D com estilo visual pixel art, onde o jogador passa por cenário típicos da Uece - Campus Itaperi (divididos em três fases) e enfrenta um grande vilão ao final.
 
 ## Funcionalidades
 * Set Pixel -> todo o jogo foi renderizado pixel por pixel
@@ -50,7 +50,7 @@ aconteceu de fato naquela noite.
 * Carrinho do Billy 
 * RU 
 * Biblioteca central 
-* Prédio da Medicina - existe uma cura??
+* Prédio da Medicina
 
 #### Background
 * Lua 
@@ -59,20 +59,42 @@ aconteceu de fato naquela noite.
 * Paredes
 
 # Mecânicas 
-* Pulo 
-* Corrida
-* Tiro
+* Pulo : tecla SPACE
+* Corrida : teclas RIGHT , LEFT
+* Tiro : tecla Z
 
 # Dificuldades
 * Fácil - Dano de inimigo = 10
 * Médio -  Dano de inimigo = 20
 * Difícil - Dano de inimigo = 40
 
-# Tutorial -> Como criar ambiente virtual e executar
+# Tutorial 
+## Como executar o jogo
+* Clone o repositório
+```
+git clone 
+``` 
+* Entre na pasta do projeto
+```
+cd TrabalhoCG2D
+```
+* Crie um ambiente virtual
+** Linux/macOS
 ```
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install pygame
+```
+** Windows (no Command Prompt)
+```
+python -m venv .venv
+.venv\Scripts\activate.bat
+```
+* Intale as dependências (pip freeze > requirements.txt)
+```
+pip install -r requirements.txt
+```
+* Executar jogo
+```
 python jogo.py 
 ```
 
