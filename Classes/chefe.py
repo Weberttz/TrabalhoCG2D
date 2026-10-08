@@ -21,7 +21,7 @@ class Chefe(Humanoide):
         self.atualizar_vertices()
 
         # podia exibir a vida do chefe tbm na tela final   
-        self.vida = 400
+        self.vida = 800
         self.vel_x = 0
         self.vel_y = 0
         self.velocidade = 1 
