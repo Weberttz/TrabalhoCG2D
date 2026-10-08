@@ -6,7 +6,7 @@ from settings import Vetor, Retangulo, TAMANHO_JOGADOR, VIDA_MAXIMA
 class Jogador(Humanoide):
     def __init__(self, pos, plataformas, inimigos, coletaveis, equipamentos, cor):
         super().__init__(plataformas, inimigos, equipamentos, pos, cor, TAMANHO_JOGADOR)
-        self.tempo = pygame.time.get_ticks()
+        self.tempo = 0
         self.olhando = 1
         self.pontuacao = 0
         self.coletaveis = coletaveis
@@ -38,7 +38,7 @@ class Jogador(Humanoide):
                                 self.tamanho, self.tamanho)
         self.atualizar_vertices()
 
-    def atualizar(self):
+    def atualizar(self, dt):
         '''Atualiza os atributos do jogador.'''
         self.lidar_com_inputs()
         self.aplicar_gravidade()
@@ -48,6 +48,7 @@ class Jogador(Humanoide):
         self.atirar()
         self.atualizar_invulnerabilidade()
         self.contabilizar_pontuacao()
+        self.tempo += dt
 
     def get_direcao_tiro(self):
         '''Determina a direção do tiro.'''
