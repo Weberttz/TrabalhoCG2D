@@ -135,7 +135,7 @@ class Jogo:
 
         self.mundo_surface = self.renderizar_mundo()
         self.viewport_surface = self.criar_surface_viewport()
-        self.voltando = False 
+        self.voltando = False  
 
     def renderizar_mundo(self):
         """Desenha o mapa estático uma única vez numa superficie gigante."""
