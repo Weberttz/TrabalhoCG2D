@@ -73,7 +73,7 @@ aconteceu de fato naquele lugar.
 ## Como executar o jogo
 * Clone o repositório
 ```
-git clone 
+git clone https://github.com/Weberttz/TrabalhoCG2D
 ``` 
 * Entre na pasta do projeto
 ```
